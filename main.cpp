@@ -86,8 +86,7 @@ int getTime(std::chrono::steady_clock::time_point start, std::chrono::steady_clo
 	return std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 }
 
-int main(int argc, const char* argv[]){
-
+vector<point> getTrajectory(int argc, const char* argv[]){
 	max_x=max_y=min_y=min_x=0;
 
 	setConfig(argc,argv);
@@ -143,7 +142,8 @@ int main(int argc, const char* argv[]){
 	//Output the distance
 	
 	if(config.printGraph){
-		draw(testTitle,start,end, polygons,distance,points,route,graph);	
+		draw(testTitle,start,end, polygons,distance,points,route,graph);
+		return vector<point>();	
 	}
 	else{
 		std::cout<<points.size()<<std::endl;
@@ -155,5 +155,11 @@ int main(int argc, const char* argv[]){
 		//cout << distance << endl;
 		cout << getTime(time1,time2) << " " << getTime(time2,time3) << " " << getTime(time3,time4) << " " << distance << endl;
 		//cout << "Dijkstra took : " << getTime(visibility_end,dijkstra_end) << endl;
-	}
+		return points;
+	}	
+}
+
+int main(int argc, const char* argv[]){
+	vector<point> trajectory = getTrajectory(argc, argv);
+	return 0;
 }
