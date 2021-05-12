@@ -1,1 +1,1 @@
-./a.out < test/test3.txt > test/test.svg
+./a.out < test/test3.txt -k -p > test/test.svg
