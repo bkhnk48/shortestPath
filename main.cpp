@@ -217,8 +217,10 @@ void getData(int *numOfStacks, int *rowsInStack, int *columnsInStack,
 
 void print(int numOfStacks, int rowsInStack, int columnsInStack, 
 				int widthOfLine, int widthOfAV, int lengthOfAV){
-	cout<<"In conclusion: #Stacks "<<numOfStacks<<", #rows in Stack "<<rowsInStack<<", #cols in Stack "<<columnsInStack<<endl;
-	cout<<"               Width of line "<<widthOfLine<<", width of AV "<<widthOfAV<<", length of AV "<<lengthOfAV<<endl;
+	cout<<"In conclusion: #Stacks "<<numOfStacks<<", #rows in Stack "<<rowsInStack;
+	cout<<", #cols in Stack "<<columnsInStack<<endl;
+	cout<<"               Width of line "<<widthOfLine<<", width of AV "<<widthOfAV;
+	cout<<", length of AV "<<lengthOfAV<<endl;
 }
 
 int main(int argc, const char* argv[]){
