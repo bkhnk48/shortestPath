@@ -17,7 +17,7 @@ string toString(lineSegment l){
 //Function for reading the next point in stdin
 point readPoint(){
 	double x,y;
-	scanf("%lf,%lf\n",&x,&y);
+	int t = scanf("%lf,%lf\n",&x,&y);
 	point p(x,y);
 	return p;
 }
