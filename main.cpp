@@ -160,6 +160,66 @@ vector<point> getTrajectory(int argc, const char* argv[]){
 }
 
 int main(int argc, const char* argv[]){
-	vector<point> trajectory = getTrajectory(argc, argv);
+	//input strings
+	string strStacks, strRowsStack, strColsStack;
+	string strWidthLine, strWidthAV, strLengthAV;
+	//local variables
+	int numOfStacks = 2; 
+	int rowsInStack = 3;
+	int columnsInStack = 35;
+	int widthOfLine = 5;
+	int widthOfAV = 2;
+	int lengthOfAV = 6;
+	do{
+		cout<<"Type values for some variables (P/p for using all default values)"<<endl;
+		cout<<"Or S/s for skipping the current variable"<<endl;
+		cout<<"Num of Stacks in parking lot: "; cin >> strStacks;
+		
+		if(strStacks.compare("P") == 0 || strStacks.compare("p") == 0)
+			break;
+		if(strStacks.compare("S") != 0 && strStacks.compare("s") != 0)
+			//numOfStacks = stoi(strStacks);
+			istringstream(strStacks) >> numOfStacks;
+
+		cout<<"Num of rows in each Stack: "; cin >> strRowsStack;
+		if(strRowsStack.compare("P") == 0 || strRowsStack.compare("p") == 0)
+			break;
+		if(strRowsStack.compare("S") != 0 && strRowsStack.compare("s") != 0)
+			istringstream(strStacks) >> numOfStacks;
+		
+		cout<<"Num of columns in each Stack: "; cin >> strColsStack;
+		if(strColsStack.compare("P") == 0 || strColsStack.compare("p") == 0)
+			break;
+		if(strColsStack.compare("S") != 0 && strColsStack.compare("s") != 0)
+			istringstream(strStacks) >> numOfStacks;
+
+		cout<<"Width of line in parking lot: "; cin >> strWidthLine;
+		if(strWidthLine.compare("P") == 0 || strWidthLine.compare("p") == 0)
+			break;
+		if(strWidthLine.compare("S") != 0 && strWidthLine.compare("s") != 0)
+			istringstream(strStacks) >> numOfStacks;
+
+		cout<<"Width of AV: "; cin >> strWidthAV;
+		if(strWidthAV.compare("P") == 0 || strWidthAV.compare("p") == 0)
+			break;
+		if(strWidthAV.compare("S") != 0 && strWidthAV.compare("s") != 0)
+			istringstream(strStacks) >> numOfStacks;
+
+		cout<<"Length of AV: "; cin >> strLengthAV;
+		if(strLengthAV.compare("P") == 0 || strLengthAV.compare("p") == 0)
+			break;
+		if(strLengthAV.compare("S") != 0 && strLengthAV.compare("s") != 0)
+			istringstream(strStacks) >> numOfStacks;
+		cout<<"====================================="<<endl;
+	}while(numOfStacks <= 0 || 
+			rowsInStack <= 0 || 
+			columnsInStack <= 0 || 
+			widthOfLine <= 2*widthOfAV ||
+			widthOfAV <= 0 ||
+			lengthOfAV <= 2*widthOfAV);
+	cout<<"In conclusion: #Stacks "<<numOfStacks<<", #rows in Stack "<<rowsInStack<<", #cols in Stack "<<columnsInStack<<endl;
+	cout<<"               Width of line "<<widthOfLine<<", width of AV "<<widthOfAV<<", length of AV "<<lengthOfAV<<endl;
+
+	//vector<point> trajectory = getTrajectory(argc, argv);
 	return 0;
 }
