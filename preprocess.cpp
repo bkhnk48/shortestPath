@@ -15,11 +15,9 @@ void setConfig(int argc, const char* argv[]){
 		string s(argv[i]);	
 		if(s.compare("-k")==0){
 			config.k = atoi(argv[i+1]);
-			//std::cout<<"In ra k: "<<config.k<<std::endl;
 		}
 		if(s.compare("-p") == 0){
 			config.printGraph = true;
-			//std::cout<<"Ve graph: "<<std::endl;
 			if(argc-1>i){
 				string temp(argv[i+1]);
 
