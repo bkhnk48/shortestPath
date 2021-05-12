@@ -159,69 +159,7 @@ vector<point> getTrajectory(int argc, const char* argv[]){
 	}	
 }
 
-void getData(int *numOfStacks, int *rowsInStack, int *columnsInStack, 
-				int *widthOfLine, int *widthOfAV, int *lengthOfAV){
-	//input strings
-	string strStacks, strRowsStack, strColsStack;
-	string strWidthLine, strWidthAV, strLengthAV;
-	
-	do{
-		cout<<"Type values for some variables (P/p for using all default values)"<<endl;
-		cout<<"Or S/s for skipping the current variable"<<endl;
-		cout<<"Num of Stacks in parking lot: "; cin >> strStacks;
-		
-		if(strStacks.compare("P") == 0 || strStacks.compare("p") == 0)
-			break;
-		if(strStacks.compare("S") != 0 && strStacks.compare("s") != 0)
-			//numOfStacks = stoi(strStacks);
-			istringstream(strStacks) >> *numOfStacks;
 
-		cout<<"Num of rows in each Stack: "; cin >> strRowsStack;
-		if(strRowsStack.compare("P") == 0 || strRowsStack.compare("p") == 0)
-			break;
-		if(strRowsStack.compare("S") != 0 && strRowsStack.compare("s") != 0)
-			istringstream(strRowsStack) >> *rowsInStack;
-		
-		cout<<"Num of columns in each Stack: "; cin >> strColsStack;
-		if(strColsStack.compare("P") == 0 || strColsStack.compare("p") == 0)
-			break;
-		if(strColsStack.compare("S") != 0 && strColsStack.compare("s") != 0)
-			istringstream(strColsStack) >> *columnsInStack;
-
-		cout<<"Width of line in parking lot: "; cin >> strWidthLine;
-		if(strWidthLine.compare("P") == 0 || strWidthLine.compare("p") == 0)
-			break;
-		if(strWidthLine.compare("S") != 0 && strWidthLine.compare("s") != 0)
-			istringstream(strWidthLine) >> *widthOfLine;
-
-		cout<<"Width of AV: "; cin >> strWidthAV;
-		if(strWidthAV.compare("P") == 0 || strWidthAV.compare("p") == 0)
-			break;
-		if(strWidthAV.compare("S") != 0 && strWidthAV.compare("s") != 0)
-			istringstream(strWidthAV) >> *widthOfAV;
-
-		cout<<"Length of AV: "; cin >> strLengthAV;
-		if(strLengthAV.compare("P") == 0 || strLengthAV.compare("p") == 0)
-			break;
-		if(strLengthAV.compare("S") != 0 && strLengthAV.compare("s") != 0)
-			istringstream(strLengthAV) >> *lengthOfAV;
-		cout<<"====================================="<<endl;
-	}while(*numOfStacks <= 0 || 
-			*rowsInStack <= 0 || 
-			*columnsInStack <= 0 || 
-			*widthOfLine <= 2*(*widthOfAV) ||
-			*widthOfAV <= 0 ||
-			*lengthOfAV <= 2*(*widthOfAV));
-	
-}
-
-void print(int numOfStacks, int rowsInStack, int columnsInStack, 
-				int widthOfLine, int widthOfAV, int lengthOfAV){
-	cout<<"In conclusion: #Stacks "<<numOfStacks<<", #rows in Stack "<<rowsInStack;
-	cout<<", #cols in Stack "<<columnsInStack<<endl;
-	cout<<"               Width of line "<<widthOfLine<<", width of AV "<<widthOfAV;
-	cout<<", length of AV "<<lengthOfAV<<endl;
-}
 
 int main(int argc, const char* argv[]){
 	//local variables
