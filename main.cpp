@@ -77,8 +77,7 @@ int main(int argc, const char* argv[]){
 	getData(&numOfStacks, &rowsInStack, &columnsInStack, 
 				&widthOfLine, &widthOfAV, &lengthOfAV);
 
-	print(numOfStacks, rowsInStack, columnsInStack, 
-				widthOfLine, widthOfAV, lengthOfAV);
+	
 
 	//vector<point> trajectory = getTrajectory(argc, argv);
 	return 0;
