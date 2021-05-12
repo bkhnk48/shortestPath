@@ -278,6 +278,14 @@ int calculateNumberOfCrossings(vector < vector < int > > &crossesNumber,vector<v
 	return 0;	
 }
 
+void print(int numOfStacks, int rowsInStack, int columnsInStack, 
+				int widthOfLine, int widthOfAV, int lengthOfAV){
+	cout<<"In conclusion: #Stacks "<<numOfStacks<<", #rows in Stack "<<rowsInStack;
+	cout<<", #cols in Stack "<<columnsInStack<<endl;
+	cout<<"               Width of line "<<widthOfLine<<", width of AV "<<widthOfAV;
+	cout<<", length of AV "<<lengthOfAV<<endl;
+}
+
 void getData(int *numOfStacks, int *rowsInStack, int *columnsInStack, 
 				int *widthOfLine, int *widthOfAV, int *lengthOfAV){
 	//input strings
@@ -287,6 +295,7 @@ void getData(int *numOfStacks, int *rowsInStack, int *columnsInStack,
 	do{
 		cout<<"Type values for some variables (P/p for using all default values)"<<endl;
 		cout<<"Or S/s for skipping the current variable"<<endl;
+		cout<<"\t\t keep in mind: all of them should be positive and WL > 2WAV, LAV > 2*WAV"<<endl;
 		cout<<"Num of Stacks in parking lot: "; cin >> strStacks;
 		
 		if(strStacks.compare("P") == 0 || strStacks.compare("p") == 0)
@@ -325,6 +334,8 @@ void getData(int *numOfStacks, int *rowsInStack, int *columnsInStack,
 		if(strLengthAV.compare("S") != 0 && strLengthAV.compare("s") != 0)
 			istringstream(strLengthAV) >> *lengthOfAV;
 		cout<<"====================================="<<endl;
+		print(*numOfStacks, *rowsInStack, *columnsInStack, 
+				*widthOfLine, *widthOfAV, *lengthOfAV);
 	}while(*numOfStacks <= 0 || 
 			*rowsInStack <= 0 || 
 			*columnsInStack <= 0 || 
@@ -332,12 +343,4 @@ void getData(int *numOfStacks, int *rowsInStack, int *columnsInStack,
 			*widthOfAV <= 0 ||
 			*lengthOfAV <= 2*(*widthOfAV));
 	
-}
-
-void print(int numOfStacks, int rowsInStack, int columnsInStack, 
-				int widthOfLine, int widthOfAV, int lengthOfAV){
-	cout<<"In conclusion: #Stacks "<<numOfStacks<<", #rows in Stack "<<rowsInStack;
-	cout<<", #cols in Stack "<<columnsInStack<<endl;
-	cout<<"               Width of line "<<widthOfLine<<", width of AV "<<widthOfAV;
-	cout<<", length of AV "<<lengthOfAV<<endl;
 }
