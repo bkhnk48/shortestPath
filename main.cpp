@@ -146,6 +146,12 @@ int main(int argc, const char* argv[]){
 		draw(testTitle,start,end, polygons,distance,points,route,graph);	
 	}
 	else{
+		std::cout<<points.size()<<std::endl;
+		for(int i = 0; i < points.size(); i++)
+		{
+			std::cout<<"("<<points.at(i).x<<", "<<points.at(i).y<<") ";
+		}
+		cout<<"\n";
 		//cout << distance << endl;
 		cout << getTime(time1,time2) << " " << getTime(time2,time3) << " " << getTime(time3,time4) << " " << distance << endl;
 		//cout << "Dijkstra took : " << getTime(visibility_end,dijkstra_end) << endl;
