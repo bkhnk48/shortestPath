@@ -82,7 +82,8 @@ int main(int argc, const char* argv[]){
 	stacks->k = numOfStacks;
 	buildStack(stacks, numOfStacks, rowsInStack, columnsInStack);
 
-	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
+	//printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
+	
 	//vector<point> trajectory = getTrajectory(argc, argv);
 	return 0;
 }
