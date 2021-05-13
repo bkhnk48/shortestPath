@@ -9,7 +9,10 @@
 #include <chrono>
 
 using namespace std;
-
+typedef struct Stacks{
+	int** slotsOfAV;
+	int k;
+}K_Stack;
 void setConfig(int argc, const char* argv[]){
 	for(int i = 1 ; i < argc ; i++ ){
 		string s(argv[i]);	
@@ -106,4 +109,33 @@ vector<point> getTrajectory(int argc, const char* argv[]){
 		//cout << "Dijkstra took : " << getTime(visibility_end,dijkstra_end) << endl;
 		return points;
 	}	
+}
+
+
+void buildStack(K_Stack *stacks, int numStacks, int numOfRows, int numOfCol){
+	for(int i = 0; i < numStacks; i++){
+		int **slotsOfAVs = NULL;
+		slotsOfAVs = (int **)malloc(sizeof * slotsOfAVs * numOfRows);
+		for(int j = 0; j < numOfRows; j++){
+			slotsOfAVs[j] = (int *)malloc(sizeof * slotsOfAVs[i] * numOfCol);
+			for(int l = 0; l < numOfCol; l++){
+				slotsOfAVs[j][l] = 1;
+			}
+		}
+		stacks[i].slotsOfAV = slotsOfAVs;
+	}
+}
+
+void printStacks(K_Stack *stacks, int numOfStacks, int rowsInStack, int columnsInStack){
+	cout<<"\n"<<endl;
+	for(int i = 0; i < numOfStacks; i++){
+		for(int j = 0; j < rowsInStack; j++){
+			cout<<"\t";
+			for(int l = 0; l < columnsInStack; l++){
+				cout<<stacks[i].slotsOfAV[j][l]<<" ";
+			}
+			cout<<endl;
+		}
+		cout<<"\n"<<endl;
+	}
 }
