@@ -7,6 +7,7 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
+#include "BuildPolygonState.cpp"
 
 using namespace std;
 typedef struct Stacks{
@@ -123,6 +124,25 @@ void buildStack(K_Stack *stacks, int numStacks, int numOfRows, int numOfCol){
 			}
 		}
 		stacks[i].slotsOfAV = slotsOfAVs;
+	}
+}
+
+void readKStacks(vector< vector< lineSegment> > &polygons, K_Stack *stacks, 
+			int numOfStacks, int rowsInStack, int columnsInStack){
+	
+	for(int i = 0; i < numOfStacks; i++){
+
+		vector<lineSegment> polygon;
+		
+		int count = 0;
+		int r = 0, c = 0;
+		while(count < rowsInStack*columnsInStack){
+
+		}
+
+		if(!polygon.empty()){
+			polygons.push_back(polygon);
+		}
 	}
 }
 
