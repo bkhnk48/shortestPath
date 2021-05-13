@@ -76,9 +76,13 @@ int main(int argc, const char* argv[]){
 
 	getData(&numOfStacks, &rowsInStack, &columnsInStack, 
 				&widthOfLine, &widthOfAV, &lengthOfAV);
-
 	
+	K_Stack *stacks = NULL;
+	stacks = (K_Stack *)malloc(numOfStacks*sizeof(K_Stack));
+	stacks->k = numOfStacks;
+	buildStack(stacks, numOfStacks, rowsInStack, columnsInStack);
 
+	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
 	//vector<point> trajectory = getTrajectory(argc, argv);
 	return 0;
 }
