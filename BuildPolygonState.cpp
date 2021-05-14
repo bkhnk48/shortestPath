@@ -66,6 +66,6 @@ class Factory
                 delete s;    
                 return newState;
             }
-            return s;
+            return NULL;
         }
 };
