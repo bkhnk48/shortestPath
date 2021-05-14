@@ -36,7 +36,18 @@ class InitState{
             }
         }
         virtual void move(){
-
+            if(decision == 'S')
+                this->c++;
+            else if(decision == 'D'){
+                this->r++;
+            }
+            else if(decision == 'L'){
+                this->r--;
+            }
+            else if(decision == 'C'){
+                this->r++;
+                this->c = 0;
+            }
         }
     
 };
@@ -80,9 +91,7 @@ class RightForwardingState : public virtual InitState
             }
         }
 
-        void move(){
-            this->c++;
-        }
+        
 };
 
 class LeftForwardingState : public virtual InitState
@@ -127,17 +136,17 @@ class LeftForwardingState : public virtual InitState
 class Factory
 {
     public:
-        static InitState* getNextState(InitState* s, char option){
-            if(option == 'S')
+        static InitState* getNextState(InitState* s){
+            s->move();
+            if(s->decision == 'S')
             {
-                s->move();
                 return s;
             }
             int r = s->r; int c = s->c;
+            char option = s->decision;
             delete s;
             if(option == 'R')
             {
-                c = c + 1;
                 RightForwardingState* newState = new RightForwardingState(r, c);
                 return newState;
             }
