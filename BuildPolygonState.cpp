@@ -22,26 +22,28 @@ class InitState{
     
 };
 
-class LeftForwardingState : public virtual InitState{
+class LeftForwardingState : public virtual InitState
+{
 
-    public char nextState(int **array, int ROW, int COL){
-        if(c < COL - 1){
-            if(array[r][c + 1] == 1){
-                return 'S';//Still
+    public:
+        char nextState(int **array, int ROW, int COL){
+            if(c < COL - 1){
+                if(array[r][c + 1] == 1){
+                    return 'S';//Still
+                }
             }
-        }
-        else{//reach right boundary
-            if(r < ROW - 1){
-                if(array[r + 1][c] == 1){
-                    return 'D';//Down
+            else{//reach right boundary
+                if(r < ROW - 1){
+                    if(array[r + 1][c] == 1){
+                        return 'D';//Down
+                    }
+                    else{
+                        return 'H'; //Halt
+                    }
                 }
                 else{
-                    return 'H'; //Halt
+
                 }
             }
-            else{
-
-            }
         }
-    }
 };
