@@ -22,10 +22,14 @@ class InitState{
     
 };
 
+
 class LeftForwardingState : public virtual InitState
 {
 
     public:
+        LeftForwardingState(int r, int c) : InitState{r, c}{
+
+        }
         char nextState(int **array, int ROW, int COL){
             if(c < COL - 1){
                 if(array[r][c + 1] == 1){
@@ -46,5 +50,22 @@ class LeftForwardingState : public virtual InitState
                     return 'R';//quay lui lại
                 }
             }
+        }
+};
+
+class Factory
+{
+    public:
+        static InitState* getNextState(InitState* s, char option){
+            if(option == 'S')
+                return s;
+            
+            if(option == 'L')
+            {
+                LeftForwardingState* newState = new LeftForwardingState(s->r, s->c);
+                delete s;    
+                return newState;
+            }
+            return s;
         }
 };
