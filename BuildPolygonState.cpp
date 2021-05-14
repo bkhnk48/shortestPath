@@ -19,6 +19,7 @@ class InitState{
             this->c = c;
         }
         virtual char nextState(int **array, int R, int C);
+        virtual void move();
     
 };
 
@@ -55,6 +56,44 @@ class RightForwardingState : public virtual InitState
                 }
             }
         }
+
+        void move(){
+            this->c++;
+        }
+};
+
+class LeftForwardingState : public virtual InitState
+{
+
+    public:
+        LeftForwardingState(int r, int c) : InitState{r, c}{
+
+        }
+        char nextState(int **array, int ROW, int COL){
+            if(c > 0){
+                if(array[r][c - 1] == 1){
+                    return 'S';//Still
+                }
+                else{
+                    return 'D';//Down
+                }
+            }
+            else{//reach right boundary
+                if(r < ROW - 1){
+                    if(array[r + 1][c] == 1){
+                        return 'D';//Down
+                    }
+                    else{
+                        return 'L'; //Quay lui lại
+                        //tức turn left
+                        //Ô trống ở dưới hàng này
+                    }
+                }
+                else{//đang duyệt hàng cuối cùng
+                    return 'L';//quay lui lại
+                }
+            }
+        }
 };
 
 class Factory
@@ -62,11 +101,15 @@ class Factory
     public:
         static InitState* getNextState(InitState* s, char option){
             if(option == 'S')
+            {
+                s->move();
                 return s;
+            }
             int r = s->r; int c = s->c;
             delete s;
             if(option == 'R')
             {
+                c = c + 1;
                 RightForwardingState* newState = new RightForwardingState(r, c);
                 return newState;
             }
