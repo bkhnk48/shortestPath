@@ -35,6 +35,9 @@ class LeftForwardingState : public virtual InitState
                 if(array[r][c + 1] == 1){
                     return 'S';//Still
                 }
+                else{
+                    return 'D';//Down
+                }
             }
             else{//reach right boundary
                 if(r < ROW - 1){
@@ -43,6 +46,7 @@ class LeftForwardingState : public virtual InitState
                     }
                     else{
                         return 'R'; //Quay lui lại
+                        //tức turn right
                         //Ô trống ở dưới hàng này
                     }
                 }
@@ -59,11 +63,11 @@ class Factory
         static InitState* getNextState(InitState* s, char option){
             if(option == 'S')
                 return s;
-            
+            int r = s->r; int c = s->c;
+            delete s;
             if(option == 'L')
             {
-                LeftForwardingState* newState = new LeftForwardingState(s->r, s->c);
-                delete s;    
+                LeftForwardingState* newState = new LeftForwardingState(r, c);
                 return newState;
             }
             return NULL;
