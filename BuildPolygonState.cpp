@@ -23,11 +23,11 @@ class InitState{
 };
 
 
-class LeftForwardingState : public virtual InitState
+class RightForwardingState : public virtual InitState
 {
 
     public:
-        LeftForwardingState(int r, int c) : InitState{r, c}{
+        RightForwardingState(int r, int c) : InitState{r, c}{
 
         }
         char nextState(int **array, int ROW, int COL){
@@ -45,13 +45,13 @@ class LeftForwardingState : public virtual InitState
                         return 'D';//Down
                     }
                     else{
-                        return 'R'; //Quay lui lại
-                        //tức turn right
+                        return 'L'; //Quay lui lại
+                        //tức turn left
                         //Ô trống ở dưới hàng này
                     }
                 }
                 else{//đang duyệt hàng cuối cùng
-                    return 'R';//quay lui lại
+                    return 'L';//quay lui lại
                 }
             }
         }
@@ -65,9 +65,9 @@ class Factory
                 return s;
             int r = s->r; int c = s->c;
             delete s;
-            if(option == 'L')
+            if(option == 'R')
             {
-                LeftForwardingState* newState = new LeftForwardingState(r, c);
+                RightForwardingState* newState = new RightForwardingState(r, c);
                 return newState;
             }
             return NULL;
