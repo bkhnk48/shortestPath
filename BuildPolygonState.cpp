@@ -38,11 +38,12 @@ class LeftForwardingState : public virtual InitState
                         return 'D';//Down
                     }
                     else{
-                        return 'H'; //Halt
+                        return 'R'; //Quay lui lại
+                        //Ô trống ở dưới hàng này
                     }
                 }
-                else{
-
+                else{//đang duyệt hàng cuối cùng
+                    return 'R';//quay lui lại
                 }
             }
         }
