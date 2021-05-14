@@ -7,7 +7,7 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
-#include "BuildPolygonState.cpp"
+//#include "BuildPolygonState.cpp"
 #include "draw.cpp"
 #include "naive.cpp"
 #include "preprocess.cpp"

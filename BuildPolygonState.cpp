@@ -19,6 +19,7 @@ class InitState{
             this->r = r;
             this->c = c;
         }
+
         virtual void nextState(int **array, int ROW, int COL){
             if(c < COL - 1){
                 if(array[r][c + 1] == 1){
@@ -35,6 +36,7 @@ class InitState{
                 return;//change row
             }
         }
+        
         virtual void move(){
             if(decision == 'S')
                 this->c++;
