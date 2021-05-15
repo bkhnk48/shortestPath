@@ -7,8 +7,59 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
+#include <stack>
+
+#include "draw.cpp"
 
 using namespace std;
+
+class BuildingPolygons{
+    private:
+        static int WIDTH;
+        static int LENGTH; 
+        void getFourVertecies(int indexRow, int indexCol, vector<point> fourVertecies){
+            int xCenter = indexRow*WIDTH + this->cordX0;
+            int yCenter = indexCol*LENGTH + this->cordY0;
+            fourVertecies[0].x = xCenter - (WIDTH/2);
+            fourVertecies[0].y = yCenter + (LENGTH/2);
+
+            fourVertecies[1].x = xCenter + (WIDTH/2);
+            fourVertecies[1].y = yCenter + (LENGTH/2);
+
+            fourVertecies[2].x = xCenter + (WIDTH/2);
+            fourVertecies[2].y = yCenter - (LENGTH/2);
+
+            fourVertecies[3].x = xCenter - (WIDTH/2);
+            fourVertecies[3].y = yCenter - (LENGTH/2);
+        }
+    public:
+        //int** checkedPoints;
+        vector<point> checkedPoints;
+        int Row;
+        int Column;
+        int cordX0;
+        int cordY0;
+        int width;
+        int length;
+        stack<point> ongoingCheckedSlots;
+        void check(int x0, int y0){
+            //if()
+        }
+
+        BuildingPolygons(int Row, int Column, int cordX, int cordY, int width, int length){
+            this->Row = Row;
+            this->Column = Column;
+            this->cordX0 = cordX;
+            this->cordY0 = cordY;
+            WIDTH = width;
+            LENGTH = length;
+        }
+
+        
+       
+
+
+};
 
 class InitState{
     public:
@@ -20,7 +71,7 @@ class InitState{
             this->c = c;
         }
 
-        virtual void nextState(int **array, int ROW, int COL){
+        virtual void makeDecision(int **array, int ROW, int COL, int *checkedAVs){
             if(c < COL - 1){
                 if(array[r][c + 1] == 1){
                     decision = 'R';
@@ -36,7 +87,7 @@ class InitState{
                 return;//change row
             }
         }
-        
+
         virtual void move(){
             if(decision == 'S')
                 this->c++;
@@ -62,7 +113,7 @@ class RightForwardingState : public virtual InitState
         RightForwardingState(int r, int c) : InitState{r, c}{
 
         }
-        void nextState(int **array, int ROW, int COL){
+        void makeDecision(int **array, int ROW, int COL){
             if(c < COL - 1){
                 if(array[r][c + 1] == 1){
                     decision = 'S';
@@ -103,7 +154,7 @@ class LeftForwardingState : public virtual InitState
         LeftForwardingState(int r, int c) : InitState{r, c}{
 
         }
-        void nextState(int **array, int ROW, int COL){
+        void makeDecision(int **array, int ROW, int COL){
             if(c > 0){
                 if(array[r][c - 1] == 1){
                     decision = 'S';
