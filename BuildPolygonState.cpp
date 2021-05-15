@@ -107,6 +107,11 @@ class BuildingPolygons{
                     }
                 }
             }
+            int i = 1;
+            for(auto p : checkedPoints){
+                cout<<i<<") ("<<p.x<<", "<<p.y<<") ";
+                i++;
+            }
         }
 
         void insertNonExistedPoints(){
