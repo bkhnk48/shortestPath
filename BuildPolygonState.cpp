@@ -15,8 +15,8 @@ using namespace std;
 
 class BuildingPolygons{
     private:
-        static int WIDTH;
-        static int LENGTH; 
+        int WIDTH;
+        int LENGTH; 
         point pA, pB, pC, pD;
         void getFourVertecies(int indexRow, int indexCol){
             int xCenter = indexRow*WIDTH + this->cordX0;
