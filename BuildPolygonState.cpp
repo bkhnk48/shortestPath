@@ -17,20 +17,22 @@ class BuildingPolygons{
     private:
         static int WIDTH;
         static int LENGTH; 
-        void getFourVertecies(int indexRow, int indexCol, vector<point> fourVertecies){
+        point pA, pB, pC, pD;
+        void getFourVertecies(int indexRow, int indexCol){
             int xCenter = indexRow*WIDTH + this->cordX0;
             int yCenter = indexCol*LENGTH + this->cordY0;
-            fourVertecies[0].x = xCenter - (WIDTH/2);
-            fourVertecies[0].y = yCenter + (LENGTH/2);
+            
+            pA.x = xCenter - (WIDTH/2);
+            pA.y = yCenter + (LENGTH/2);
 
-            fourVertecies[1].x = xCenter + (WIDTH/2);
-            fourVertecies[1].y = yCenter + (LENGTH/2);
+            pB.x = xCenter + (WIDTH/2);
+            pB.y = yCenter + (LENGTH/2);
 
-            fourVertecies[2].x = xCenter + (WIDTH/2);
-            fourVertecies[2].y = yCenter - (LENGTH/2);
+            pC.x = xCenter + (WIDTH/2);
+            pC.y = yCenter - (LENGTH/2);
 
-            fourVertecies[3].x = xCenter - (WIDTH/2);
-            fourVertecies[3].y = yCenter - (LENGTH/2);
+            pD.x = xCenter - (WIDTH/2);
+            pD.y = yCenter - (LENGTH/2);
         }
     public:
         //int** checkedPoints;
@@ -42,8 +44,99 @@ class BuildingPolygons{
         int width;
         int length;
         stack<point> ongoingCheckedSlots;
-        void check(int x0, int y0){
-            //if()
+        //vector<point> fourVertecies;
+        
+        void check(int** arrayOfAVs, int r0, int c0, int rowsInStack, int columnsInStack){
+            //fourVertecies.resize(4);
+            
+            //fourVertecies.push_back(pA);
+            //fourVertecies.push_back(pB);
+            //fourVertecies.push_back(pC);
+            //fourVertecies.push_back(pD);
+
+            for(int i = r0; i < rowsInStack; i++){
+                for(int j = c0; j < columnsInStack; j++){
+                    if(arrayOfAVs[i][j] == 1){//Tim thay mot diem chua thuoc polygon nao ca
+                        point p;
+                        p.x = i; p.y = j;
+                        arrayOfAVs[i][j] = -1;
+                        ongoingCheckedSlots.push(p);
+                        while(!ongoingCheckedSlots.empty()){
+                            point temp = ongoingCheckedSlots.top();
+                            getFourVertecies(i, j);
+                            insertNonExistedPoints();
+                            ongoingCheckedSlots.pop();
+                        }
+                    }
+                }
+            }
+        }
+
+        void insertNonExistedPoints(){
+            int i = 0;
+            //bool found = false;
+            bool pA_Is_Existed = false;
+            bool pB_Is_Existed = false;
+            bool pC_Is_Existed = false;
+            bool pD_Is_Existed = false;
+
+            for(; i < checkedPoints.size(); i++){
+                if(checkedPoints.at(i) == pA) 
+                {
+                   pA_Is_Existed = true;
+                   break;
+                }
+            }
+            if(pA_Is_Existed)
+                checkedPoints.erase(checkedPoints.begin() + i);
+            
+            for(i = 0; i < checkedPoints.size(); i++){
+                if(checkedPoints.at(i) == pB) 
+                {
+                   pB_Is_Existed = true;
+                   break;
+                }
+            }
+            if(pB_Is_Existed)
+                checkedPoints.erase(checkedPoints.begin() + i);
+
+            for(i = 0; i < checkedPoints.size(); i++){
+                if(checkedPoints.at(i) == pC) 
+                {
+                   pC_Is_Existed = true;
+                   break;
+                }
+            }
+
+            if(pC_Is_Existed)
+                checkedPoints.erase(checkedPoints.begin() + i);
+            
+            for(i = 0; i < checkedPoints.size(); i++){
+                if(checkedPoints.at(i) == pD) 
+                {
+                   pD_Is_Existed = true;
+                   break;
+                }
+            }
+            if(pD_Is_Existed)
+                checkedPoints.erase(checkedPoints.begin() + i);
+            
+            if(!pA_Is_Existed){
+                point p(pA.x, pA.y);
+                checkedPoints.push_back(p);
+            }
+            if(!pB_Is_Existed){
+                point p(pB.x, pB.y);
+                checkedPoints.push_back(p);
+            }
+            if(!pC_Is_Existed){
+                point p(pC.x, pC.y);
+                checkedPoints.push_back(p);
+            }
+            if(!pD_Is_Existed){
+                point p(pD.x, pD.y);
+                checkedPoints.push_back(p);
+            }
         }
 
         BuildingPolygons(int Row, int Column, int cordX, int cordY, int width, int length){
