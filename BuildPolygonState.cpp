@@ -47,13 +47,7 @@ class BuildingPolygons{
         //vector<point> fourVertecies;
         
         void check(int** arrayOfAVs, int r0, int c0, int rowsInStack, int columnsInStack){
-            //fourVertecies.resize(4);
             
-            //fourVertecies.push_back(pA);
-            //fourVertecies.push_back(pB);
-            //fourVertecies.push_back(pC);
-            //fourVertecies.push_back(pD);
-
             for(int i = r0; i < rowsInStack; i++){
                 for(int j = c0; j < columnsInStack; j++){
                     if(arrayOfAVs[i][j] == 1){//Tim thay mot diem chua thuoc polygon nao ca
