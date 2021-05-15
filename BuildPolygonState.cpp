@@ -34,6 +34,37 @@ class BuildingPolygons{
             pD.x = xCenter - (WIDTH/2);
             pD.y = yCenter - (LENGTH/2);
         }
+
+        point getNeighborPoint(int index, double x, double y){
+            point p(x, y);
+            switch(index){
+                case 0: p.x--; p.y--; break;
+                case 1: p.y--; break;
+                case 2: p.x++; p.y++; break;
+                case 3: p.x++; break;
+                case 4: p.x++; p.y++; break;
+                case 5: p.y++; break;
+                case 6: p.x--; p.y++; break;
+                case 7: p.x--; break;
+            }
+            return p;
+        }
+
+        void getNeighborSlots(int** arrayOfAVs, point slot){
+            int row = (int)slot.x;
+            int col = (int)slot.y;
+            int neighbors[8] = {(row - 1)*col, };
+        
+            /*if(col > 0){
+                if(arrayOfAVs[row][col - 1] == 1){
+                    point p(row, col - 1);
+                    ongoingCheckedSlots.push(p);
+                    arrayOfAVs[row][col - 1] == -1;
+                }
+            }*/
+
+
+        }
     public:
         //int** checkedPoints;
         vector<point> checkedPoints;
