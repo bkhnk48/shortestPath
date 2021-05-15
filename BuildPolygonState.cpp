@@ -78,7 +78,7 @@ class BuildingPolygons{
 
     public:
         //int** checkedPoints;
-        vector<point> checkedPoints;
+        vector<Coincidence> checkedPoints;
         int Row;
         int Column;
         int cordX0;
@@ -100,7 +100,7 @@ class BuildingPolygons{
                         while(!ongoingCheckedSlots.empty()){
                             Slot temp = ongoingCheckedSlots.top();
                             getFourVertecies(temp.row, temp.column);
-                            insertNonExistedPoints();
+                            insertNonExistedPoints(arrayOfAVs, temp);
                             insertNeighborSlots(arrayOfAVs, temp);
                             ongoingCheckedSlots.pop();
                         }
@@ -108,76 +108,48 @@ class BuildingPolygons{
                 }
             }
             int i = 1;
-            for(auto p : checkedPoints){
-                cout<<i<<") ("<<p.x<<", "<<p.y<<") ";
-                i++;
+            for(auto coincidence : checkedPoints){
+                if(coincidence.numCoincidence <= 3){
+                    cout<<i<<") ("<<coincidence.p.x<<", "<<coincidence.p.y<<"-"<<coincidence.numCoincidence<<") ";
+                    i++;
+                }
             }
         }
 
-        void insertNonExistedPoints(){
-            int i = 0;
+        void insertNonExistedPoints(int** arrayOfAVs, Slot center){
+            //int i = 0;
             //bool found = false;
-            bool pA_Is_Existed = false;
-            bool pB_Is_Existed = false;
-            bool pC_Is_Existed = false;
-            bool pD_Is_Existed = false;
+            //bool pA_Is_Existed = false;
+            //bool pB_Is_Existed = false;
+            //bool pC_Is_Existed = false;
+            //bool pD_Is_Existed = false;
+            //int r1, r2, r3, r4, c1, c2, c3, c4;
+            double xCenterGroup[4] = {0};  double yCenterGroup[4] = {0};
+            //int rowGroup[4] = {0};
+            //int colGroup[4] = {0};
+            //double x1Center, y1Center, x2Center, y2Center, x3Center, y3Center, x4Center, y4Center;
 
-            for(; i < checkedPoints.size(); i++){
-                if(checkedPoints.at(i) == pA) 
-                {
-                   pA_Is_Existed = true;
-                   break;
-                }
-            }
-            if(pA_Is_Existed)
-                checkedPoints.erase(checkedPoints.begin() + i);
-            
-            for(i = 0; i < checkedPoints.size(); i++){
-                if(checkedPoints.at(i) == pB) 
-                {
-                   pB_Is_Existed = true;
-                   break;
-                }
-            }
-            if(pB_Is_Existed)
-                checkedPoints.erase(checkedPoints.begin() + i);
+            point group[4] = {pA, pB, pC, pD};
+            for(int i = 0; i < 4; i++){
+                xCenterGroup[0] = group[i].x - (WIDTH/2);  yCenterGroup[0] = group[i].y + (LENGTH/2);
+                xCenterGroup[1] = group[i].x + (WIDTH/2);  yCenterGroup[1] = group[i].y + (LENGTH/2);
+                xCenterGroup[2] = group[i].x + (WIDTH/2);  yCenterGroup[2] = group[i].y - (LENGTH/2);
+                xCenterGroup[3] = group[i].x - (WIDTH/2);  yCenterGroup[3] = group[i].y - (LENGTH/2);
 
-            for(i = 0; i < checkedPoints.size(); i++){
-                if(checkedPoints.at(i) == pC) 
-                {
-                   pC_Is_Existed = true;
-                   break;
+                int aroundAVs = 0;
+                for(int j = 0; j < 4; j++){
+                    int row = ((int)(this->cordY0 - yCenterGroup[j])) / LENGTH;
+                    int col = ((int)(xCenterGroup[j] - this->cordX0)) / WIDTH;
+                    if((row | col | (Column - col - 1) | (Row - row - 1)) >= 0){
+                        if(arrayOfAVs[row][col] != 0)
+                            aroundAVs++;
+                    }
                 }
-            }
 
-            if(pC_Is_Existed)
-                checkedPoints.erase(checkedPoints.begin() + i);
-            
-            for(i = 0; i < checkedPoints.size(); i++){
-                if(checkedPoints.at(i) == pD) 
-                {
-                   pD_Is_Existed = true;
-                   break;
+                if(aroundAVs < 4){
+                    point p(group[i].x, group[i].y);
+                    checkedPoints.push_back(p);
                 }
-            }
-            if(pD_Is_Existed)
-                checkedPoints.erase(checkedPoints.begin() + i);
-            
-            if(!pA_Is_Existed){
-                point p(pA.x, pA.y);
-                checkedPoints.push_back(p);
-            }
-            if(!pB_Is_Existed){
-                point p(pB.x, pB.y);
-                checkedPoints.push_back(p);
-            }
-            if(!pC_Is_Existed){
-                point p(pC.x, pC.y);
-                checkedPoints.push_back(p);
-            }
-            if(!pD_Is_Existed){
-                point p(pD.x, pD.y);
-                checkedPoints.push_back(p);
             }
         }
 
