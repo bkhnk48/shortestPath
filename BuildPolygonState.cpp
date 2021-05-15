@@ -19,8 +19,8 @@ class BuildingPolygons{
         int LENGTH; 
         point pA, pB, pC, pD;
         void getFourVertecies(int indexRow, int indexCol){
-            int xCenter = indexRow*WIDTH + this->cordX0;
-            int yCenter = indexCol*LENGTH + this->cordY0;
+            int xCenter = indexCol*WIDTH + this->cordX0;
+            int yCenter = -indexRow*LENGTH + this->cordY0;
             
             pA.x = xCenter - (WIDTH/2);
             pA.y = yCenter + (LENGTH/2);
@@ -40,29 +40,34 @@ class BuildingPolygons{
             //
             switch(index){
                 case 0: x--; y--; break;
-                case 1: y--; break;
-                case 2: x++; y++; break;
-                case 3: x++; break;
+                case 1: x--; break;
+                case 2: x--; y++; break;
+                case 3: y++; break;
                 case 4: x++; y++; break;
-                case 5: y++; break;
-                case 6: x--; y++; break;
-                case 7: x--; break;
+                case 5: r++; break;
+                case 6: x++; y--; break;
+                case 7: y--; break;
             }
             if(arrayOfAVs[x][y] == 1){
-                point p(x, y);
-                ongoingCheckedSlots.push(p);
+                Slot s(x, y);
+                ongoingCheckedSlots.push(s);
                 arrayOfAVs[x][y] = -1;
             }
             
             //return p;
         }
 
-        void insertNeighborSlots(int** arrayOfAVs, point slot){
-            int row = (int)slot.x;
-            int col = (int)slot.y;
-            int neighbors[8] = {(row - 1) | (col - 1), (row - 1) | col, (row - 1) | (col + 1),
-                                 (row) | (col - 1),                     (row) | (col + 1),
-                                 (row + 1) | (col - 1), (row + 1) | (col), (row + 1) | (col + 1)
+        void insertNeighborSlots(int** arrayOfAVs, Slot slot){
+            int row = slot.row;
+            int col = slot.column;
+            int neighbors[8] = {(row - 1) | (col - 1), //0
+                                (row - 1) | col, //1
+                                (row - 1) | (col + 1) | (Column - col - 2), //2
+                                (row) | (col + 1) | (Column - col - 2),      //3               
+                                (row + 1) | (col + 1) | (Column - col - 2) | (Row - row - 2),  //4
+                                (row + 1) | (col) | (Row - row - 2), //5
+                                (row + 1) | (col - 1) | (Row - row - 2), //6
+                                (row + 1) | (col + 1) | (Column - col - 2) | (Row - row - 2) //7
                                 };
             for(int i = 0; i < 8; i++){
                 if(neighbors[i] >= 0){
@@ -80,7 +85,7 @@ class BuildingPolygons{
         int cordY0;
         int width;
         int length;
-        stack<point> ongoingCheckedSlots;
+        stack<Slot> ongoingCheckedSlots;
         //vector<point> fourVertecies;
         
         void check(int** arrayOfAVs, int r0, int c0, int rowsInStack, int columnsInStack){
@@ -88,13 +93,13 @@ class BuildingPolygons{
             for(int i = r0; i < rowsInStack; i++){
                 for(int j = c0; j < columnsInStack; j++){
                     if(arrayOfAVs[i][j] == 1){//Tim thay mot diem chua thuoc polygon nao ca
-                        point p;
-                        p.x = i; p.y = j;
+                        Slot s;
+                        s.row = i; s.column = j;
                         arrayOfAVs[i][j] = -1;
-                        ongoingCheckedSlots.push(p);
+                        ongoingCheckedSlots.push(s);
                         while(!ongoingCheckedSlots.empty()){
-                            point temp = ongoingCheckedSlots.top();
-                            getFourVertecies((int)temp.x, (int)temp.y);
+                            Slot temp = ongoingCheckedSlots.top();
+                            getFourVertecies(temp.row, temp.column);
                             insertNonExistedPoints();
                             insertNeighborSlots(arrayOfAVs, temp);
                             ongoingCheckedSlots.pop();
