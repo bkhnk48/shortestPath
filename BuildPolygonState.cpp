@@ -35,36 +35,42 @@ class BuildingPolygons{
             pD.y = yCenter - (LENGTH/2);
         }
 
-        point getNeighborPoint(int index, double x, double y){
-            point p(x, y);
+        void getNeighborByIndex(int** arrayOfAVs, int index, int r, int c){
+            int x = r; int y = c;
+            //
             switch(index){
-                case 0: p.x--; p.y--; break;
-                case 1: p.y--; break;
-                case 2: p.x++; p.y++; break;
-                case 3: p.x++; break;
-                case 4: p.x++; p.y++; break;
-                case 5: p.y++; break;
-                case 6: p.x--; p.y++; break;
-                case 7: p.x--; break;
+                case 0: x--; y--; break;
+                case 1: y--; break;
+                case 2: x++; y++; break;
+                case 3: x++; break;
+                case 4: x++; y++; break;
+                case 5: y++; break;
+                case 6: x--; y++; break;
+                case 7: x--; break;
             }
-            return p;
+            if(arrayOfAVs[x][y] == 1){
+                point p(x, y);
+                ongoingCheckedSlots.push(p);
+                arrayOfAVs[x][y] = -1;
+            }
+            
+            //return p;
         }
 
-        void getNeighborSlots(int** arrayOfAVs, point slot){
+        void insertNeighborSlots(int** arrayOfAVs, point slot){
             int row = (int)slot.x;
             int col = (int)slot.y;
-            int neighbors[8] = {(row - 1)*col, };
-        
-            /*if(col > 0){
-                if(arrayOfAVs[row][col - 1] == 1){
-                    point p(row, col - 1);
-                    ongoingCheckedSlots.push(p);
-                    arrayOfAVs[row][col - 1] == -1;
-                }
-            }*/
-
-
+            int neighbors[8] = {(row - 1) | (col - 1), (row - 1) | col, (row - 1) | (col + 1),
+                                 (row) | (col - 1),                     (row) | (col + 1),
+                                 (row + 1) | (col - 1), (row + 1) | (col), (row + 1) | (col + 1)
+                                };
+            for(int i = 0; i < 8; i++){
+                if(neighbors[i] >= 0){
+                    getNeighborByIndex(arrayOfAVs, i, row, col);
+                }  
+            }
         }
+
     public:
         //int** checkedPoints;
         vector<point> checkedPoints;
@@ -88,8 +94,9 @@ class BuildingPolygons{
                         ongoingCheckedSlots.push(p);
                         while(!ongoingCheckedSlots.empty()){
                             point temp = ongoingCheckedSlots.top();
-                            getFourVertecies(i, j);
+                            getFourVertecies((int)temp.x, (int)temp.y);
                             insertNonExistedPoints();
+                            insertNeighborSlots(arrayOfAVs, temp);
                             ongoingCheckedSlots.pop();
                         }
                     }
