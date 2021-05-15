@@ -14,6 +14,7 @@ typedef struct Stacks{
 	int** slotsOfAV;
 	int k;
 }K_Stack;
+
 void setConfig(int argc, const char* argv[]){
 	for(int i = 1 ; i < argc ; i++ ){
 		string s(argv[i]);	
@@ -127,6 +128,18 @@ void buildStack(K_Stack *stacks, int numStacks, int numOfRows, int numOfCol){
 	}
 }
 
+int countAVs(int** arrayOfAVs, int rowsInStack, int columnsInStack){
+	int count = 0;
+	for(int i = 0; i < rowsInStack; i++){
+		for(int j = 0; j < columnsInStack; j++){
+			if(arrayOfAVs[i][j] == 1){
+				count++;
+			}
+		}
+	}
+	return count;
+}
+
 void readKStacks(vector< vector< lineSegment> > &polygons, K_Stack *stacks, 
 			int numOfStacks, int rowsInStack, int columnsInStack){
 	
@@ -134,14 +147,18 @@ void readKStacks(vector< vector< lineSegment> > &polygons, K_Stack *stacks,
 
 		vector<lineSegment> polygon;
 		
-		int count = 0;
+
+		int count = countAVs(stacks[i].slotsOfAV, rowsInStack, columnsInStack);
+		int checkedAVs = 0;
 		int r = 0, c = 0;
-		while(count < rowsInStack*columnsInStack){
+		while(checkedAVs <= count){
+			//InitState* state = new InitState(0, 0);
+			//state->makeDecision(stacks[i].slotsOfAV, rowsInStack, columnsInStack);
+			//state = Factory::getNextState(state);
 
-		}
-
-		if(!polygon.empty()){
-			polygons.push_back(polygon);
+			//if(!polygon.empty()){
+			//		polygons.push_back(polygon);
+			//}
 		}
 	}
 }
