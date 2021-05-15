@@ -36,6 +36,24 @@ struct point {
 	}
 };
 
+struct Coincidence{
+	point p;
+	int numCoincidence;
+
+	Coincidence(point p){
+		this->p = p;
+		numCoincidence = 0;
+	}
+
+	Coincidence(){
+
+	}
+
+	bool operator==(const Coincidence &other) const {
+		return (this->p == other.p);
+	}
+};
+
 struct Slot {
 	int row;
 	int column;
