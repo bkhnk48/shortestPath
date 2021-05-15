@@ -7,6 +7,7 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
+#include <stdio.h>
 #include "BuildPolygonState.cpp"
 
 using namespace std;
@@ -169,7 +170,8 @@ void printStacks(K_Stack *stacks, int numOfStacks, int rowsInStack, int columnsI
 		for(int j = 0; j < rowsInStack; j++){
 			cout<<"\t";
 			for(int l = 0; l < columnsInStack; l++){
-				cout<<stacks[i].slotsOfAV[j][l]<<" ";
+				//cout<<stacks[i].slotsOfAV[j][l]<<" ";
+				printf("%2d ", stacks[i].slotsOfAV[j][l]);
 			}
 			cout<<endl;
 		}
