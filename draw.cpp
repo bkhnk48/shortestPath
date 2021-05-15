@@ -30,10 +30,12 @@ struct point {
 	point(){
 
 	}
+	
 	bool operator==(const point &other) const {
 		return (this->x==other.x && this->y==other.y);
 	}
 };
+
 //Type used in the priority queue in the dijkstra function
 typedef std::pair<double,std::pair<int,int> > pq_pair;
 
