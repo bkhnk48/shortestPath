@@ -4,6 +4,9 @@
 #include <math.h>
 //#include <string.h>
 
+#ifndef _DRAW_
+#define _DRAW_
+
 using namespace std;
 
 struct {
@@ -192,3 +195,4 @@ void draw(string file_name, string & testTitle, point & start, point & end, vect
 	ofs << str1;
 	ofs.close();
 }
+#endif
