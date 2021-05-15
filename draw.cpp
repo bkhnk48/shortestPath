@@ -30,9 +30,26 @@ struct point {
 	point(){
 
 	}
-	
+
 	bool operator==(const point &other) const {
 		return (this->x==other.x && this->y==other.y);
+	}
+};
+
+struct Slot {
+	int row;
+	int column;
+	Slot(int x, int y){
+		this->row = x;
+		this->column = y;
+	}
+
+	Slot(){
+
+	}
+
+	bool operator==(const Slot &other) const {
+		return (this->row == other.row && this->column == other.column);
 	}
 };
 
