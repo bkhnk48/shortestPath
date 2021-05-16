@@ -19,7 +19,7 @@ using namespace std;
 void testFullAVsInStacks(){
     int numOfStacks = 1; 
 	int rowsInStack = 6;
-	int columnsInStack = 8;
+	int columnsInStack = 11;
 	int widthOfLine = 5;
 	int widthOfAV = 2;
 	int lengthOfAV = 6;
@@ -38,6 +38,11 @@ void testFullAVsInStacks(){
 	stacks[0].slotsOfAV[5][0] = 0;	stacks[0].slotsOfAV[5][2] = 0;  stacks[0].slotsOfAV[5][3] = 0;  stacks[0].slotsOfAV[5][6] = 0;  
 																				stacks[0].slotsOfAV[5][7] = 0;
 
+	for(int i = 0; i < 6; i++){
+		for(int j = 7; j < 11; j++){
+			stacks[0].slotsOfAV[i][j] = 0;
+		}
+	}
     //vector< vector< lineSegment> > polygons;
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
