@@ -42,7 +42,7 @@ void testFullAVsInStacks(){
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
 	BuildingPolygons* polygons = new BuildingPolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
-	polygons->check(stacks[0].slotsOfAV, 0, 0, rowsInStack, columnsInStack);
+	polygons->check(stacks[0].slotsOfAV, 0, 0);
 	
 	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
 
