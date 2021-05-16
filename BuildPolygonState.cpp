@@ -8,6 +8,7 @@
 #include <tuple> //get<n> make_tuple
 #include <chrono>
 #include <queue>
+#include <list>
 
 #include "draw.cpp"
 
@@ -18,7 +19,7 @@ class BuildingPolygons{
         int WIDTH;
         int LENGTH; 
         point pA, pB, pC, pD;
-        vector<point> checkedPoints;
+        list<point> checkedPoints;
         int ROWS;
         int COLUMNS;
         int cordX0;
@@ -122,16 +123,21 @@ class BuildingPolygons{
             bool found = false;
 
             double xCenterGroup[4] = {0};  double yCenterGroup[4] = {0};
+            list<point>::iterator it;
+
 
             point group[4] = {pA, pB, pC, pD};
             for(int i = 0; i < 4; i++){
                 found = false;
+                it = checkedPoints.begin();
+
                 for(int j = 0; j < checkedPoints.size(); j++){
-                    if(checkedPoints.at(j) == group[i]) 
+                    if(*it == group[i]) 
                     {
                         found = true;
                         break;
                     }
+                    ++it;
                 }
 
                 if(!found){
@@ -155,6 +161,25 @@ class BuildingPolygons{
                         checkedPoints.push_back(p);
                     }
                 }
+            }
+        }
+
+        void arrangePoints(point p){
+            bool foundVertical = false;/* /|\ */
+            bool foundHorizontal = false; /*  -> */
+
+            int index = 0;
+            list<point>::iterator it;
+            it = checkedPoints.begin();
+            //Vertical
+            for(int i = 0; i < checkedPoints.size(); i++){
+
+                if(it->x == p.x){
+                    if(it->y < p.y){
+
+                    }
+                }
+                ++it;
             }
         }
 
