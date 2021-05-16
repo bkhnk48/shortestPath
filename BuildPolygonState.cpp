@@ -8,7 +8,8 @@
 #include <tuple> //get<n> make_tuple
 #include <chrono>
 #include <queue>
-#include <list>
+#include <bits/stdc++.h>
+
 
 #include "draw.cpp"
 
@@ -19,11 +20,12 @@ class BuildingPolygons{
         int WIDTH;
         int LENGTH; 
         point pA, pB, pC, pD;
-        list<point> checkedPoints;
+        vector<point> checkedPoints;
         int ROWS;
         int COLUMNS;
         int cordX0;
         int cordY0;
+        point highest;
         
         queue<Slot> ongoingCheckedSlots;
 
@@ -116,6 +118,7 @@ class BuildingPolygons{
                 cout<<i<<") ("<<coincidence.x<<", "<<coincidence.y<<") ";
                 i++;
             }
+            //cout<<"\nThe highest "<<highest.y<<endl;
         }
 
         void insertNonExistedPoints(int** arrayOfAVs, Slot center){
@@ -123,21 +126,18 @@ class BuildingPolygons{
             bool found = false;
 
             double xCenterGroup[4] = {0};  double yCenterGroup[4] = {0};
-            list<point>::iterator it;
-
+            
 
             point group[4] = {pA, pB, pC, pD};
             for(int i = 0; i < 4; i++){
                 found = false;
-                it = checkedPoints.begin();
-
+                
                 for(int j = 0; j < checkedPoints.size(); j++){
-                    if(*it == group[i]) 
+                    if(checkedPoints.at(j) == group[i]) 
                     {
                         found = true;
                         break;
                     }
-                    ++it;
                 }
 
                 if(!found){
@@ -158,6 +158,10 @@ class BuildingPolygons{
 
                     if(aroundAVs < 4){
                         point p(group[i].x, group[i].y);
+                        if(p.y > highest.y){
+                            highest.y = p.y;
+                            highest.x = p.x;
+                        }
                         checkedPoints.push_back(p);
                     }
                 }
@@ -165,22 +169,7 @@ class BuildingPolygons{
         }
 
         void arrangePoints(point p){
-            bool foundVertical = false;/* /|\ */
-            bool foundHorizontal = false; /*  -> */
-
-            int index = 0;
-            list<point>::iterator it;
-            it = checkedPoints.begin();
-            //Vertical
-            for(int i = 0; i < checkedPoints.size(); i++){
-
-                if(it->x == p.x){
-                    if(it->y < p.y){
-
-                    }
-                }
-                ++it;
-            }
+            
         }
 
         BuildingPolygons(int Row, int Column, int cordX, int cordY, int width, int length){
@@ -190,6 +179,8 @@ class BuildingPolygons{
             this->cordY0 = cordY;
             WIDTH = width;
             LENGTH = length;
+            highest.x = 0;
+            highest.y = INT64_MIN;
         }
 
         
