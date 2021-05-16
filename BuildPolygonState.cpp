@@ -18,6 +18,14 @@ class BuildingPolygons{
         int WIDTH;
         int LENGTH; 
         point pA, pB, pC, pD;
+        vector<Coincidence> checkedPoints;
+        int ROWS;
+        int COLUMNS;
+        int cordX0;
+        int cordY0;
+        
+        queue<Slot> ongoingCheckedSlots;
+        
         void getFourVertecies(int indexRow, int indexCol){
             int xCenter = indexCol*WIDTH + this->cordX0;
             int yCenter = -indexRow*LENGTH + this->cordY0;
@@ -79,13 +87,7 @@ class BuildingPolygons{
 
     public:
         //int** checkedPoints;
-        vector<Coincidence> checkedPoints;
-        int ROWS;
-        int COLUMNS;
-        int cordX0;
-        int cordY0;
         
-        queue<Slot> ongoingCheckedSlots;
         //vector<point> fourVertecies;
         
         void check(int** arrayOfAVs, int r0, int c0){
