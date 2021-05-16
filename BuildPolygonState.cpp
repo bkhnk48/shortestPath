@@ -18,14 +18,14 @@ class BuildingPolygons{
         int WIDTH;
         int LENGTH; 
         point pA, pB, pC, pD;
-        vector<Coincidence> checkedPoints;
+        vector<point> checkedPoints;
         int ROWS;
         int COLUMNS;
         int cordX0;
         int cordY0;
         
         queue<Slot> ongoingCheckedSlots;
-        
+
         void getFourVertecies(int indexRow, int indexCol){
             int xCenter = indexCol*WIDTH + this->cordX0;
             int yCenter = -indexRow*LENGTH + this->cordY0;
@@ -112,7 +112,7 @@ class BuildingPolygons{
             
             int i = 1;
             for(auto coincidence : checkedPoints){
-                cout<<i<<") ("<<coincidence.p.x<<", "<<coincidence.p.y<<") ";
+                cout<<i<<") ("<<coincidence.x<<", "<<coincidence.y<<") ";
                 i++;
             }
         }
