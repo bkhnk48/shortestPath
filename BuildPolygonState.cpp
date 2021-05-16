@@ -198,7 +198,7 @@ class BuildingPolygons{
                 point prev(0, 0);
                 prev.x = highestPoint.x;
                 prev.y = highestPoint.y;
-                cout<<"\n\n\n\n("<<temp.x<<", "<<temp.y<<") ";
+                //cout<<"\n\n\n\n("<<temp.x<<", "<<temp.y<<") ";
                 do{
                     index = getNearestNeighborClockwise(arrayOfAVs, temp, prev);
                     if(index != -1){
