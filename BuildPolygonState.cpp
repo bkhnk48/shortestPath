@@ -63,12 +63,12 @@ class BuildingPolygons{
             int col = slot.column;
             int neighbors[8] = {(row - 1) | (col - 1), //0
                                 (row - 1) | col, //1
-                                (row - 1) | (col + 1) | (Column - col - 2), //2
-                                (row) | (col + 1) | (Column - col - 2),      //3               
-                                (row + 1) | (col + 1) | (Column - col - 2) | (Row - row - 2),  //4
-                                (row + 1) | (col) | (Row - row - 2), //5
-                                (row + 1) | (col - 1) | (Row - row - 2), //6
-                                (row + 1) | (col + 1) | (Column - col - 2) | (Row - row - 2) //7
+                                (row - 1) | (col + 1) | (COLUMNS - col - 2), //2
+                                (row) | (col + 1) | (COLUMNS - col - 2),      //3               
+                                (row + 1) | (col + 1) | (COLUMNS - col - 2) | (ROWS - row - 2),  //4
+                                (row + 1) | (col) | (ROWS - row - 2), //5
+                                (row + 1) | (col - 1) | (ROWS - row - 2), //6
+                                (row + 1) | (col + 1) | (COLUMNS - col - 2) | (ROWS - row - 2) //7
                                 };
             for(int i = 0; i < 8; i++){
                 if(neighbors[i] >= 0){
@@ -80,19 +80,18 @@ class BuildingPolygons{
     public:
         //int** checkedPoints;
         vector<Coincidence> checkedPoints;
-        int Row;
-        int Column;
+        int ROWS;
+        int COLUMNS;
         int cordX0;
         int cordY0;
-        int width;
-        int length;
+        
         queue<Slot> ongoingCheckedSlots;
         //vector<point> fourVertecies;
         
-        void check(int** arrayOfAVs, int r0, int c0, int rowsInStack, int columnsInStack){
+        void check(int** arrayOfAVs, int r0, int c0){
             
-            for(int i = r0; i < rowsInStack; i++){
-                for(int j = c0; j < columnsInStack; j++){
+            for(int i = r0; i < ROWS; i++){
+                for(int j = c0; j < COLUMNS; j++){
                     if(arrayOfAVs[i][j] == 1){//Tim thay mot diem chua thuoc polygon nao ca
                         Slot s;
                         s.row = i; s.column = j;
@@ -143,7 +142,7 @@ class BuildingPolygons{
                     for(int j = 0; j < 4; j++){
                         int row = ((int)(this->cordY0 - yCenterGroup[j])) / LENGTH;
                         int col = ((int)(xCenterGroup[j] - this->cordX0)) / WIDTH;
-                        if((row | col | (Column - col - 1) | (Row - row - 1)) >= 0){
+                        if((row | col | (COLUMNS - col - 1) | (ROWS - row - 1)) >= 0){
                             if(arrayOfAVs[row][col] != 0)
                                 aroundAVs++;
                         }
@@ -158,8 +157,8 @@ class BuildingPolygons{
         }
 
         BuildingPolygons(int Row, int Column, int cordX, int cordY, int width, int length){
-            this->Row = Row;
-            this->Column = Column;
+            this->ROWS = Row;
+            this->COLUMNS = Column;
             this->cordX0 = cordX;
             this->cordY0 = cordY;
             WIDTH = width;
