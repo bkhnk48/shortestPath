@@ -11,6 +11,7 @@
 #include "draw.cpp"
 #include "naive.cpp"
 #include "preprocess.cpp"
+#include <cassert>  
 
 //So we don't need to write std:: everywhere
 using namespace std;
@@ -44,6 +45,17 @@ void testFullAVsInStacks(){
 	polygons->check(stacks[0].slotsOfAV, 0, 0, rowsInStack, columnsInStack);
 	
 	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
+
+	int ones = 0;
+	for(int k = 0; k < numOfStacks; k++){
+		for(int i = 0; i < rowsInStack; i++){
+			for(int j = 0; j < columnsInStack; j++){
+				if(stacks[k].slotsOfAV[i][j] == 1)
+					ones++;
+			}
+		}
+	}
+	assert(ones == 0);
 }
 
 
