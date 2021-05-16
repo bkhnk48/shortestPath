@@ -7,7 +7,7 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
-#include <stack>
+#include <queue>
 
 #include "draw.cpp"
 
@@ -44,10 +44,11 @@ class BuildingPolygons{
                 case 2: x--; y++; break;
                 case 3: y++; break;
                 case 4: x++; y++; break;
-                case 5: r++; break;
+                case 5: x++; break;//previous version gets r++ here which is totally wrong 
                 case 6: x++; y--; break;
                 case 7: y--; break;
             }
+            
             if(arrayOfAVs[x][y] == 1){
                 Slot s(x, y);
                 ongoingCheckedSlots.push(s);
@@ -85,7 +86,7 @@ class BuildingPolygons{
         int cordY0;
         int width;
         int length;
-        stack<Slot> ongoingCheckedSlots;
+        queue<Slot> ongoingCheckedSlots;
         //vector<point> fourVertecies;
         
         void check(int** arrayOfAVs, int r0, int c0, int rowsInStack, int columnsInStack){
@@ -98,7 +99,7 @@ class BuildingPolygons{
                         arrayOfAVs[i][j] = -1;
                         ongoingCheckedSlots.push(s);
                         while(!ongoingCheckedSlots.empty()){
-                            Slot temp = ongoingCheckedSlots.top();
+                            Slot temp = ongoingCheckedSlots.front();
                             getFourVertecies(temp.row, temp.column);
                             insertNonExistedPoints(arrayOfAVs, temp);
                             insertNeighborSlots(arrayOfAVs, temp);
@@ -107,48 +108,51 @@ class BuildingPolygons{
                     }
                 }
             }
+            
             int i = 1;
             for(auto coincidence : checkedPoints){
-                if(coincidence.numCoincidence <= 3){
-                    cout<<i<<") ("<<coincidence.p.x<<", "<<coincidence.p.y<<"-"<<coincidence.numCoincidence<<") ";
-                    i++;
-                }
+                cout<<i<<") ("<<coincidence.p.x<<", "<<coincidence.p.y<<") ";
+                i++;
             }
         }
 
         void insertNonExistedPoints(int** arrayOfAVs, Slot center){
             //int i = 0;
-            //bool found = false;
-            //bool pA_Is_Existed = false;
-            //bool pB_Is_Existed = false;
-            //bool pC_Is_Existed = false;
-            //bool pD_Is_Existed = false;
-            //int r1, r2, r3, r4, c1, c2, c3, c4;
+            bool found = false;
+
             double xCenterGroup[4] = {0};  double yCenterGroup[4] = {0};
-            //int rowGroup[4] = {0};
-            //int colGroup[4] = {0};
-            //double x1Center, y1Center, x2Center, y2Center, x3Center, y3Center, x4Center, y4Center;
 
             point group[4] = {pA, pB, pC, pD};
             for(int i = 0; i < 4; i++){
-                xCenterGroup[0] = group[i].x - (WIDTH/2);  yCenterGroup[0] = group[i].y + (LENGTH/2);
-                xCenterGroup[1] = group[i].x + (WIDTH/2);  yCenterGroup[1] = group[i].y + (LENGTH/2);
-                xCenterGroup[2] = group[i].x + (WIDTH/2);  yCenterGroup[2] = group[i].y - (LENGTH/2);
-                xCenterGroup[3] = group[i].x - (WIDTH/2);  yCenterGroup[3] = group[i].y - (LENGTH/2);
-
-                int aroundAVs = 0;
-                for(int j = 0; j < 4; j++){
-                    int row = ((int)(this->cordY0 - yCenterGroup[j])) / LENGTH;
-                    int col = ((int)(xCenterGroup[j] - this->cordX0)) / WIDTH;
-                    if((row | col | (Column - col - 1) | (Row - row - 1)) >= 0){
-                        if(arrayOfAVs[row][col] != 0)
-                            aroundAVs++;
+                found = false;
+                for(int j = 0; j < checkedPoints.size(); j++){
+                    if(checkedPoints.at(j) == group[i]) 
+                    {
+                        found = true;
+                        break;
                     }
                 }
 
-                if(aroundAVs < 4){
-                    point p(group[i].x, group[i].y);
-                    checkedPoints.push_back(p);
+                if(!found){
+                    xCenterGroup[0] = group[i].x - (WIDTH/2);  yCenterGroup[0] = group[i].y + (LENGTH/2);
+                    xCenterGroup[1] = group[i].x + (WIDTH/2);  yCenterGroup[1] = group[i].y + (LENGTH/2);
+                    xCenterGroup[2] = group[i].x + (WIDTH/2);  yCenterGroup[2] = group[i].y - (LENGTH/2);
+                    xCenterGroup[3] = group[i].x - (WIDTH/2);  yCenterGroup[3] = group[i].y - (LENGTH/2);
+
+                    int aroundAVs = 0;
+                    for(int j = 0; j < 4; j++){
+                        int row = ((int)(this->cordY0 - yCenterGroup[j])) / LENGTH;
+                        int col = ((int)(xCenterGroup[j] - this->cordX0)) / WIDTH;
+                        if((row | col | (Column - col - 1) | (Row - row - 1)) >= 0){
+                            if(arrayOfAVs[row][col] != 0)
+                                aroundAVs++;
+                        }
+                    }
+
+                    if(aroundAVs < 4){
+                        point p(group[i].x, group[i].y);
+                        checkedPoints.push_back(p);
+                    }
                 }
             }
         }
