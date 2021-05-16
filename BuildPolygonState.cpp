@@ -9,7 +9,7 @@
 #include <chrono>
 #include <queue>
 #include <bits/stdc++.h>
-
+#include <algorithm>
 
 #include "draw.cpp"
 
@@ -26,6 +26,9 @@ class BuildingPolygons{
         int cordX0;
         int cordY0;
         double highest;
+        bool fourDirections[4] = {false};//0: RIGHT, 1: DOWN, 2: LEFT, 3: UP
+        point d0, d1, d2, d3;
+        point delta[4];
         
         queue<Slot> ongoingCheckedSlots;
 
@@ -110,6 +113,8 @@ class BuildingPolygons{
                             insertNeighborSlots(arrayOfAVs, temp);
                             ongoingCheckedSlots.pop();
                         }
+                        cout<<"size of checked points: "<<checkedPoints.size()<<endl;
+                        drawLineSegmentsOfPolygon(arrayOfAVs);
                     }
                 }
             }
@@ -168,7 +173,7 @@ class BuildingPolygons{
             }
         }
 
-        void getHighest(){
+        void drawLineSegmentsOfPolygon(int** arrayOfAVs){
             //get highest point
             int i = 0;
             for(; i < checkedPoints.size(); i++){
@@ -185,7 +190,25 @@ class BuildingPolygons{
             int index = getNeighborOfHighest(highestPoint);
             if(index != -1){
                 point temp(0, 0);
-
+                temp.x = checkedPoints.at(index).x;
+                temp.y = checkedPoints.at(index).y;
+                checkedPoints.erase(checkedPoints.begin() + index);
+                point prev(0, 0);
+                prev.x = highestPoint.x;
+                prev.y = highestPoint.y;
+                cout<<"\n\n\n\n("<<temp.x<<", "<<temp.y<<") ";
+                do{
+                    index = getNearestNeighborClockwise(arrayOfAVs, temp, prev);
+                    if(index != -1){
+                        prev.x = temp.x;
+                        prev.y = temp.y;
+                        temp.x = checkedPoints.at(index).x;
+                        temp.y = checkedPoints.at(index).y;
+                        checkedPoints.erase(checkedPoints.begin() + index);
+                        //cout<<"|"<<checkedPoints.size()<<"|
+                        cout<<"==>("<<temp.x<<", "<<temp.y<<") ";
+                    }
+                }while(checkedPoints.size() > 0 && index != -1);
             }
         }
 
@@ -196,7 +219,7 @@ class BuildingPolygons{
 
             for(; i < checkedPoints.size(); i++){
                 if((highestPoint.y == checkedPoints.at(i).y)
-                    && (highestPoint.x == (checkedPoints.at(i).x + WIDTH))
+                    && (highestPoint.x == (checkedPoints.at(i).x - WIDTH))
                     ){
                     foundInRight = true; 
                     break;
@@ -208,7 +231,7 @@ class BuildingPolygons{
                 i = 0;
                 for(; i < checkedPoints.size(); i++){
                     if((highestPoint.x == checkedPoints.at(i).x)
-                        && (highestPoint.y == (checkedPoints.at(i).y - LENGTH))
+                        && (highestPoint.y == (checkedPoints.at(i).y + LENGTH))
                         ){
                         foundInDown = true; 
                         break;
@@ -220,8 +243,62 @@ class BuildingPolygons{
             return -1;
         }
 
-        void getNearestNeighborClockwise(){
+        int getNearestNeighborClockwise(int** arrayOfAVs, point current, point prev){
+            int index = 0;
+            fourDirections[0] = false;    fourDirections[1] = false;
+            fourDirections[2] = false;    fourDirections[3] = false;
+            for(int i = 0; i < 4; i++){
+                index = 0;
+                //cout<<"Sz: "<<checkedPoints.size()<<" ";
+                for(index = 0; index < checkedPoints.size(); index++){
+                    //if(index == 28)
+                    //    cout<<"dsef ";
+                    if(!(checkedPoints.at(index) == prev) && 
+                        checkedPoints.at(index).x == current.x + delta[i].x
+                        && checkedPoints.at(index).y == current.y + delta[i].y
+                    ){
+                        if(IsLineExisted(checkedPoints.at(index), current, arrayOfAVs)){
+                            fourDirections[i] = true;
+                            break;
+                        }
+                    }
+                }
+                if(fourDirections[i] == true){
+                    return index;
+                }
+            }
+            return -1;
+        }
 
+        bool IsLineExisted(point pA, point pB, int** arrayOfAVs){
+            int row1, row2, col1, col2;
+            if(pA.x == pB.x){
+                col1 = ((int)(pA.x - (WIDTH/2)- this->cordX0))/WIDTH;
+                col2 = col1 + 1;
+                row1 = ((int)(this->cordY0 - (pA.y + pB.y)/2))/LENGTH;
+                row2 = row1;
+                if(col1 < 0){
+                    return (arrayOfAVs[row2][col2] != 0);
+                }
+                if(col1 == this->COLUMNS - 1)
+                    return (arrayOfAVs[row1][col1] != 0);
+                return ((abs(arrayOfAVs[row1][col1]) ^ abs(arrayOfAVs[row2][col2])) == 1);
+            }
+
+            if(pA.y == pB.y){
+                col1 = ((int)((pA.x + pB.x)/2 - this->cordX0))/WIDTH;
+                col2 = col1;
+                row1 = ((int)(this->cordY0 - (pA.y + (LENGTH/2))))/LENGTH;
+                row2 = row1 + 1;
+                if(row1 < 0){
+                    return (arrayOfAVs[row2][col2] != 0);
+                }
+                if(row1 == this->ROWS - 1)
+                    return (arrayOfAVs[row1][col1] != 0);
+                //return (arrayOfAVs[row1][col1] != 0 || arrayOfAVs[row2][col2] != 0);
+                return ((abs(arrayOfAVs[row1][col1]) ^ abs(arrayOfAVs[row2][col2])) == 1);
+            }
+            return false;
         }
 
 
@@ -237,6 +314,15 @@ class BuildingPolygons{
             WIDTH = width;
             LENGTH = length;
             
+            d0.x = WIDTH;   d0.y = 0; //0: Right: 
+            d1.x = 0;       d1.y = -LENGTH; //1: Down
+            d2.x = -WIDTH;  d2.y = 0;       //2: Left
+            d3.x = 0;       d3.y = LENGTH;  //3: Up
+            delta[0] = d0;
+            delta[1] = d1;
+            delta[2] = d2;
+            delta[3] = d3;
+
             highest = INT64_MIN;
         }
 
