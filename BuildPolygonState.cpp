@@ -31,6 +31,7 @@ class BuildingPolygons{
         point delta[4];
         
         queue<Slot> ongoingCheckedSlots;
+        stack<lineSegment> edges;
 
         void getFourVertecies(int indexRow, int indexCol){
             int xCenter = indexCol*WIDTH + this->cordX0;
@@ -112,8 +113,9 @@ class BuildingPolygons{
                             insertNonExistedPoints(arrayOfAVs, temp);
                             insertNeighborSlots(arrayOfAVs, temp);
                             ongoingCheckedSlots.pop();
+                            //pushLineSegment(temp, prev);
                         }
-                        cout<<"size of checked points: "<<checkedPoints.size()<<endl;
+                        //cout<<"size of checked points: "<<checkedPoints.size()<<endl;
                         drawLineSegmentsOfPolygon(arrayOfAVs);
                     }
                 }
@@ -205,8 +207,8 @@ class BuildingPolygons{
                         temp.x = checkedPoints.at(index).x;
                         temp.y = checkedPoints.at(index).y;
                         checkedPoints.erase(checkedPoints.begin() + index);
-                        //cout<<"|"<<checkedPoints.size()<<"|
-                        cout<<"==>("<<temp.x<<", "<<temp.y<<") ";
+                        pushLineSegment(temp, prev);
+
                     }
                 }while(checkedPoints.size() > 0 && index != -1);
             }
@@ -302,8 +304,31 @@ class BuildingPolygons{
         }
 
 
-        void arrangePoints(point p){
-            
+        void pushLineSegment(point current, point previous){
+            if(edges.empty()){
+                lineSegment l;
+                l.p = previous;
+                l.q = current;
+            }
+            else{
+                lineSegment l = edges.top();
+                double vX = l.q.x - l.p.x;
+                double vY = l.q.y - l.p.y;
+
+                double uX = current.x - previous.x;
+                double uY = current.y - previous.y;
+
+                double uv = uX*vX + uY*vY;
+                if(uv == 0){
+                    lineSegment newL;
+                    newL.p = previous;
+                    newL.q = current;
+                    edges.push(newL);
+                }
+                else{
+                    l.q = current;
+                }
+            }
         }
 
         BuildingPolygons(int Row, int Column, int cordX, int cordY, int width, int length){
