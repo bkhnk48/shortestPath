@@ -25,7 +25,7 @@ class BuildingPolygons{
         int COLUMNS;
         int cordX0;
         int cordY0;
-        point highest;
+        double highest;
         
         queue<Slot> ongoingCheckedSlots;
 
@@ -102,6 +102,7 @@ class BuildingPolygons{
                         s.row = i; s.column = j;
                         arrayOfAVs[i][j] = -1;
                         ongoingCheckedSlots.push(s);
+                        highest = INT64_MIN;
                         while(!ongoingCheckedSlots.empty()){
                             Slot temp = ongoingCheckedSlots.front();
                             getFourVertecies(temp.row, temp.column);
@@ -158,15 +159,71 @@ class BuildingPolygons{
 
                     if(aroundAVs < 4){
                         point p(group[i].x, group[i].y);
-                        if(p.y > highest.y){
-                            highest.y = p.y;
-                            highest.x = p.x;
+                        if(p.y > highest){
+                            highest = p.y;
                         }
                         checkedPoints.push_back(p);
                     }
                 }
             }
         }
+
+        void getHighest(){
+            //get highest point
+            int i = 0;
+            for(; i < checkedPoints.size(); i++){
+                if(highest == checkedPoints.at(i).y){
+                    break;
+                }
+            }
+            point highestPoint;
+            highestPoint.x = checkedPoints.at(i).x;
+            highestPoint.y = checkedPoints.at(i).y;
+
+            checkedPoints.erase(checkedPoints.begin() + i);
+
+            int index = getNeighborOfHighest(highestPoint);
+            if(index != -1){
+                point temp(0, 0);
+
+            }
+        }
+
+        int getNeighborOfHighest(point highestPoint){
+            int i = 0;
+            bool foundInRight = false;
+            bool foundInDown = false;
+
+            for(; i < checkedPoints.size(); i++){
+                if((highestPoint.y == checkedPoints.at(i).y)
+                    && (highestPoint.x == (checkedPoints.at(i).x + WIDTH))
+                    ){
+                    foundInRight = true; 
+                    break;
+                }
+            }
+
+            
+            if(!foundInRight){
+                i = 0;
+                for(; i < checkedPoints.size(); i++){
+                    if((highestPoint.x == checkedPoints.at(i).x)
+                        && (highestPoint.y == (checkedPoints.at(i).y - LENGTH))
+                        ){
+                        foundInDown = true; 
+                        break;
+                    }
+                }
+            }
+            if(foundInRight || foundInDown)
+                return i;
+            return -1;
+        }
+
+        void getNearestNeighborClockwise(){
+
+        }
+
 
         void arrangePoints(point p){
             
@@ -179,8 +236,8 @@ class BuildingPolygons{
             this->cordY0 = cordY;
             WIDTH = width;
             LENGTH = length;
-            highest.x = 0;
-            highest.y = INT64_MIN;
+            
+            highest = INT64_MIN;
         }
 
         
