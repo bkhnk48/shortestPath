@@ -31,7 +31,7 @@ class BuildingPolygons{
         point delta[4];
         
         queue<Slot> ongoingCheckedSlots;
-        stack<lineSegment> edges;
+       
 
         void getFourVertecies(int indexRow, int indexCol){
             int xCenter = indexCol*WIDTH + this->cordX0;
@@ -93,6 +93,7 @@ class BuildingPolygons{
         }
 
     public:
+        vector<lineSegment> edges;
         //int** checkedPoints;
         
         //vector<point> fourVertecies;
@@ -211,6 +212,14 @@ class BuildingPolygons{
 
                     }
                 }while(checkedPoints.size() > 0 && index != -1);
+
+
+                for (int i = 0; i < edges.size(); ++i){
+                    lineSegment line = edges.at(i);
+                    cout<<"("<<line.p.x<<", "<<line.p.y<<") => ("<<line.q.x<<", "<<line.q.y<<") | ";
+                    //edges.erase(edges.begin());
+                }
+
             }
         }
 
@@ -309,9 +318,10 @@ class BuildingPolygons{
                 lineSegment l;
                 l.p = previous;
                 l.q = current;
+                edges.push_back(l);
             }
             else{
-                lineSegment l = edges.top();
+                lineSegment l = edges.at(edges.size() - 1);
                 double vX = l.q.x - l.p.x;
                 double vY = l.q.y - l.p.y;
 
@@ -323,10 +333,12 @@ class BuildingPolygons{
                     lineSegment newL;
                     newL.p = previous;
                     newL.q = current;
-                    edges.push(newL);
+                    edges.push_back(newL);
                 }
                 else{
                     l.q = current;
+                    edges.pop_back();
+                    edges.push_back(l);
                 }
             }
         }
