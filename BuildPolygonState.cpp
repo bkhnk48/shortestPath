@@ -93,7 +93,8 @@ class BuildingPolygons{
         }
 
     public:
-        vector<lineSegment> edges;
+        //vector<lineSegment> edges;
+        vector< vector<lineSegment> > polygons;
         //int** checkedPoints;
         
         //vector<point> fourVertecies;
@@ -104,6 +105,7 @@ class BuildingPolygons{
                 for(int j = c0; j < COLUMNS; j++){
                     if(arrayOfAVs[i][j] == 1){//Tim thay mot diem chua thuoc polygon nao ca
                         Slot s;
+                        
                         s.row = i; s.column = j;
                         arrayOfAVs[i][j] = -1;
                         ongoingCheckedSlots.push(s);
@@ -179,6 +181,7 @@ class BuildingPolygons{
         void drawLineSegmentsOfPolygon(int** arrayOfAVs){
             //get highest point
             int i = 0;
+            
             for(; i < checkedPoints.size(); i++){
                 if(highest == checkedPoints.at(i).y){
                     break;
@@ -188,10 +191,12 @@ class BuildingPolygons{
             highestPoint.x = checkedPoints.at(i).x;
             highestPoint.y = checkedPoints.at(i).y;
 
+
             checkedPoints.erase(checkedPoints.begin() + i);
 
             int index = getNeighborOfHighest(highestPoint);
             if(index != -1){
+                vector<lineSegment> edges;
                 point temp(0, 0);
                 temp.x = checkedPoints.at(index).x;
                 temp.y = checkedPoints.at(index).y;
@@ -199,7 +204,7 @@ class BuildingPolygons{
                 point prev(0, 0);
                 prev.x = highestPoint.x;
                 prev.y = highestPoint.y;
-                pushLineSegment(temp, prev);
+                pushLineSegment(temp, prev, edges);
                 //cout<<"\n\n\n\n("<<temp.x<<", "<<temp.y<<") ";
                 do{
                     index = getNearestNeighborClockwise(arrayOfAVs, temp, prev);
@@ -209,12 +214,14 @@ class BuildingPolygons{
                         temp.x = checkedPoints.at(index).x;
                         temp.y = checkedPoints.at(index).y;
                         checkedPoints.erase(checkedPoints.begin() + index);
-                        pushLineSegment(temp, prev);
+                        pushLineSegment(temp, prev, edges);
 
                     }
                 }while(checkedPoints.size() > 0 && index != -1);
 
-                pushLineSegment(highestPoint, temp);
+                pushLineSegment(highestPoint, temp, edges);
+
+                polygons.push_back(edges);
 
                 for (int i = 0; i < edges.size(); i++){
                     lineSegment line = edges.at(i);
@@ -315,7 +322,7 @@ class BuildingPolygons{
         }
 
 
-        void pushLineSegment(point current, point previous){
+        void pushLineSegment(point current, point previous, vector<lineSegment> &edges){
             if(edges.empty()){
                 lineSegment l;
                 l.p = previous;
