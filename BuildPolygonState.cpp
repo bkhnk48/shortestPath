@@ -120,6 +120,7 @@ class BuildingPolygons{
                         }
                         //cout<<"size of checked points: "<<checkedPoints.size()<<endl;
                         drawLineSegmentsOfPolygon(arrayOfAVs);
+                        cout<<"\n\n"<<endl;
                     }
                 }
             }
