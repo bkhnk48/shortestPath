@@ -124,12 +124,6 @@ class BuildingPolygons{
                 }
             }
             
-            int i = 1;
-            for(auto coincidence : checkedPoints){
-                cout<<i<<") ("<<coincidence.x<<", "<<coincidence.y<<") ";
-                i++;
-            }
-            //cout<<"\nThe highest "<<highest.y<<endl;
         }
 
         void insertNonExistedPoints(int** arrayOfAVs, Slot center){
