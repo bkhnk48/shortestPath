@@ -43,11 +43,12 @@ void testFullAVsInStacks(){
 			stacks[0].slotsOfAV[i][j] = 0;
 		}
 	}
+	stacks[0].slotsOfAV[0][9] = 1;
     //vector< vector< lineSegment> > polygons;
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
-	BuildingPolygons* polygons = new BuildingPolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
-	polygons->check(stacks[0].slotsOfAV, 0, 0);
+	BuildingPolygons* generator = new BuildingPolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
+	generator->check(stacks[0].slotsOfAV, 0, 0);
 	
 	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
 
@@ -61,6 +62,8 @@ void testFullAVsInStacks(){
 		}
 	}
 	assert(ones == 0);
+
+	assert(generator->polygons.size() == 2);
 }
 
 
