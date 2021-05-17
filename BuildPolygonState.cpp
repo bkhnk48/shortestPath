@@ -199,6 +199,7 @@ class BuildingPolygons{
                 point prev(0, 0);
                 prev.x = highestPoint.x;
                 prev.y = highestPoint.y;
+                pushLineSegment(temp, prev);
                 //cout<<"\n\n\n\n("<<temp.x<<", "<<temp.y<<") ";
                 do{
                     index = getNearestNeighborClockwise(arrayOfAVs, temp, prev);
@@ -213,8 +214,9 @@ class BuildingPolygons{
                     }
                 }while(checkedPoints.size() > 0 && index != -1);
 
+                pushLineSegment(highestPoint, temp);
 
-                for (int i = 0; i < edges.size(); ++i){
+                for (int i = 0; i < edges.size(); i++){
                     lineSegment line = edges.at(i);
                     cout<<"("<<line.p.x<<", "<<line.p.y<<") => ("<<line.q.x<<", "<<line.q.y<<") | ";
                     //edges.erase(edges.begin());
