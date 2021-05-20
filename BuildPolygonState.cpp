@@ -373,4 +373,36 @@ class BuildingPolygons{
             point p(xCenter, yCenter);
             return p;
         }
+
+        point getPositionInGate(int gateNumber, int kStacks, bool enter){
+            double x = 0, y = 0;
+            double LAND_WIDTH = 2*this->WIDTH + 1;
+            double deltaX = this->WIDTH;
+            double deltaY = this->LENGTH/2;
+            if(gateNumber == 1 || gateNumber == 3){
+                x = 2*LAND_WIDTH + (this->COLUMNS/2)*this->WIDTH + (this->WIDTH/2);
+                if(gateNumber == 1){
+                    y = 4*LAND_WIDTH + (kStacks - 1)*2*LAND_WIDTH + kStacks*this->ROWS*this->LENGTH;
+                    x += enter ? -deltaX : deltaX;
+                }
+                else{
+                    y = 0;
+                    x += enter ? deltaX : -deltaX;
+                }
+                
+            }
+            else if(gateNumber == 2 || gateNumber == 4){
+                y = (4*LAND_WIDTH + (kStacks - 1)*2*LAND_WIDTH + kStacks*this->ROWS*this->LENGTH)/2;
+                if(gateNumber == 2){
+                    x = 0;
+                    y += enter ? deltaY : -deltaY;
+                }
+                else{
+                    x = 4*LAND_WIDTH + this->COLUMNS*this->WIDTH;
+                    y += enter ? -deltaY : deltaY;
+                }
+            }
+            point p(x, y);
+            return p;
+        }
 };
