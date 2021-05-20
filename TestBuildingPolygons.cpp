@@ -11,7 +11,9 @@
 #include "draw.cpp"
 #include "naive.cpp"
 #include "preprocess.cpp"
+#include "MovementController.cpp"
 #include <cassert>  
+#include <stdio.h>
 
 //So we don't need to write std:: everywhere
 using namespace std;
@@ -64,6 +66,8 @@ void testFullAVsInStacks(){
 	assert(ones == 0);
 
 	assert(generator->polygons.size() == 2);
+
+	
 }
 
 
