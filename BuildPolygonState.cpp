@@ -367,8 +367,10 @@ class BuildingPolygons{
             highest = INT64_MIN;
         }
 
-        
-       
-
-
+        point getSlot(int indexRow, int indexCol){
+            int xCenter = indexCol*WIDTH + this->cordX0;
+            int yCenter = -indexRow*LENGTH + this->cordY0;
+            point p(xCenter, yCenter);
+            return p;
+        }
 };
