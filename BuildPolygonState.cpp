@@ -21,6 +21,8 @@ class BuildingPolygons{
         int LENGTH; 
         point pA, pB, pC, pD;
         vector<point> checkedPoints;
+        //Create vector for containing the points of the polygons
+	    vector<point> points;
         int ROWS;
         int COLUMNS;
         int cordX0;
@@ -221,6 +223,8 @@ class BuildingPolygons{
                 for (int i = 0; i < edges.size(); i++){
                     lineSegment line = edges.at(i);
                     cout<<"("<<line.p.x<<", "<<line.p.y<<") => ("<<line.q.x<<", "<<line.q.y<<") | ";
+                    point vertex(line.p.x, line.p.y);
+                    points.push_back(vertex);
                     //edges.erase(edges.begin());
                 }
 
