@@ -26,6 +26,12 @@ class PlanningController{
 
         }
 
+        void echo(RawRoute* r){
+            for(int i = 0; i < r->points.size(); i++){
+                cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
+            }
+        }
+
         vector<point> getTrajectory(vector<point> points, vector< vector< lineSegment> > polygons, point start, point end){
             vector< vector < int > > graph;
             vector< vector < double > > graphDistance;
@@ -65,13 +71,14 @@ class PlanningController{
 
             auto time4 = std::chrono::steady_clock::now();
 
-            std:string title = "Automated valet parking v = 24km/h";
+            //std:string title = "Automated valet parking v = 24km/h";
             //Output the distance
-            
+            RawRoute* rawRoute = new RawRoute();
             //if(config.printGraph)
             {
-                draw("test/test.svg", title, 
+                draw("test/test.svg", rawRoute, 
                     start,end, polygons,distance,points,route,graph);
+                echo(rawRoute);
                 return vector<point>();	
             }
             /*else{
@@ -87,6 +94,8 @@ class PlanningController{
                 return points;
             }*/
         }
+
+        
 };
 
 #endif
