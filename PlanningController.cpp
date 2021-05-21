@@ -26,10 +26,28 @@ class PlanningController{
 
         }
 
-        void echo(RawRoute* r){
+        void echo(RawRoute* r, vector< vector< lineSegment> > polygons){
+            vector<lineSegment> group;
             for(int i = 0; i < r->points.size(); i++){
-                cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
+                //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
+                point p1 = r->points.at(i);
+
+                for(int j = i + 2; j < r->points.size(); j++){
+                    point p2 = r->points.at(j);
+                    lineSegment l;
+                    l.p = p1;
+                    l.q = p2;
+                    int crossing = numberOfCrossings(polygons,l);
+                    if(crossing == 0){
+                        group.push_back(l);
+                    }
+                    else{
+                        cout<<"("<<l.p.x<<", "<<l.p.y<<") => ("
+                            <<l.q.x<<", "<<l.q.y<<") crosses "<<crossing<<endl;
+                    }
+                }
             }
+            cout<<"size of group "<<group.size()<<endl;
         }
 
         vector<point> getTrajectory(vector<point> points, vector< vector< lineSegment> > polygons, point start, point end){
@@ -78,7 +96,7 @@ class PlanningController{
             {
                 draw("test/test.svg", rawRoute, 
                     start,end, polygons,distance,points,route,graph);
-                echo(rawRoute);
+                echo(rawRoute, polygons);
                 return vector<point>();	
             }
             /*else{
@@ -95,7 +113,23 @@ class PlanningController{
             }*/
         }
 
-        
+        point getMaxOfXY(point p1, point p2){
+            double maxX = max(p1.x, p2.x);
+            double maxY = max(p1.y, p2.y);
+
+            point p;
+            p.x = maxX; p.y = maxY;
+            return p;
+        }
+
+        point getMinOfXY(point p1, point p2){
+            double minX = min(p1.x, p2.x);
+            double minY = min(p1.y, p2.y);
+
+            point p;
+            p.x = minX; p.y = minY;
+            return p;
+        }
 };
 
 #endif
