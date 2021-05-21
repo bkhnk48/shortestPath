@@ -2,7 +2,9 @@
 #include <sstream> //ostringstream
 #include <fstream> 
 #include <math.h>
+#include <vector> //vector
 //#include <string.h>
+//#include "RawRoute.cpp"
 
 #ifndef _DRAW_
 #define _DRAW_
@@ -41,6 +43,18 @@ struct point {
 	}
 };
 
+class RawRoute{
+    public:
+        vector<point> points;
+        
+        RawRoute(){
+
+        }
+
+        void insert(point p){
+            points.insert(points.begin(), p);
+        }
+};
 
 struct Slot {
 	int row;
@@ -106,7 +120,7 @@ string drawY(point &p){
 	return to_string(r);
 }
 
-string drawRoute(vector<int> & route,vector<point> & points){
+string drawRoute(RawRoute* rawRoute, vector<int> & route,vector<point> & points){
 	string str = "<polyline stroke='red' stroke-width='2' fill='none' points='";
 	int current = route.size()-1;
 	while(current != -1){
@@ -116,8 +130,12 @@ string drawRoute(vector<int> & route,vector<point> & points){
 		str.append(drawY(p));
 		str.append(" ");
 		current = route[current];
+		rawRoute->insert(p);
+		//cout<<"("<<p.x<<", "<<p.y<<") ";
 	}
 	str.append("'/>\n");
+
+	
 	return str;
 }
 
@@ -189,7 +207,7 @@ string drawGraph(vector< vector< int> > &graph, vector<point>& points){
 	return str;
 }
 
-void draw(string file_name, string testTitle, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<int> &route,vector< vector<int> >graph){
+void draw(string file_name, RawRoute* rawRoute, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<int> &route,vector< vector<int> >graph){
 	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
 	string str2 = "<svg viewBox='"; //+ 
 	str2.append(std::to_string(10*min_x-5));
@@ -208,10 +226,10 @@ void draw(string file_name, string testTitle, point & start, point & end, vector
 	str1 = str1 + drawPoint(start,"#FFA500");
 	str1 = str1 + drawPoint(end,"green");
 
-	str1 = str1 + drawTitle(testTitle,distance);
+	//str1 = str1 + drawTitle(testTitle,distance);
 	str1 = str1 + drawGraph(graph,points);
 	if(distance!=-1 && config.drawRoute) 
-		str1 = str1 + drawRoute(route,points);
+		str1 = str1 + drawRoute(rawRoute, route,points);
 	str1 = str1 + "</svg>\n";
 	std::ofstream ofs(file_name.c_str());
 	if (!ofs.good())
