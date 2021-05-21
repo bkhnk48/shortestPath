@@ -13,6 +13,9 @@
 
 #include "draw.cpp"
 
+#ifndef _BUILD_POLYGON_
+#define _BUILD_POLYGON_
+
 using namespace std;
 
 class BuildingPolygons{
@@ -410,3 +413,5 @@ class BuildingPolygons{
             return p;
         }
 };
+
+#endif
