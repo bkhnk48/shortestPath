@@ -34,19 +34,25 @@ void testFullAVsInStacks(){
 	stacks[0].slotsOfAV[0][0] = 0;	stacks[0].slotsOfAV[0][1] = 0;  stacks[0].slotsOfAV[0][3] = 0;  stacks[0].slotsOfAV[0][4] = 0;  
 																				stacks[0].slotsOfAV[0][6] = 0;  stacks[0].slotsOfAV[0][7] = 0;
 
-	stacks[0].slotsOfAV[1][3] = 0;	stacks[0].slotsOfAV[1][6] = 0;  stacks[0].slotsOfAV[1][7] = 0;																		
+	stacks[0].slotsOfAV[1][3] = 0;	stacks[0].slotsOfAV[1][6] = 0;  stacks[0].slotsOfAV[1][7] = 0;	
 	stacks[0].slotsOfAV[2][7] = 0;
 	stacks[0].slotsOfAV[3][7] = 0;
 	stacks[0].slotsOfAV[4][0] = 0;	stacks[0].slotsOfAV[4][2] = 0;  stacks[0].slotsOfAV[4][6] = 0;  stacks[0].slotsOfAV[4][7] = 0;
 	stacks[0].slotsOfAV[5][0] = 0;	stacks[0].slotsOfAV[5][2] = 0;  stacks[0].slotsOfAV[5][3] = 0;  stacks[0].slotsOfAV[5][6] = 0;  
 																				stacks[0].slotsOfAV[5][7] = 0;
+	
+
+					stacks[0].slotsOfAV[5][1] = 0;  stacks[0].slotsOfAV[5][4] = 0;  stacks[0].slotsOfAV[5][5] = 0;
+
+	stacks[0].slotsOfAV[1][0] = 0;  stacks[0].slotsOfAV[2][0] = 0;  stacks[0].slotsOfAV[3][0] = 0;
+
 
 	for(int i = 0; i < 6; i++){
 		for(int j = 7; j < columnsInStack; j++){
 			stacks[0].slotsOfAV[i][j] = 0;
 		}
 	}
-	stacks[0].slotsOfAV[0][9] = 1;
+	//stacks[0].slotsOfAV[0][9] = 1;
     //vector< vector< lineSegment> > polygons;
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
@@ -66,10 +72,13 @@ void testFullAVsInStacks(){
 	}
 	assert(ones == 0);
 
-	assert(generator->polygons.size() == 2);
+	//assert(generator->polygons.size() == 2);
 
 	point start = generator->getSlot(0, 0);
-	point end = generator->getPositionInGate(3, numOfStacks, false);
+	cout<<"\nstart: "<<start.x<<", "<<start.y<<endl;
+	//point end = generator->getPositionInGate(3, numOfStacks, false);
+	point end(8, 0);
+	cout<<"End: "<<end.x<<", "<<end.y<<endl;
 
 	PlanningController* plan = new PlanningController();
 	plan->getTrajectory(generator->points, generator->polygons, start, end);
