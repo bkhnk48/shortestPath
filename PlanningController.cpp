@@ -34,10 +34,14 @@ class PlanningController{
 
                 for(int j = i + 2; j < r->points.size(); j++){
                     point p2 = r->points.at(j);
+                    if(p1.x == 6 && p1.y == 36 && p2.x == 10 && p2.y == 30){
+                        //cout<<"DEBUG";
+                    }
                     lineSegment l;
                     l.p = p1;
                     l.q = p2;
-                    int crossing = numberOfCrossings(polygons,l);
+                    
+                    int crossing = numberOfCuttingThrough(polygons,l);
                     if(crossing == 0){
                         group.push_back(l);
                     }
