@@ -68,6 +68,12 @@ void testFullAVsInStacks(){
 
 	assert(generator->polygons.size() == 2);
 
+	point start = generator->getSlot(0, 0);
+	point end = generator->getPositionInGate(3, numOfStacks, false);
+
+	PlanningController* plan = new PlanningController();
+	plan->getTrajectory(generator->points, generator->polygons, start, end);
+
 	
 }
 
