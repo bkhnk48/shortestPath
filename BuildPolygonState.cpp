@@ -25,7 +25,7 @@ class BuildingPolygons{
         point pA, pB, pC, pD;
         vector<point> checkedPoints;
         //Create vector for containing the points of the polygons
-	    vector<point> points;
+	    
         int ROWS;
         int COLUMNS;
         int cordX0;
@@ -100,6 +100,7 @@ class BuildingPolygons{
     public:
         //vector<lineSegment> edges;
         vector< vector<lineSegment> > polygons;
+        vector<point> points;
         //int** checkedPoints;
         
         //vector<point> fourVertecies;
