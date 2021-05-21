@@ -107,7 +107,7 @@ string drawY(point &p){
 }
 
 string drawRoute(vector<int> & route,vector<point> & points){
-	string str = "<polyline stroke='red' stroke-width='0.2' fill='none' points='";
+	string str = "<polyline stroke='red' stroke-width='2' fill='none' points='";
 	int current = route.size()-1;
 	while(current != -1){
 		point p = points[current%points.size()];
@@ -124,7 +124,7 @@ string drawRoute(vector<int> & route,vector<point> & points){
 string drawPoint(point &p,string color){
 	string str = "<circle cx='";
 	str.append(drawX(p)); str.append("' cy='");
-	str.append(drawY(p)); str.append("' r='0.5' fill='");
+	str.append(drawY(p)); str.append("' r='0.8' fill='");
 	str.append(color);
 	str.append("' />\n");
 	return str;
