@@ -10,11 +10,12 @@
 #include <stdio.h>
 #include "BuildPolygonState.cpp"
 
+
+#ifndef _PREPROCESS_
+#define _PREPROCESS_
+
 using namespace std;
-typedef struct Stacks{
-	int** slotsOfAV;
-	int k;
-}K_Stack;
+
 
 void setConfig(int argc, const char* argv[]){
 	for(int i = 1 ; i < argc ; i++ ){
@@ -38,8 +39,6 @@ void setConfig(int argc, const char* argv[]){
 int getTime(std::chrono::steady_clock::time_point start, std::chrono::steady_clock::time_point end){
 	return std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 }
-
-
 
 vector<point> getTrajectory(int argc, const char* argv[]){
 	max_x=max_y=min_y=min_x=0;
@@ -178,3 +177,5 @@ void printStacks(K_Stack *stacks, int numOfStacks, int rowsInStack, int columnsI
 		cout<<"\n"<<endl;
 	}
 }
+
+#endif
