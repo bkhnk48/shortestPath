@@ -164,6 +164,61 @@ int numberOfCrossings(vector<vector<lineSegment> > &polygons, lineSegment l){
 	return n;
 }
 
+int cutThrough(lineSegment l1, lineSegment l2){
+	//point A = l1.p; point B = l1.q;
+	//point C = l2.p; point D = l2.q;
+	point AC; 
+	AC.x = l2.p.x - l1.p.x; 
+	AC.y = l2.p.y - l1.p.y;
+	point AB;
+	AB.x = l1.q.x - l1.p.x; 
+	AB.y = l1.q.y - l1.p.y;
+	point AD;
+	AD.x = l2.q.x - l1.p.x; 
+	AD.y = l2.q.y - l1.p.y;
+	double AC_AB = AC.x*AB.y - AC.y*AB.x;
+	double AD_AB = AD.x*AB.y - AD.y*AB.x;
+	if(AC_AB*AD_AB < 0){
+		//point A = l2.p; point B = l2.q;
+		//point C = l1.p; point D = l1.q;
+		AC.x = l1.p.x - l2.p.x; 
+		AC.y = l1.p.y - l2.p.y;
+		
+		AB.x = l2.q.x - l2.p.x; 
+		AB.y = l2.q.y - l2.p.y;
+		
+		AD.x = l1.q.x - l2.p.x; 
+		AD.y = l1.q.y - l2.p.y;
+		AC_AB = AC.x*AB.y - AC.y*AB.x;
+		AD_AB = AD.x*AB.y - AD.y*AB.x;
+		if(AC_AB*AD_AB < 0){
+			return 1; //cut through
+		}
+	}
+	return 0;
+
+}
+
+
+//Take a line segment and returns the number of polygon it cut through
+int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
+	
+	for(size_t i = 0; i < polygons.size();i++){
+		int numberOfvaolation=0;
+		for(size_t j=0;j<polygons[i].size();j++){
+			if(i == 0 && j == 7){
+				//cout<<"debug"<<endl;
+			}
+			int result = cutThrough(l,polygons[i][j]);
+			if(result == 1)
+				return 1;	
+		}
+	}
+	return 0;
+}
+
+
+
 //Implementation of dijkstra
 //Takes a graph and a start and end point in the graph
 //returns the distance
