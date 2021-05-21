@@ -96,7 +96,7 @@ vector<point> getTrajectory(int argc, const char* argv[]){
 	//Output the distance
 	
 	if(config.printGraph){
-		draw("test/test.svg", testTitle,start,end, polygons,distance,points,route,graph);
+		//draw("test/test.svg", testTitle,start,end, polygons,distance,points,route,graph);
 		return vector<point>();	
 	}
 	else{
