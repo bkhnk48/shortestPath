@@ -42,9 +42,9 @@ void testFullAVsInStacks(){
 																				stacks[0].slotsOfAV[5][7] = 0;
 	
 
-					stacks[0].slotsOfAV[5][1] = 0;  stacks[0].slotsOfAV[5][4] = 0;  stacks[0].slotsOfAV[5][5] = 0;
+					//stacks[0].slotsOfAV[5][1] = 0;  stacks[0].slotsOfAV[5][4] = 0;  stacks[0].slotsOfAV[5][5] = 0;
 
-	stacks[0].slotsOfAV[1][0] = 0;  stacks[0].slotsOfAV[2][0] = 0;  stacks[0].slotsOfAV[3][0] = 0;
+	//stacks[0].slotsOfAV[1][0] = 0;  stacks[0].slotsOfAV[2][0] = 0;  stacks[0].slotsOfAV[3][0] = 0;
 
 
 	for(int i = 0; i < 6; i++){
@@ -52,7 +52,7 @@ void testFullAVsInStacks(){
 			stacks[0].slotsOfAV[i][j] = 0;
 		}
 	}
-	//stacks[0].slotsOfAV[0][9] = 1;
+	stacks[0].slotsOfAV[0][9] = 1;
     //vector< vector< lineSegment> > polygons;
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
@@ -76,8 +76,8 @@ void testFullAVsInStacks(){
 
 	point start = generator->getSlot(0, 0);
 	cout<<"\nstart: "<<start.x<<", "<<start.y<<endl;
-	//point end = generator->getPositionInGate(3, numOfStacks, false);
-	point end(8, 0);
+	point end = generator->getPositionInGate(3, numOfStacks, false);
+	//point end(8, 0);
 	cout<<"End: "<<end.x<<", "<<end.y<<endl;
 
 	PlanningController* plan = new PlanningController();
