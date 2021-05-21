@@ -16,6 +16,11 @@ struct {
 	size_t k = 0;
 } config;
 
+typedef struct Stacks{
+	int** slotsOfAV;
+	int k;
+}K_Stack;
+
 //point type for holding a coordinate 
 void setMinMax(double x, double y);
 struct point {
@@ -184,7 +189,7 @@ string drawGraph(vector< vector< int> > &graph, vector<point>& points){
 	return str;
 }
 
-void draw(string file_name, string & testTitle, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<int> &route,vector< vector<int> >graph){
+void draw(string file_name, string testTitle, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<int> &route,vector< vector<int> >graph){
 	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
 	string str2 = "<svg viewBox='"; //+ 
 	str2.append(std::to_string(10*min_x-5));
