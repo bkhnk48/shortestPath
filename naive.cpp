@@ -242,39 +242,6 @@ int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirec
 	return result;
 }
 
-/*void middlePoint(point pA, point pB, vector<lineSegment> aPolygon, double *x, double *y){
-	double delta = max(abs(pA.x - pB.x), abs(pA.y - pB.y));
-	double tempX = pA.x;
-	double tempY= pA.y;
-	
-	bool existed = false;
-	bool found = false;
-	while(delta >= 1){
-		*x = (tempX + pB.x)/2;
-		*y = (tempY + pB.y)/2;
-		for(int i = 0; i < aPolygon.size(); i++){
-			if((*x == aPolygon.at(i).p.x && 
-				*x == aPolygon.at(i).q.x) ||
-				(*y == aPolygon.at(i).p.y &&
-				*y == aPolygon.at(i).q.y)
-				){
-					existed = true;
-					break;
-				}
-		}
-		if(!existed){
-			found = true;
-			break;
-		}
-		tempX = *x;
-		tempY = *y;
-		delta = max(abs(tempX - pB.x), abs(tempY - pB.y));
-	}
-	if(!found){
-		*x = FLT_MAX;
-		*y = FLT_MAX;
-	}
-}*/
 
 bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 	double x;
