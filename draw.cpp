@@ -120,7 +120,7 @@ string drawY(point &p){
 	return to_string(r);
 }
 
-string drawRoute(RawRoute* rawRoute, vector<int> & route,vector<point> & points){
+string drawRoute(vector<int> & route,vector<point> & points){
 	string str = "<polyline stroke='red' stroke-width='2' fill='none' points='";
 	int current = route.size()-1;
 	while(current != -1){
@@ -130,13 +130,20 @@ string drawRoute(RawRoute* rawRoute, vector<int> & route,vector<point> & points)
 		str.append(drawY(p));
 		str.append(" ");
 		current = route[current];
-		rawRoute->insert(p);
-		//cout<<"("<<p.x<<", "<<p.y<<") ";
 	}
 	str.append("'/>\n");
 
 	
 	return str;
+}
+
+void getRawRoute(RawRoute* rawRoute, vector<int> & route,vector<point> & points){
+	int current = route.size()-1;
+	while(current != -1){
+		point p = points[current%points.size()];
+		current = route[current];
+		rawRoute->insert(p);
+	}
 }
 
 string drawPoint(point &p,string color){
@@ -228,8 +235,10 @@ void draw(string file_name, RawRoute* rawRoute, point & start, point & end, vect
 
 	//str1 = str1 + drawTitle(testTitle,distance);
 	str1 = str1 + drawGraph(graph,points);
-	if(distance!=-1 && config.drawRoute) 
-		str1 = str1 + drawRoute(rawRoute, route,points);
+	if(distance!=-1 && config.drawRoute){ 
+		getRawRoute(rawRoute, route, points);
+		str1 = str1 + drawRoute(route, points);
+	}
 	str1 = str1 + "</svg>\n";
 	std::ofstream ofs(file_name.c_str());
 	if (!ofs.good())
