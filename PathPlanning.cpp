@@ -12,7 +12,7 @@
 #include <algorithm>
 
 #include "preprocess.cpp"
-
+#include "CollectingPoints.cpp"
 
 #ifndef _PLANNING_CONTROLLER_
 #define _PLANNING_CONTROLLER_
