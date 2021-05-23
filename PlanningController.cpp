@@ -34,7 +34,7 @@ class PlanningController{
 
                 for(int j = i + 2; j < r->points.size(); j++){
                     point p2 = r->points.at(j);
-                    //cout<<"Loop at here i = "<<i<<" j = "<<j<<endl;
+                    
                     lineSegment l;
                     l.p = p1;
                     l.q = p2;
