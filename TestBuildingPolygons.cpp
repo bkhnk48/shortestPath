@@ -12,7 +12,7 @@
 #include "naive.cpp"
 #include "preprocess.cpp"
 #include "MovementController.cpp"
-#include "PlanningController.cpp"
+#include "PathPlanning.cpp"
 #include <cassert>  
 #include <stdio.h>
 
