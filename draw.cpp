@@ -343,14 +343,14 @@ void echo(RawRoute* r, vector< vector< lineSegment> > polygons){
 				}
 			}
 			else{
-				cout<<"("<<l.p.x<<", "<<l.p.y<<") => ("
-					<<l.q.x<<", "<<l.q.y<<") crosses "<<crossing<<endl;
+				//cout<<"("<<l.p.x<<", "<<l.p.y<<") => ("
+				//	<<l.q.x<<", "<<l.q.y<<") crosses "<<crossing<<endl;
 			}
 		}
 	}
 	cout<<"size of group "<<group.size()<<endl;
 	for(int  i = 0; i < group.size();  i++){
-		cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<"=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
+		cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
 	}
 }
 
