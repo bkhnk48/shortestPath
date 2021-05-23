@@ -72,6 +72,7 @@ class PlanningController{
             //if(config.printGraph)
             {
                 getRawRoute(rawRoute, route, points);
+                echo(rawRoute, polygons);
                 draw("test/test.svg", start,end, polygons,distance,points,route,graph);
                 return vector<point>();	
             }
