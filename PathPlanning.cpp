@@ -11,11 +11,13 @@
 #include <bits/stdc++.h>
 #include <algorithm>
 
-#include "preprocess.cpp"
+//#include "preprocess.cpp"
 #include "CollectingPoints.cpp"
 
 #ifndef _PLANNING_CONTROLLER_
 #define _PLANNING_CONTROLLER_
+
+
 
 using namespace std;
 
@@ -72,8 +74,12 @@ class PlanningController{
             //if(config.printGraph)
             {
                 getRawRoute(rawRoute, route, points);
-                echo(rawRoute, polygons, route);
-                draw("test/test.svg", start,end, polygons,distance,points,route,graph);
+                for(int i = 0; i < route.size(); i++){
+                    cout<<route.at(i)<<" ";
+                }
+                vector<point> shortestPath = echo(rawRoute, polygons, route);
+                //draw("test/test.svg", start,end, polygons,distance,points,route,graph);
+                drawShortestPath("test/test.svg", start,end, polygons,distance,points,shortestPath,graph);
                 return vector<point>();	
             }
             
@@ -106,7 +112,7 @@ class PlanningController{
             }
         }
 
-        void echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route){
+        vector<point> echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route){
             vector<lineSegment> group;
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
@@ -131,19 +137,77 @@ class PlanningController{
                     }
                 }
             }
-            cout<<"size of group "<<group.size()<<endl;
+            cout<<"\nsize of group "<<group.size()<<endl;
             for(int  i = 0; i < group.size();  i++){
                 cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
             }
             
-            int  **PATHS     = (int**)  NULL;  //edgelerin uzunluklari
+            double  **PATHS     = (double**)  NULL;  //edgelerin uzunluklari
             int **ROUTE2     = (int**) NULL;   //ROUTE mizi belirleriz
-            int  *SHORTEST_PATH       = (int*)   NULL;  //o vertex in baslangica en kisa yolu
-            int  *VISITED = (int*)   NULL;   
+            double  *SHORTEST_PATH       = (double*)   NULL;  //o vertex in baslangica en kisa yolu
+            double  *VISITED = (double*)   NULL;   
 
             CollectingPoints* collectionPoints = new CollectingPoints();
-            collectionPoints->buildAdjMatrix(route.size(), PATHS, ROUTE2, SHORTEST_PATH, VISITED);
+            
+            vector<point> result = collectionPoints->assignValueToMatrix(PATHS, ROUTE2, SHORTEST_PATH, VISITED, route, r->points, group);
+            return result;
         }
 };
+
+
+/*class CollectingPoints{
+
+    public:
+        CollectingPoints(){
+
+        }
+
+        void Error (char *str)
+        { 
+            printf("\nERROR: %s\n", str);
+            return;
+        }
+
+        void buildAdjMatrix(int N, int  **PATHS, int **ROUTE2, int  *SHORTEST_PATH, int  *VISITED){
+            int vertexNum = N;
+            //mallocations dynamicly and check for errors 
+
+            SHORTEST_PATH = MALLOC( int , vertexNum );
+            
+
+            VISITED = MALLOC( int , vertexNum );
+            
+
+            PATHS = MALLOC2D( int , vertexNum );
+            
+
+            ROUTE2 = MALLOC2D( int , vertexNum );
+            
+            for(int i=0; i < vertexNum; i++)
+            {
+                PATHS[i] =  MALLOC( int , vertexNum );
+
+                ROUTE2[i] = MALLOC( int , vertexNum );
+
+                //say that Y is empty
+                VISITED[i] = 0; 
+
+                //set the paths as very long 
+                SHORTEST_PATH[i] = MAX_INT;
+
+            }
+
+        }
+
+        void assignValueToMatrix(int N, int  **PATHS, int **ROUTE2, vector<int> route){
+            int current = route.size()-1;
+            while(current != -1){
+                point p = points[current % points.size()];
+                
+                cout<<"\nroute["<<current<<"] = "<<route[current]<<" => ("<<p.x<<", "<<p.y<<")";
+                current = route[current];
+            }
+        }
+};*/
 
 #endif
