@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <bits/stdc++.h>
 
-#include "draw.cpp"
+//#include "draw.cpp"
 
 using namespace std;
 
