@@ -105,6 +105,37 @@ class PlanningController{
                 rawRoute->insert(p);
             }
         }
+
+        void echo(RawRoute* r, vector< vector< lineSegment> > polygons){
+            vector<lineSegment> group;
+            for(int i = 0; i < r->points.size(); i++){
+                //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
+                point p1 = r->points.at(i);
+
+                for(int j = i + 2; j < r->points.size(); j++){
+                    point p2 = r->points.at(j);
+                    
+                    lineSegment l;
+                    l.p = p1;
+                    l.q = p2;
+                    
+                    int crossing = numberOfCuttingThrough(polygons,l);
+                    if(crossing == 0){
+                        if(!insidePolygon(l, polygons)){
+                            group.push_back(l);
+                        }
+                    }
+                    else{
+                        //cout<<"("<<l.p.x<<", "<<l.p.y<<") => ("
+                        //	<<l.q.x<<", "<<l.q.y<<") crosses "<<crossing<<endl;
+                    }
+                }
+            }
+            cout<<"size of group "<<group.size()<<endl;
+            for(int  i = 0; i < group.size();  i++){
+                cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
+            }
+        }
 };
 
 #endif
