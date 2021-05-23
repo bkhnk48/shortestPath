@@ -7,9 +7,9 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
-#include <float.h>
 
-
+#ifndef __NAIVE__
+#define __NAIVE__
 //So we don't need to write std:: everywhere
 using namespace std;
 
@@ -164,119 +164,6 @@ int numberOfCrossings(vector<vector<lineSegment> > &polygons, lineSegment l){
 	}
 	return n;
 }
-
-int cutThrough(lineSegment l1, lineSegment l2){
-	//point A = l1.p; point B = l1.q;
-	//point C = l2.p; point D = l2.q;
-	point AC; 
-	AC.x = l2.p.x - l1.p.x; 
-	AC.y = l2.p.y - l1.p.y;
-	point AB;
-	AB.x = l1.q.x - l1.p.x; 
-	AB.y = l1.q.y - l1.p.y;
-	point AD;
-	AD.x = l2.q.x - l1.p.x; 
-	AD.y = l2.q.y - l1.p.y;
-	double AC_AB = AC.x*AB.y - AC.y*AB.x;
-	double AD_AB = AD.x*AB.y - AD.y*AB.x;
-	if(AC_AB*AD_AB < 0){
-		//point A = l2.p; point B = l2.q;
-		//point C = l1.p; point D = l1.q;
-		AC.x = l1.p.x - l2.p.x; 
-		AC.y = l1.p.y - l2.p.y;
-		
-		AB.x = l2.q.x - l2.p.x; 
-		AB.y = l2.q.y - l2.p.y;
-		
-		AD.x = l1.q.x - l2.p.x; 
-		AD.y = l1.q.y - l2.p.y;
-		AC_AB = AC.x*AB.y - AC.y*AB.x;
-		AD_AB = AD.x*AB.y - AD.y*AB.x;
-		if(AC_AB*AD_AB < 0){
-			return 1; //cut through
-		}
-	}
-	return 0;
-
-}
-
-
-int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
-{
-	int i, j, c = 0;
-	int nEdges = polygon.size();
-	double min = INT64_MAX;
-	for(int i = 0; i < nEdges; i++){
-		if(OyDirection){
-			if(polygon[i].p.y < min){
-					min = polygon[i].p.y;
-			}
-		}
-		else{
-			if(polygon[i].p.x < min){
-					min = polygon[i].p.x;
-			}
-		}
-	}
-	min--;
-
-	point pA(testx, testy);
-	point pB(min, min);
-	if(OyDirection){
-		pB.x = testx;
-	}
-	else{
-		pB.y = testy;
-	}
-
-	lineSegment line;
-	line.p = pA;
-	line.q = pB;
-
-	int result = 0;
-
-	for(size_t j = 0; j < polygon.size();j++){
-		result += cutThrough(line,polygon[j]);
-	}
-
-	return result;
-}
-
-
-bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
-	double x;
-	double y;
-	bool OyDirection = true;
-	if(line.p.x == line.q.x){
-		OyDirection = false;
-	}
-
-	for(int i = 0; i < polygons.size(); i++){
-
-		//middlePoint(line.p, line.q, polygons[i], &x, &y);
-		x = (line.p.x + line.q.x)/2; y = (line.p.y + line.q.y)/2;
-		if(x != FLT_MAX && y != FLT_MAX){
-			int c = pnpoly(polygons[i], x, y, OyDirection);
-			if(c % 2 == 1)
-				return true;
-		}
-	}
-	return false;
-}
-
-
-//Take a line segment and returns 1 if the line cuts through any polygon
-int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
-	int result = 0;
-	for(size_t i = 0; i < polygons.size();i++){
-		int numberOfvaolation=0;
-		for(size_t j=0;j<polygons[i].size();j++){
-			result += cutThrough(l,polygons[i][j]);
-		}
-	}
-	return result;
-}
-
 
 
 //Implementation of dijkstra
@@ -459,3 +346,5 @@ void getData(int *numOfStacks, int *rowsInStack, int *columnsInStack,
 			*lengthOfAV <= 2*(*widthOfAV));
 	
 }
+
+#endif
