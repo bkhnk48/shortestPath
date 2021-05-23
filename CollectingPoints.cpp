@@ -36,12 +36,6 @@ class CollectingPoints{
 
         }
 
-        void Error (char *str)
-        { 
-            printf("\nERROR: %s\n", str);
-            return;
-        }
-
         vector<point> assignValueToMatrix(double  **PATHS, int **ROUTE2, double  *SHORTEST_PATH, double  *VISITED, vector<int> route, vector<point> & points, 
                                     vector<lineSegment> group){
 
