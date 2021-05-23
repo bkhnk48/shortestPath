@@ -236,16 +236,13 @@ int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirec
 	int result = 0;
 
 	for(size_t j = 0; j < polygon.size();j++){
-		if(i == 0 && j == 7){
-			//cout<<"debug"<<endl;
-		}
 		result += cutThrough(line,polygon[j]);
 	}
 
 	return result;
 }
 
-void middlePoint(point pA, point pB, vector<lineSegment> aPolygon, double *x, double *y){
+/*void middlePoint(point pA, point pB, vector<lineSegment> aPolygon, double *x, double *y){
 	double delta = max(abs(pA.x - pB.x), abs(pA.y - pB.y));
 	double tempX = pA.x;
 	double tempY= pA.y;
@@ -259,7 +256,7 @@ void middlePoint(point pA, point pB, vector<lineSegment> aPolygon, double *x, do
 			if((*x == aPolygon.at(i).p.x && 
 				*x == aPolygon.at(i).q.x) ||
 				(*y == aPolygon.at(i).p.y &&
-				*y == aPolygon.at(i).p.x)
+				*y == aPolygon.at(i).q.y)
 				){
 					existed = true;
 					break;
@@ -277,7 +274,7 @@ void middlePoint(point pA, point pB, vector<lineSegment> aPolygon, double *x, do
 		*x = FLT_MAX;
 		*y = FLT_MAX;
 	}
-}
+}*/
 
 bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 	double x;
@@ -289,7 +286,8 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 
 	for(int i = 0; i < polygons.size(); i++){
 
-		middlePoint(line.p, line.q, polygons[i], &x, &y);
+		//middlePoint(line.p, line.q, polygons[i], &x, &y);
+		x = (line.p.x + line.q.x)/2; y = (line.p.y + line.q.y)/2;
 		if(x != FLT_MAX && y != FLT_MAX){
 			int c = pnpoly(polygons[i], x, y, OyDirection);
 			if(c % 2 == 1)
@@ -306,9 +304,6 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 	for(size_t i = 0; i < polygons.size();i++){
 		int numberOfvaolation=0;
 		for(size_t j=0;j<polygons[i].size();j++){
-			if(i == 0 && j == 7){
-				//cout<<"debug"<<endl;
-			}
 			result += cutThrough(l,polygons[i][j]);
 		}
 	}
