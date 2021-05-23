@@ -72,7 +72,7 @@ class PlanningController{
             //if(config.printGraph)
             {
                 getRawRoute(rawRoute, route, points);
-                echo(rawRoute, polygons);
+                echo(rawRoute, polygons, route);
                 draw("test/test.svg", start,end, polygons,distance,points,route,graph);
                 return vector<point>();	
             }
@@ -106,7 +106,7 @@ class PlanningController{
             }
         }
 
-        void echo(RawRoute* r, vector< vector< lineSegment> > polygons){
+        void echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route){
             vector<lineSegment> group;
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
@@ -135,6 +135,14 @@ class PlanningController{
             for(int  i = 0; i < group.size();  i++){
                 cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
             }
+            
+            int  **PATHS     = (int**)  NULL;  //edgelerin uzunluklari
+            int **ROUTE2     = (int**) NULL;   //ROUTE mizi belirleriz
+            int  *SHORTEST_PATH       = (int*)   NULL;  //o vertex in baslangica en kisa yolu
+            int  *VISITED = (int*)   NULL;   
+
+            CollectingPoints* collectionPoints = new CollectingPoints();
+            collectionPoints->buildAdjMatrix(route.size(), PATHS, ROUTE2, SHORTEST_PATH, VISITED);
         }
 };
 
