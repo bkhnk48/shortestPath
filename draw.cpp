@@ -139,14 +139,7 @@ string drawRoute(vector<int> & route,vector<point> & points){
 	return str;
 }
 
-void getRawRoute(RawRoute* rawRoute, vector<int> & route,vector<point> & points){
-	int current = route.size()-1;
-	while(current != -1){
-		point p = points[current%points.size()];
-		current = route[current];
-		rawRoute->insert(p);
-	}
-}
+
 
 string drawPoint(point &p,string color){
 	string str = "<circle cx='";
@@ -361,7 +354,7 @@ void echo(RawRoute* r, vector< vector< lineSegment> > polygons){
 	}
 }
 
-void draw(string file_name, RawRoute* rawRoute, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<int> &route,vector< vector<int> >graph){
+void draw(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<int> &route,vector< vector<int> >graph){
 	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
 	string str2 = "<svg viewBox='"; //+ 
 	str2.append(std::to_string(10*min_x-5));
@@ -383,7 +376,6 @@ void draw(string file_name, RawRoute* rawRoute, point & start, point & end, vect
 	//str1 = str1 + drawTitle(testTitle,distance);
 	str1 = str1 + drawGraph(graph,points);
 	if(distance!=-1 && config.drawRoute){ 
-		getRawRoute(rawRoute, route, points);
 		str1 = str1 + drawRoute(route, points);
 	}
 	str1 = str1 + "</svg>\n";
