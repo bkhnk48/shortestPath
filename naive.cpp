@@ -200,7 +200,7 @@ int cutThrough(lineSegment l1, lineSegment l2){
 }
 
 
-//Take a line segment and returns the number of polygon it cut through
+//Take a line segment and returns 1 if the line cuts through any polygon
 int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
 	
 	for(size_t i = 0; i < polygons.size();i++){
