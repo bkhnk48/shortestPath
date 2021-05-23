@@ -34,16 +34,16 @@ class PlanningController{
 
                 for(int j = i + 2; j < r->points.size(); j++){
                     point p2 = r->points.at(j);
-                    if(p1.x == 6 && p1.y == 36 && p2.x == 10 && p2.y == 30){
-                        //cout<<"DEBUG";
-                    }
+                    //cout<<"Loop at here i = "<<i<<" j = "<<j<<endl;
                     lineSegment l;
                     l.p = p1;
                     l.q = p2;
                     
                     int crossing = numberOfCuttingThrough(polygons,l);
                     if(crossing == 0){
-                        group.push_back(l);
+                        if(!insidePolygon(l, polygons)){
+                            group.push_back(l);
+                        }
                     }
                     else{
                         cout<<"("<<l.p.x<<", "<<l.p.y<<") => ("
@@ -52,6 +52,9 @@ class PlanningController{
                 }
             }
             cout<<"size of group "<<group.size()<<endl;
+            for(int  i = 0; i < group.size();  i++){
+                cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<"=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
+            }
         }
 
         vector<point> getTrajectory(vector<point> points, vector< vector< lineSegment> > polygons, point start, point end){
