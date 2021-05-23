@@ -7,6 +7,7 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
+#include <float.h>
 
 
 //So we don't need to write std:: everywhere
@@ -200,21 +201,118 @@ int cutThrough(lineSegment l1, lineSegment l2){
 }
 
 
+int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
+{
+	int i, j, c = 0;
+	int nEdges = polygon.size();
+	double min = INT64_MAX;
+	for(int i = 0; i < nEdges; i++){
+		if(OyDirection){
+			if(polygon[i].p.y < min){
+					min = polygon[i].p.y;
+			}
+		}
+		else{
+			if(polygon[i].p.x < min){
+					min = polygon[i].p.x;
+			}
+		}
+	}
+	min--;
+
+	point pA(testx, testy);
+	point pB(min, min);
+	if(OyDirection){
+		pB.x = testx;
+	}
+	else{
+		pB.y = testy;
+	}
+
+	lineSegment line;
+	line.p = pA;
+	line.q = pB;
+
+	int result = 0;
+
+	for(size_t j = 0; j < polygon.size();j++){
+		if(i == 0 && j == 7){
+			//cout<<"debug"<<endl;
+		}
+		result += cutThrough(line,polygon[j]);
+	}
+
+	return result;
+}
+
+void middlePoint(point pA, point pB, vector<lineSegment> aPolygon, double *x, double *y){
+	double delta = max(abs(pA.x - pB.x), abs(pA.y - pB.y));
+	double tempX = pA.x;
+	double tempY= pA.y;
+	
+	bool existed = false;
+	bool found = false;
+	while(delta >= 1){
+		*x = (tempX + pB.x)/2;
+		*y = (tempY + pB.y)/2;
+		for(int i = 0; i < aPolygon.size(); i++){
+			if((*x == aPolygon.at(i).p.x && 
+				*x == aPolygon.at(i).q.x) ||
+				(*y == aPolygon.at(i).p.y &&
+				*y == aPolygon.at(i).p.x)
+				){
+					existed = true;
+					break;
+				}
+		}
+		if(!existed){
+			found = true;
+			break;
+		}
+		tempX = *x;
+		tempY = *y;
+		delta = max(abs(tempX - pB.x), abs(tempY - pB.y));
+	}
+	if(!found){
+		*x = FLT_MAX;
+		*y = FLT_MAX;
+	}
+}
+
+bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
+	double x;
+	double y;
+	bool OyDirection = true;
+	if(line.p.x == line.q.x){
+		OyDirection = false;
+	}
+
+	for(int i = 0; i < polygons.size(); i++){
+
+		middlePoint(line.p, line.q, polygons[i], &x, &y);
+		if(x != FLT_MAX && y != FLT_MAX){
+			int c = pnpoly(polygons[i], x, y, OyDirection);
+			if(c % 2 == 1)
+				return true;
+		}
+	}
+	return false;
+}
+
+
 //Take a line segment and returns 1 if the line cuts through any polygon
 int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
-	
+	int result = 0;
 	for(size_t i = 0; i < polygons.size();i++){
 		int numberOfvaolation=0;
 		for(size_t j=0;j<polygons[i].size();j++){
 			if(i == 0 && j == 7){
 				//cout<<"debug"<<endl;
 			}
-			int result = cutThrough(l,polygons[i][j]);
-			if(result == 1)
-				return 1;	
+			result += cutThrough(l,polygons[i][j]);
 		}
 	}
-	return 0;
+	return result;
 }
 
 
