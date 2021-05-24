@@ -35,6 +35,7 @@ class BuildingPolygons{
         point d0, d1, d2, d3;
         point delta[4];
         
+        
         queue<Slot> ongoingCheckedSlots;
        
         
@@ -85,6 +86,7 @@ class BuildingPolygons{
         //vector<lineSegment> edges;
         vector< vector<lineSegment> > polygons;
         vector<point> points;
+        int NUMBER_STACKS;
         //int** checkedPoints;
         
         //vector<point> fourVertecies;
