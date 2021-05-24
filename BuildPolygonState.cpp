@@ -105,7 +105,7 @@ class BuildingPolygons{
         
         //vector<point> fourVertecies;
         
-        void check(int** arrayOfAVs, int r0, int c0){
+        void getRawRouting(int** arrayOfAVs, int r0, int c0){
             
             for(int i = r0; i < ROWS; i++){
                 for(int j = c0; j < COLUMNS; j++){
