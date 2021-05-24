@@ -111,18 +111,21 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 						printf("Type the gate number: ");
 						input = scanf("%d", &gateNumber);
 						if(input != EOF && gateNumber >= 1 && gateNumber <= 4){
-							printf("Do you want to enter (R) or exit (X)?");
+							printf("Do you want to get in (I) or get out (O)?");
 							char Mode;
 							input = scanf("%c", &Mode);
-							if(input != EOF && (Mode == 'R' || Mode == 'X')){
+							if(input != EOF && (Mode == 'I' || Mode == 'O')){
 								
-								if(Mode == 'R'){
+								if(Mode == 'I'){
 									point end = generator->getPositionInGate(gateNumber, numOfStacks, true);
 									plan->getTrajectory(generator->points, generator->polygons, start, end);
 								}
 								else{
 									point end = generator->getPositionInGate(gateNumber, numOfStacks, false);
 									plan->getTrajectory(generator->points, generator->polygons, end, start);
+
+
+									
 								}
 							}
 							else{
