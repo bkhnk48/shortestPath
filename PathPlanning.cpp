@@ -155,59 +155,6 @@ class PlanningController{
 };
 
 
-/*class CollectingPoints{
 
-    public:
-        CollectingPoints(){
-
-        }
-
-        void Error (char *str)
-        { 
-            printf("\nERROR: %s\n", str);
-            return;
-        }
-
-        void buildAdjMatrix(int N, int  **PATHS, int **ROUTE2, int  *SHORTEST_PATH, int  *VISITED){
-            int vertexNum = N;
-            //mallocations dynamicly and check for errors 
-
-            SHORTEST_PATH = MALLOC( int , vertexNum );
-            
-
-            VISITED = MALLOC( int , vertexNum );
-            
-
-            PATHS = MALLOC2D( int , vertexNum );
-            
-
-            ROUTE2 = MALLOC2D( int , vertexNum );
-            
-            for(int i=0; i < vertexNum; i++)
-            {
-                PATHS[i] =  MALLOC( int , vertexNum );
-
-                ROUTE2[i] = MALLOC( int , vertexNum );
-
-                //say that Y is empty
-                VISITED[i] = 0; 
-
-                //set the paths as very long 
-                SHORTEST_PATH[i] = MAX_INT;
-
-            }
-
-        }
-
-        void assignValueToMatrix(int N, int  **PATHS, int **ROUTE2, vector<int> route){
-            int current = route.size()-1;
-            while(current != -1){
-                point p = points[current % points.size()];
-                
-                cout<<"\nroute["<<current<<"] = "<<route[current]<<" => ("<<p.x<<", "<<p.y<<")";
-                current = route[current];
-            }
-        }
-};*/
 
 #endif
