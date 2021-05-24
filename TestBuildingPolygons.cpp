@@ -70,20 +70,85 @@ void testFullAVsInStacks(){
 			}
 		}
 	}
-	assert(ones == 0);
+	//assert(ones == 0);
 
 	//assert(generator->polygons.size() == 2);
 
-	point start = generator->getSlot(0, 0);
+	
+	
+
+	
 	//cout<<"\nstart: "<<start.x<<", "<<start.y<<endl;
-	point end = generator->getPositionInGate(3, numOfStacks, false);
+	
 	//point end(8, 0);
 	//cout<<"End: "<<end.x<<", "<<end.y<<endl;
 
-	PlanningController* plan = new PlanningController();
-	plan->getTrajectory(generator->points, generator->polygons, start, end);
+	
 
 	
+}
+
+void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int columnsInStack, BuildingPolygons* generator){
+
+	int i = 0, j = 0, indexOfStack = 0;
+	int gateNumber = 0;
+	bool stopInput = false;
+	int input;
+	PlanningController* plan = new PlanningController();
+	while(!stopInput && countAllStacks(stacks, numOfStacks, rowsInStack, columnsInStack) == 0){
+		printf("Type the number of stack: ");
+		input = scanf("%d", &indexOfStack);
+		if(input != EOF && indexOfStack >= 0 && indexOfStack < numOfStacks){
+
+			printf("Type the row index of AV: ");
+			input = scanf("%d", &i);
+			if(input != EOF && i >= 0 && i < rowsInStack){
+				printf("Type the column index of AV: ");
+				input = scanf("%d", &j);
+				if(input != EOF && j >= 0 && j < columnsInStack){
+					if(stacks[indexOfStack].slotsOfAV[i][j] == 1){
+						point start = generator->getSlot(indexOfStack, i, j);
+						printf("Type the gate number: ");
+						input = scanf("%d", &gateNumber);
+						if(input != EOF && gateNumber >= 1 && gateNumber <= 4){
+							printf("Do you want to enter (R) or exit (X)?");
+							char Mode;
+							input = scanf("%c", &Mode);
+							if(input != EOF && (Mode == 'R' || Mode == 'X')){
+								
+								if(Mode == 'R'){
+									point end = generator->getPositionInGate(gateNumber, numOfStacks, true);
+									plan->getTrajectory(generator->points, generator->polygons, start, end);
+								}
+								else{
+									point end = generator->getPositionInGate(gateNumber, numOfStacks, false);
+									plan->getTrajectory(generator->points, generator->polygons, end, start);
+								}
+							}
+							else{
+								break;
+							}
+						}
+						else{
+							break;
+						}
+						
+					}
+				}
+				else{
+					break;
+				}
+			}
+			else{
+				break;
+			}
+		}
+		else{
+			break;
+		}
+	}
+
+	cout<<"Finish choosing path of AVs"<<endl;
 }
 
 
