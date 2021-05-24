@@ -75,10 +75,10 @@ void testFullAVsInStacks(){
 	//assert(generator->polygons.size() == 2);
 
 	point start = generator->getSlot(0, 0);
-	cout<<"\nstart: "<<start.x<<", "<<start.y<<endl;
+	//cout<<"\nstart: "<<start.x<<", "<<start.y<<endl;
 	point end = generator->getPositionInGate(3, numOfStacks, false);
 	//point end(8, 0);
-	cout<<"End: "<<end.x<<", "<<end.y<<endl;
+	//cout<<"End: "<<end.x<<", "<<end.y<<endl;
 
 	PlanningController* plan = new PlanningController();
 	plan->getTrajectory(generator->points, generator->polygons, start, end);
