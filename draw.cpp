@@ -346,43 +346,6 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 
 
 
-/*
-void draw(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<int> &route,vector< vector<int> >graph){
-	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
-	string str2 = "<svg viewBox='"; //+ 
-	str2.append(std::to_string(10*min_x-5));
-	str2.append(" ");
-	str2.append(std::to_string(-10*max_y-15));
-	str2.append(" ");
-	str2.append(std::to_string((abs(min_x)+abs(max_x))*10+10));
-	str2.append(" ");
-	str2.append(std::to_string((abs(min_y)+abs(max_y))*10+20));
-	str2.append("' xmlns='http://www.w3.org/2000/svg' version='1.1'>\n");
-
-	str1 = str1 + str2;
-
-	str1 = str1 + drawPolygons(polygons);
-
-	str1 = str1 + drawPoint(start,"#FFA500");
-	str1 = str1 + drawPoint(end,"green");
-
-	//str1 = str1 + drawTitle(testTitle,distance);
-	str1 = str1 + drawGraph(graph,points);
-	if(distance!=-1 && config.drawRoute){ 
-		str1 = str1 + drawRoute(route, points);
-	}
-	str1 = str1 + "</svg>\n";
-	std::ofstream ofs(file_name.c_str());
-	if (!ofs.good())
-		cout<<"Could not write data to "<<file_name;
-
-	ofs << str1;
-	ofs.close();
-}
-*/
-
-
-
 void drawShortestPath(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<point> &route,vector< vector<int> >graph){
 	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
 	string str2 = "<svg viewBox='"; //+ 
