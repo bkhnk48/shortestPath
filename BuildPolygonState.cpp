@@ -22,7 +22,7 @@ class BuildingPolygons{
     private:
         int WIDTH;
         int LENGTH; 
-        point pA, pB, pC, pD;
+        
         vector<point> checkedPoints;
         //Create vector for containing the points of the polygons
 	    
@@ -37,23 +37,7 @@ class BuildingPolygons{
         
         queue<Slot> ongoingCheckedSlots;
        
-
-        void getFourVertecies(int indexRow, int indexCol){
-            int xCenter = indexCol*WIDTH + this->cordX0;
-            int yCenter = -indexRow*LENGTH + this->cordY0;
-            
-            pA.x = xCenter - (WIDTH/2);
-            pA.y = yCenter + (LENGTH/2);
-
-            pB.x = xCenter + (WIDTH/2);
-            pB.y = yCenter + (LENGTH/2);
-
-            pC.x = xCenter + (WIDTH/2);
-            pC.y = yCenter - (LENGTH/2);
-
-            pD.x = xCenter - (WIDTH/2);
-            pD.y = yCenter - (LENGTH/2);
-        }
+        
 
         void getNeighborByIndex(int** arrayOfAVs, int index, int r, int c){
             int x = r; int y = c;
@@ -104,8 +88,27 @@ class BuildingPolygons{
         //int** checkedPoints;
         
         //vector<point> fourVertecies;
+
+        point pA, pB, pC, pD;
+        void getFourVertecies(int indexOfStack, int indexRow, int indexCol){
+            int deltaY = indexOfStack*ROWS*LENGTH;
+            int xCenter = indexCol*WIDTH + this->cordX0;
+            int yCenter = -indexRow*LENGTH + this->cordY0 - deltaY;
+            
+            pA.x = xCenter - (WIDTH/2);
+            pA.y = yCenter + (LENGTH/2);
+
+            pB.x = xCenter + (WIDTH/2);
+            pB.y = yCenter + (LENGTH/2);
+
+            pC.x = xCenter + (WIDTH/2);
+            pC.y = yCenter - (LENGTH/2);
+
+            pD.x = xCenter - (WIDTH/2);
+            pD.y = yCenter - (LENGTH/2);
+        }
         
-        void getRawPolygons(int** arrayOfAVs){
+        void getRawPolygons(int indexOfStack, int** arrayOfAVs){
             
             int r0 = 0, c0 = 0;
             for(int i = r0; i < ROWS; i++){
@@ -119,7 +122,7 @@ class BuildingPolygons{
                         highest = INT64_MIN;
                         while(!ongoingCheckedSlots.empty()){
                             Slot temp = ongoingCheckedSlots.front();
-                            getFourVertecies(temp.row, temp.column);
+                            getFourVertecies(indexOfStack, temp.row, temp.column);
                             insertNonExistedPoints(arrayOfAVs, temp);
                             insertNeighborSlots(arrayOfAVs, temp);
                             ongoingCheckedSlots.pop();
@@ -417,7 +420,6 @@ class BuildingPolygons{
         }
 
         
-
 };
 
 #endif
