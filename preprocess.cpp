@@ -132,7 +132,7 @@ int countAVs(int** arrayOfAVs, int rowsInStack, int columnsInStack){
 	int count = 0;
 	for(int i = 0; i < rowsInStack; i++){
 		for(int j = 0; j < columnsInStack; j++){
-			if(arrayOfAVs[i][j] == 1){
+			if(arrayOfAVs[i][j] == 1 || arrayOfAVs[i][j] == -1 ){
 				count++;
 			}
 		}
