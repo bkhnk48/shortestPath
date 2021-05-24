@@ -33,7 +33,7 @@ void testFullAVsInStacks(){
 	stacks = (K_Stack *)malloc(numOfStacks*sizeof(K_Stack));
 	stacks->k = numOfStacks;
 	buildStack(stacks, numOfStacks, rowsInStack, columnsInStack);
-	stacks[0].slotsOfAV[0][0] = 0;	stacks[0].slotsOfAV[0][1] = 0;  stacks[0].slotsOfAV[0][3] = 0;  stacks[0].slotsOfAV[0][4] = 0;  
+	/*stacks[0].slotsOfAV[0][0] = 0;*/	stacks[0].slotsOfAV[0][1] = 0;  stacks[0].slotsOfAV[0][3] = 0;  stacks[0].slotsOfAV[0][4] = 0;  
 																				stacks[0].slotsOfAV[0][6] = 0;  stacks[0].slotsOfAV[0][7] = 0;
 
 	stacks[0].slotsOfAV[1][3] = 0;	stacks[0].slotsOfAV[1][6] = 0;  stacks[0].slotsOfAV[1][7] = 0;	
@@ -59,7 +59,7 @@ void testFullAVsInStacks(){
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
 	BuildingPolygons* generator = new BuildingPolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
-	generator->getRawPolygons(stacks[0].slotsOfAV);
+	generator->getRawPolygons(0, stacks[0].slotsOfAV);
 	
 	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
 
@@ -93,21 +93,27 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 	PlanningController* plan = new PlanningController();
 	while(!stopInput && countAllStacks(stacks, numOfStacks, rowsInStack, columnsInStack) > 0){
 		stopInput = true;
+		fflush(stdin);
 		printf("Type the number of stack: ");
 		input = scanf("%d", &indexOfStack);
 		if(input != EOF && indexOfStack >= 0 && indexOfStack < numOfStacks){
-
+			fflush(stdin);
 			printf("Type the row index of AV: ");
 			input = scanf("%d", &i);
 			if(input != EOF && i >= 0 && i < rowsInStack){
+				fflush(stdin);
 				printf("Type the column index of AV: ");
 				input = scanf("%d", &j);
 				if(input != EOF && j >= 0 && j < columnsInStack){
-					if(stacks[indexOfStack].slotsOfAV[i][j] == 1){
+					if(stacks[indexOfStack].slotsOfAV[i][j] == 1 ||
+						stacks[indexOfStack].slotsOfAV[i][j] == -1
+						){
 						point slot = generator->getSlot(indexOfStack, i, j);
+						fflush(stdin);
 						printf("Type the gate number: ");
 						input = scanf("%d", &gateNumber);
 						if(input != EOF && gateNumber >= 1 && gateNumber <= 4){
+							fflush(stdin);
 							printf("Do you want to get in (I) or get out (O)?");
 							char Mode;
 							input = scanf("%c", &Mode);
@@ -120,6 +126,8 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 								}
 								else{
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, false);
+
+
 									plan->getTrajectory(generator->points, generator->polygons, slot, gate);
 
 
@@ -127,24 +135,32 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 								}
 							}
 							else{
+								cout<<"Wrong mode! (Only I or O)"<<endl;
 								break;
 							}
 						}
 						else{
+							cout<<"Wrong number of gate (only 1-4)!"<<endl;
 							break;
 						}
 						
 					}
+					else{
+						cout<<"No AV over there"<<endl;
+					}
 				}
 				else{
+					cout<<"Wrong value of column!"<<endl;
 					break;
 				}
 			}
 			else{
+				cout<<"Wrong value of row!"<<endl;
 				break;
 			}
 		}
 		else{
+			cout<<"Wrong index of stack!"<<endl;
 			break;
 		}
 	}
@@ -155,4 +171,5 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 
 int main(int argc, const char* argv[]){
 	testFullAVsInStacks();
+	return 0;
 }
