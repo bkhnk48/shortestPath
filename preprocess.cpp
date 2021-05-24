@@ -140,6 +140,18 @@ int countAVs(int** arrayOfAVs, int rowsInStack, int columnsInStack){
 	return count;
 }
 
+int countAllStacks(K_Stack *stacks, 
+			int numOfStacks, int rowsInStack, int columnsInStack){
+	int sum = 0;
+	int AVsInAStack = 0;
+	for(int i = 0; i < numOfStacks; i++){
+
+		AVsInAStack = countAVs(stacks[i].slotsOfAV, rowsInStack, columnsInStack);
+		sum += AVsInAStack;
+	}
+	return sum;
+}
+
 void readKStacks(vector< vector< lineSegment> > &polygons, K_Stack *stacks, 
 			int numOfStacks, int rowsInStack, int columnsInStack){
 	
