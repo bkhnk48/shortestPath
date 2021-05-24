@@ -105,8 +105,9 @@ class BuildingPolygons{
         
         //vector<point> fourVertecies;
         
-        void getRawRouting(int** arrayOfAVs, int r0, int c0){
+        void getRawRouting(int** arrayOfAVs){
             
+            int r0 = 0, c0 = 0;
             for(int i = r0; i < ROWS; i++){
                 for(int j = c0; j < COLUMNS; j++){
                     if(arrayOfAVs[i][j] == 1){//Tim thay mot diem chua thuoc polygon nao ca
