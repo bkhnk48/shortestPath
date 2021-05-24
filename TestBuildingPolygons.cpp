@@ -19,6 +19,8 @@
 //So we don't need to write std:: everywhere
 using namespace std;
 
+void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int columnsInStack, BuildingPolygons* generator);
+
 void testFullAVsInStacks(){
     int numOfStacks = 1; 
 	int rowsInStack = 6;
@@ -70,6 +72,8 @@ void testFullAVsInStacks(){
 			}
 		}
 	}
+
+	getPathPlanning(stacks, numOfStacks, rowsInStack, columnsInStack, generator);
 	//assert(ones == 0);
 
 	//assert(generator->polygons.size() == 2);
@@ -87,7 +91,8 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 	bool stopInput = false;
 	int input;
 	PlanningController* plan = new PlanningController();
-	while(!stopInput && countAllStacks(stacks, numOfStacks, rowsInStack, columnsInStack) == 0){
+	while(!stopInput && countAllStacks(stacks, numOfStacks, rowsInStack, columnsInStack) > 0){
+		stopInput = true;
 		printf("Type the number of stack: ");
 		input = scanf("%d", &indexOfStack);
 		if(input != EOF && indexOfStack >= 0 && indexOfStack < numOfStacks){
@@ -99,7 +104,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 				input = scanf("%d", &j);
 				if(input != EOF && j >= 0 && j < columnsInStack){
 					if(stacks[indexOfStack].slotsOfAV[i][j] == 1){
-						point start = generator->getSlot(indexOfStack, i, j);
+						point slot = generator->getSlot(indexOfStack, i, j);
 						printf("Type the gate number: ");
 						input = scanf("%d", &gateNumber);
 						if(input != EOF && gateNumber >= 1 && gateNumber <= 4){
@@ -108,13 +113,14 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 							input = scanf("%c", &Mode);
 							if(input != EOF && (Mode == 'I' || Mode == 'O')){
 								
+								stopInput = false;
 								if(Mode == 'I'){
-									point end = generator->getPositionInGate(gateNumber, numOfStacks, true);
-									plan->getTrajectory(generator->points, generator->polygons, start, end);
+									point gate = generator->getPositionInGate(gateNumber, numOfStacks, true);
+									plan->getTrajectory(generator->points, generator->polygons, gate, slot);
 								}
 								else{
-									point end = generator->getPositionInGate(gateNumber, numOfStacks, false);
-									plan->getTrajectory(generator->points, generator->polygons, end, start);
+									point gate = generator->getPositionInGate(gateNumber, numOfStacks, false);
+									plan->getTrajectory(generator->points, generator->polygons, slot, gate);
 
 
 
