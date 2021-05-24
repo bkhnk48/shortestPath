@@ -57,7 +57,7 @@ void testFullAVsInStacks(){
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
 	BuildingPolygons* generator = new BuildingPolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
-	generator->getRawRouting(stacks[0].slotsOfAV);
+	generator->getRawPolygons(stacks[0].slotsOfAV);
 	
 	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
 
@@ -73,18 +73,10 @@ void testFullAVsInStacks(){
 	//assert(ones == 0);
 
 	//assert(generator->polygons.size() == 2);
-
-	
-	
-
-	
 	//cout<<"\nstart: "<<start.x<<", "<<start.y<<endl;
 	
 	//point end(8, 0);
 	//cout<<"End: "<<end.x<<", "<<end.y<<endl;
-
-	
-
 	
 }
 
