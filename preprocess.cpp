@@ -8,8 +8,8 @@
 #include <tuple> //get<n> make_tuple
 #include <chrono>
 #include <stdio.h>
-#include "BuildPolygonState.cpp"
-
+//#include "BuildPolygonState.cpp"
+#include "RefinePolygons.cpp"
 
 #ifndef _PREPROCESS_
 #define _PREPROCESS_
