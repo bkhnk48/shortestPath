@@ -375,9 +375,10 @@ class BuildingPolygons{
             highest = INT64_MIN;
         }
 
-        point getSlot(int indexRow, int indexCol){
+        point getSlot(int indexOfStack, int indexRow, int indexCol){
+            int deltaY = indexOfStack*ROWS*LENGTH;
             int xCenter = indexCol*WIDTH + this->cordX0;
-            int yCenter = -indexRow*LENGTH + this->cordY0;
+            int yCenter = -indexRow*LENGTH + this->cordY0 - deltaY;
             point p(xCenter, yCenter);
             return p;
         }
@@ -413,6 +414,9 @@ class BuildingPolygons{
             point p(x, y);
             return p;
         }
+
+        
+
 };
 
 #endif
