@@ -126,7 +126,7 @@ class BuildingPolygons{
                         }
                         //cout<<"size of checked points: "<<checkedPoints.size()<<endl;
                         drawLineSegmentsOfPolygon(arrayOfAVs);
-                        cout<<"\n\n"<<endl;
+                        //cout<<"\n\n"<<endl;
                     }
                 }
             }
@@ -226,7 +226,7 @@ class BuildingPolygons{
 
                 for (int i = 0; i < edges.size(); i++){
                     lineSegment line = edges.at(i);
-                    cout<<"("<<line.p.x<<", "<<line.p.y<<") => ("<<line.q.x<<", "<<line.q.y<<") | ";
+                    //cout<<"("<<line.p.x<<", "<<line.p.y<<") => ("<<line.q.x<<", "<<line.q.y<<") | ";
                     point vertex(line.p.x, line.p.y);
                     points.push_back(vertex);
                     //edges.erase(edges.begin());
