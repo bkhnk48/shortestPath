@@ -141,9 +141,9 @@ class PlanningController{
                 }
             }
             //cout<<"\nsize of group "<<group.size()<<endl;
-            for(int  i = 0; i < group.size();  i++){
-                cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
-            }
+            //for(int  i = 0; i < group.size();  i++){
+            //    cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
+            //}
             
             double  **PATHS     = (double**)  NULL;  //edgelerin uzunluklari
             int **ROUTE2     = (int**) NULL;   //ROUTE mizi belirleriz
@@ -158,6 +158,10 @@ class PlanningController{
 
     private:
         int nmrMovement = 0;
+
+        void stayAwayFromEdges(){
+
+        }
 };
 
 
