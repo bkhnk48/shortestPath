@@ -58,7 +58,7 @@ void testFullAVsInStacks(){
     //vector< vector< lineSegment> > polygons;
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
-	BuildingPolygons* generator = new BuildingPolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
+	BuildingPolygons* generator = new RefinePolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
 	generator->NUMBER_STACKS = numOfStacks;
 	generator->getRawPolygons(0, stacks[0].slotsOfAV);
 	
@@ -127,7 +127,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 								}
 								else{
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, false);
-
+									generator->removeEdgesAndVertices(indexOfStack, i, j);
 
 									plan->getTrajectory(generator->points, generator->polygons, slot, gate);
 
