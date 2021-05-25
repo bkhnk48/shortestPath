@@ -92,7 +92,11 @@ struct lineSegment {
 	bool operator==(const lineSegment &other) const {
 		return (this->p==other.p && this->q==other.q) ||
 		(this->p==other.q && this->q==other.p);
-  }
+  	}
+
+	bool contains(point c){
+		return (c == p) || (c == q); 
+	}
 };
 
 double max_y,max_x,min_y,min_x;
