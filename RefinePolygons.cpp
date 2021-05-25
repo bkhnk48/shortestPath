@@ -27,13 +27,7 @@ class RefinePolygons : public BuildingPolygons{
 
         }
 
-        /*auto removeByIndex = 
-        []<class T>(std::vector<T> &vec, unsigned int index)
-        {
-            vec.erase(vec.begin() + index);
-        };*/
-
-        void removeByPoint(point p){
+        void removePoint(point p){
             int index = 0;
             bool found = false;
             for(int i = 0; i < this->points.size(); i++){
@@ -110,7 +104,7 @@ class RefinePolygons : public BuildingPolygons{
             int first = -1, last = -1, polygonIndex = -1;
             int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
             if(nmrSameVertices == 4){
-                removeByPoint(this->pA);
+                removePoint(this->pA);
             }
         }
 };
