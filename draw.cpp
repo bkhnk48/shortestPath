@@ -4,7 +4,7 @@
 #include <math.h>
 #include <vector> //vector
 #include <float.h>
-//#include <string.h>
+#include <string>
 //#include "RawRoute.cpp"
 //#include "naive.cpp"
 
