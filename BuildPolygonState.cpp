@@ -419,7 +419,10 @@ class BuildingPolygons{
             return p;
         }
 
+        //draw the polygon again as an AV is going to get out its slot.
         virtual void removeEdgesAndVertices(int indexOfStack, int row, int column) {}
+
+        
 };
 
 #endif
