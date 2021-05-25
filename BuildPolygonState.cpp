@@ -280,8 +280,6 @@ class BuildingPolygons{
                 index = 0;
                 //cout<<"Sz: "<<checkedPoints.size()<<" ";
                 for(index = 0; index < checkedPoints.size(); index++){
-                    //if(index == 28)
-                    //    cout<<"dsef ";
                     if(!(checkedPoints.at(index) == prev) && 
                         checkedPoints.at(index).x == current.x + delta[i].x
                         && checkedPoints.at(index).y == current.y + delta[i].y
@@ -324,7 +322,7 @@ class BuildingPolygons{
                 }
                 if(row1 == this->ROWS - 1)
                     return (arrayOfAVs[row1][col1] != 0);
-                //return (arrayOfAVs[row1][col1] != 0 || arrayOfAVs[row2][col2] != 0);
+                
                 return ((abs(arrayOfAVs[row1][col1]) ^ abs(arrayOfAVs[row2][col2])) == 1);
             }
             return false;
@@ -421,7 +419,7 @@ class BuildingPolygons{
             return p;
         }
 
-        
+        virtual void removeEdgesAndVertices(int indexOfStack, int row, int column) {}
 };
 
 #endif
