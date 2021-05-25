@@ -78,8 +78,11 @@ class PlanningController{
                     cout<<route.at(i)<<" ";
                 }
                 vector<point> shortestPath = echo(rawRoute, polygons, route, points);
-                //draw("test/test.svg", start,end, polygons,distance,points,route,graph);
-                drawShortestPath("test/test.svg", start,end, polygons,distance,points,shortestPath,graph);
+                string fileName = "test/test";
+                fileName += to_string(nmrMovement);
+                fileName += ".svg";
+                drawShortestPath(fileName, start,end, polygons,distance,points,shortestPath,graph);
+                nmrMovement++;
                 return vector<point>();	
             }
             
@@ -152,6 +155,9 @@ class PlanningController{
             vector<point> result = collectionPoints->assignValueToMatrix(PATHS, ROUTE2, SHORTEST_PATH, VISITED, route, points, group);
             return result;
         }
+
+    private:
+        int nmrMovement = 0;
 };
 
 
