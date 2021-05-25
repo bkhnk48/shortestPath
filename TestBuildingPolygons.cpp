@@ -123,16 +123,12 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 								stopInput = false;
 								if(Mode == 'I'){
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, true);
-									plan->getTrajectory(generator->points, generator->polygons, gate, slot);
+									plan->getTrajectory(generator, gate, slot);
 								}
 								else{
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, false);
 									generator->removeEdgesAndVertices(indexOfStack, i, j);
-
-									plan->getTrajectory(generator->points, generator->polygons, slot, gate);
-
-
-
+									plan->getTrajectory(generator, slot, gate);
 								}
 							}
 							else{
