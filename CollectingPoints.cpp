@@ -49,9 +49,9 @@ class CollectingPoints{
                 current = route[current];
             }
 
-            for(int  i = 0; i < trajectory.size();  i++){
-                cout<<"("<<trajectory.at(i).x<<", "<<trajectory.at(i).y<<")\n";
-            }
+            /*for(int  i = 0; i < trajectory.size();  i++){
+                cout<<"\n*("<<trajectory.at(i).x<<", "<<trajectory.at(i).y<<")";
+            }*/
 
             int vertexNum = trajectory.size();
             
