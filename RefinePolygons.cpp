@@ -27,11 +27,39 @@ class RefinePolygons : public BuildingPolygons{
 
         }
 
-        int countSharedVertices(int indexOfStack, int row, int column, int *first, int *last, int *stack){
+        /*auto removeByIndex = 
+        []<class T>(std::vector<T> &vec, unsigned int index)
+        {
+            vec.erase(vec.begin() + index);
+        };*/
+
+        void removeByPoint(point p){
+            int index = 0;
+            bool found = false;
+            for(int i = 0; i < this->points.size(); i++){
+                if(this->points.at(i) == p)
+                {
+                    index = i;
+                    found = true;
+                    break;
+                }
+            }
+            if(found){
+                this->points.erase(this->points.begin() + index);
+            }
+                //removeByIndex(this->points, index);
+
+        }
+
+        int countSharedVertices(int indexOfStack, int row, int column, int *first, int *last, int *polygonIndex){
             this->getFourVertecies(indexOfStack, row, column);
             bool found = false;
             //for(int i = 0; i < this->NUMBER_STACKS; i++)
             int count = 0;
+            sharedVertices[0] = false;
+            sharedVertices[1] = false;
+            sharedVertices[2] = false;
+            sharedVertices[3] = false;
             
             int prev = 0;
             
@@ -69,7 +97,7 @@ class RefinePolygons : public BuildingPolygons{
                         break;
                 }
                 if(count > 0){
-                    *stack = i;
+                    *polygonIndex = i;
                     found = true;
                     break;
                 }
@@ -79,10 +107,10 @@ class RefinePolygons : public BuildingPolygons{
         }
 
         void removeEdgesAndVertices(int indexOfStack, int row, int column){
-            int first = -1, last = -1, stack = -1;
-            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &stack);
+            int first = -1, last = -1, polygonIndex = -1;
+            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
             if(nmrSameVertices == 4){
-
+                removeByPoint(this->pA);
             }
         }
 };
