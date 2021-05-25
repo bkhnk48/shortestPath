@@ -105,6 +105,9 @@ class RefinePolygons : public BuildingPolygons{
             int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
             if(nmrSameVertices == 4){
                 removePoint(this->pA);
+                removePoint(this->pB);
+                removePoint(this->pC);
+                removePoint(this->pD);
             }
         }
 };
