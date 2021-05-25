@@ -45,7 +45,7 @@ class RefinePolygons : public BuildingPolygons{
         }
 
         void removeLineSegment(point p, int polygonIndex){
-            cout<<"Remove all line segments which have p("<<p.x<<", "<<p.y<<")"<<endl;
+            //cout<<"Remove all line segments which have p("<<p.x<<", "<<p.y<<")"<<endl;
             int index1 = 0;
             int index2 = 0;
             bool found1 = false;
