@@ -41,8 +41,36 @@ class RefinePolygons : public BuildingPolygons{
             if(found){
                 this->points.erase(this->points.begin() + index);
             }
-                //removeByIndex(this->points, index);
+                
+        }
 
+        void removeLineSegment(point pA, int polygonIndex){
+
+            int index1 = 0;
+            int index2 = 0;
+            bool found1 = false;
+            bool found2 = false;
+            for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
+                if(!found1 && this->polygons.at(polygonIndex).at(i).p == pA)    
+                {
+                    index1 = i;
+                    found1 = true;
+                }
+                else if(!found2 && this->polygons.at(polygonIndex).at(i).q == pA){
+                    index2 = i;
+                    found2 = true;
+                }
+                if(found1 && found2)
+                    break;
+            }
+            if(found1){
+                this->polygons.at(polygonIndex).erase(this->polygons.at(polygonIndex).begin() + index1);
+            }
+            if(found2){
+                if(index1 < index2)
+                    index2--;
+                this->polygons.at(polygonIndex).erase(this->polygons.at(polygonIndex).begin() + index2);
+            }
         }
 
         int countSharedVertices(int indexOfStack, int row, int column, int *first, int *last, int *polygonIndex){
@@ -100,7 +128,7 @@ class RefinePolygons : public BuildingPolygons{
             return count;
         }
 
-        void removeEdgesAndVertices(int indexOfStack, int row, int column){
+        void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
             if(nmrSameVertices == 4){
@@ -108,6 +136,37 @@ class RefinePolygons : public BuildingPolygons{
                 removePoint(this->pB);
                 removePoint(this->pC);
                 removePoint(this->pD);
+                removeLineSegment(this->pA, polygonIndex);
+                removeLineSegment(this->pB, polygonIndex);
+                removeLineSegment(this->pC, polygonIndex);
+                removeLineSegment(this->pD, polygonIndex);
+                if(!this->polygons.at(polygonIndex).empty()){
+                    if(first == 0){
+                        first = this->polygons.at(polygonIndex).size() - 1;
+                    }
+                    else{
+                        first--;
+                    }
+                    last++;
+                    last -= 4;
+                    if(first >= 0 && 
+                        first < this->polygons.at(polygonIndex).size() && 
+                        last > 0 && 
+                        last < this->polygons.at(polygonIndex).size()){
+                        lineSegment line;
+                        line.p.x = this->polygons.at(polygonIndex).at(first).q.x;
+                        line.p.y = this->polygons.at(polygonIndex).at(first).q.y;
+
+                        line.q.x = this->polygons.at(polygonIndex).at(last).p.x;
+                        line.q.y = this->polygons.at(polygonIndex).at(last).p.y;
+                        if(first == this->polygons.at(polygonIndex).size() - 1){
+                            this->polygons.at(polygonIndex).push_back(line);
+                        }
+                        else{
+                            this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (first + 1), line);
+                        }
+                    }
+                }
             }
         }
 };
