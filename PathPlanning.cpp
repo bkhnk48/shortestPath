@@ -77,7 +77,7 @@ class PlanningController{
                 for(int i = 0; i < route.size(); i++){
                     cout<<route.at(i)<<" ";
                 }
-                vector<point> shortestPath = echo(rawRoute, polygons, route);
+                vector<point> shortestPath = echo(rawRoute, polygons, route, points);
                 //draw("test/test.svg", start,end, polygons,distance,points,route,graph);
                 drawShortestPath("test/test.svg", start,end, polygons,distance,points,shortestPath,graph);
                 return vector<point>();	
@@ -112,7 +112,7 @@ class PlanningController{
             }
         }
 
-        vector<point> echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route){
+        vector<point> echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route, vector<point> & points){
             vector<lineSegment> group;
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
@@ -137,10 +137,10 @@ class PlanningController{
                     }
                 }
             }
-            /*cout<<"\nsize of group "<<group.size()<<endl;
+            //cout<<"\nsize of group "<<group.size()<<endl;
             for(int  i = 0; i < group.size();  i++){
                 cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
-            }*/
+            }
             
             double  **PATHS     = (double**)  NULL;  //edgelerin uzunluklari
             int **ROUTE2     = (int**) NULL;   //ROUTE mizi belirleriz
@@ -149,7 +149,7 @@ class PlanningController{
 
             CollectingPoints* collectionPoints = new CollectingPoints();
             
-            vector<point> result = collectionPoints->assignValueToMatrix(PATHS, ROUTE2, SHORTEST_PATH, VISITED, route, r->points, group);
+            vector<point> result = collectionPoints->assignValueToMatrix(PATHS, ROUTE2, SHORTEST_PATH, VISITED, route, points, group);
             return result;
         }
 };
