@@ -29,7 +29,10 @@ class PlanningController{
         }
 
         
-        vector<point> getTrajectory(vector<point> points, vector< vector< lineSegment> > polygons, point start, point end){
+        vector<point> getTrajectory(BuildingPolygons* generator, point start, point end){
+            vector<point> points = generator->points;
+            vector< vector< lineSegment> > polygons = generator->polygons;
+            
             vector< vector < int > > graph;
             vector< vector < double > > graphDistance;
 
@@ -159,9 +162,11 @@ class PlanningController{
     private:
         int nmrMovement = 0;
 
-        void stayAwayFromEdges(){
-
+        void stayAwayFromEdges(vector< vector< lineSegment> > polygons, vector<point> result){
+            
         }
+
+        
 };
 
 
