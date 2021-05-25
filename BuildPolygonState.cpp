@@ -87,6 +87,7 @@ class BuildingPolygons{
         vector< vector<lineSegment> > polygons;
         vector<point> points;
         int NUMBER_STACKS;
+        static const int  DISTANCE = 1;
         //int** checkedPoints;
         
         //vector<point> fourVertecies;
