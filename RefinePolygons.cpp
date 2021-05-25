@@ -44,19 +44,19 @@ class RefinePolygons : public BuildingPolygons{
                 
         }
 
-        void removeLineSegment(point pA, int polygonIndex){
-
+        void removeLineSegment(point p, int polygonIndex){
+            cout<<"Remove all line segments which have p("<<p.x<<", "<<p.y<<")"<<endl;
             int index1 = 0;
             int index2 = 0;
             bool found1 = false;
             bool found2 = false;
             for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
-                if(!found1 && this->polygons.at(polygonIndex).at(i).p == pA)    
+                if(!found1 && this->polygons.at(polygonIndex).at(i).p == p)    
                 {
                     index1 = i;
                     found1 = true;
                 }
-                else if(!found2 && this->polygons.at(polygonIndex).at(i).q == pA){
+                else if(!found2 && this->polygons.at(polygonIndex).at(i).q == p){
                     index2 = i;
                     found2 = true;
                 }
@@ -67,16 +67,18 @@ class RefinePolygons : public BuildingPolygons{
                 this->polygons.at(polygonIndex).erase(this->polygons.at(polygonIndex).begin() + index1);
             }
             if(found2){
-                if(index1 < index2)
+                if(index1 < index2 && found1)
                     index2--;
                 this->polygons.at(polygonIndex).erase(this->polygons.at(polygonIndex).begin() + index2);
             }
+
+            
         }
 
         int countSharedVertices(int indexOfStack, int row, int column, int *first, int *last, int *polygonIndex){
             this->getFourVertecies(indexOfStack, row, column);
             bool found = false;
-            //for(int i = 0; i < this->NUMBER_STACKS; i++)
+            
             int count = 0;
             sharedVertices[0] = false;
             sharedVertices[1] = false;
@@ -136,36 +138,43 @@ class RefinePolygons : public BuildingPolygons{
                 removePoint(this->pB);
                 removePoint(this->pC);
                 removePoint(this->pD);
+                
                 removeLineSegment(this->pA, polygonIndex);
                 removeLineSegment(this->pB, polygonIndex);
                 removeLineSegment(this->pC, polygonIndex);
                 removeLineSegment(this->pD, polygonIndex);
-                if(!this->polygons.at(polygonIndex).empty()){
-                    if(first == 0){
-                        first = this->polygons.at(polygonIndex).size() - 1;
-                    }
-                    else{
-                        first--;
-                    }
-                    last++;
-                    last -= 4;
-                    if(first >= 0 && 
-                        first < this->polygons.at(polygonIndex).size() && 
-                        last > 0 && 
-                        last < this->polygons.at(polygonIndex).size()){
-                        lineSegment line;
-                        line.p.x = this->polygons.at(polygonIndex).at(first).q.x;
-                        line.p.y = this->polygons.at(polygonIndex).at(first).q.y;
 
-                        line.q.x = this->polygons.at(polygonIndex).at(last).p.x;
-                        line.q.y = this->polygons.at(polygonIndex).at(last).p.y;
-                        if(first == this->polygons.at(polygonIndex).size() - 1){
-                            this->polygons.at(polygonIndex).push_back(line);
-                        }
-                        else{
-                            this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (first + 1), line);
+                if(!this->polygons.at(polygonIndex).empty()){
+                    bool foundBreak = false;
+                    int breakIndex = 0;
+                    double x1, x2, y1, y2;
+                    for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
+                        int j = (i + 1) % this->polygons.at(polygonIndex).size();
+                        if(!(this->polygons.at(polygonIndex).at(i).q == this->polygons.at(polygonIndex).at(j).p))
+                        {
+                            x1 = this->polygons.at(polygonIndex).at(i).q.x;
+                            y1 = this->polygons.at(polygonIndex).at(i).q.y;
+
+                            x2 = this->polygons.at(polygonIndex).at(j).p.x;
+                            y2 = this->polygons.at(polygonIndex).at(j).p.y;
+                            breakIndex = i;
+                            foundBreak = true;
+                            break;
                         }
                     }
+
+                    if(foundBreak){
+                        lineSegment line ;
+                        line.p.x = x1;
+                        line.p.y = y1;
+
+                        line.q.x = x2;
+                        line.q.y = y2;
+
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line);
+                    }
+
+
                 }
             }
         }
