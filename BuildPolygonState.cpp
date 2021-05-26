@@ -82,6 +82,7 @@ class BuildingPolygons{
             }
         }
 
+
     public:
         //vector<lineSegment> edges;
         vector< vector<lineSegment> > polygons;
@@ -388,6 +389,8 @@ class BuildingPolygons{
             return p;
         }
 
+        
+
         point getPositionInGate(int gateNumber, int kStacks, bool enter){
             double x = 0, y = 0;
             double LAND_WIDTH = 2*this->WIDTH + 1;
@@ -415,6 +418,12 @@ class BuildingPolygons{
                     x = 4*LAND_WIDTH + this->COLUMNS*this->WIDTH;
                     y += enter ? -deltaY : deltaY;
                 }
+            }
+            else{
+                cout<<"X coord of the dest point: ";
+                cin>>x;
+                cout<<"Y coord of the dest point: ";
+                cin>>y;
             }
             point p(x, y);
             return p;
