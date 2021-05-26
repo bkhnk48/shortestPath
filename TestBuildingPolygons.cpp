@@ -111,17 +111,17 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 						){
 						point slot = generator->getSlot(indexOfStack, i, j);
 						fflush(stdin);
-						printf("Type the gate number: ");
+						printf("Type the gate number (zero - 0 - for pick up an arbitrary point): ");
 						input = scanf("%d", &gateNumber);
-						if(input != EOF && gateNumber >= 1 && gateNumber <= 4){
+						if(input != EOF && gateNumber >= 0 && gateNumber <= 4){
 							fflush(stdin);
-							printf("Do you want to get in (I) or get out (O)?");
+							printf("Do you want to get in (I/i) or get out (O/o)?");
 							char Mode;
 							input = scanf("%c", &Mode);
-							if(input != EOF && (Mode == 'I' || Mode == 'O')){
+							if(input != EOF && (Mode == 'I' || Mode == 'O' || Mode == 'i' || Mode == 'o')){
 								
 								stopInput = false;
-								if(Mode == 'I'){
+								if(Mode == 'I' || Mode == 'i'){
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, true);
 									plan->getTrajectory(generator, gate, slot);
 								}
