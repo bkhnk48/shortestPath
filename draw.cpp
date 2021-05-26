@@ -5,6 +5,7 @@
 #include <vector> //vector
 #include <float.h>
 #include <string>
+#include <stdlib.h>
 //#include "RawRoute.cpp"
 //#include "naive.cpp"
 
@@ -314,6 +315,26 @@ int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirec
 }
 
 
+vector<point> middlePoints(point pA, point pB){
+	vector<point> allMiddlePoints;
+	int size = (int)round(abs(pA.x - pB.x));
+	if(size <= 1){
+		point p((pA.x + pB.x)/2, (pA.y + pB.y)/2);
+		allMiddlePoints.push_back(p);
+	}
+	else{
+		size--;
+		double x = min(pA.x + 1, pB.x + 1); 
+		double y = ((x - pA.x)*(pB.y - pA.y)/(pB.x - pA.x)) + pA.y;
+		for(int i = 0; i < size; i++){
+			point p(x + i, y + i);
+			allMiddlePoints.push_back(p);
+		}
+	}
+	return allMiddlePoints;
+}
+
+
 bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 	double x;
 	double y;
@@ -322,14 +343,18 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 		OyDirection = false;
 	}
 
+	vector<point> allMiddlePoints = middlePoints(line.p, line.q);
+
 	for(int i = 0; i < polygons.size(); i++){
 
-		//middlePoint(line.p, line.q, polygons[i], &x, &y);
-		x = (line.p.x + line.q.x)/2; y = (line.p.y + line.q.y)/2;
-		if(x != FLT_MAX && y != FLT_MAX){
-			int c = pnpoly(polygons[i], x, y, OyDirection);
-			if(c % 2 == 1)
-				return true;
+		for(int j = 0; j < allMiddlePoints.size(); j++){
+			x = allMiddlePoints.at(j).x; 
+			y = allMiddlePoints.at(j).y;
+			if(x != FLT_MAX && y != FLT_MAX){
+				int c = pnpoly(polygons[i], x, y, OyDirection);
+				if(c % 2 == 1)
+					return true;
+			}
 		}
 	}
 	return false;
