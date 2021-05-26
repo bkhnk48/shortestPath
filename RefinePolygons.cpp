@@ -133,6 +133,8 @@ class RefinePolygons : public BuildingPolygons{
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+            
+            #pragma region
             if(nmrSameVertices == 4){
                 removePoint(this->pA);
                 removePoint(this->pB);
@@ -177,6 +179,10 @@ class RefinePolygons : public BuildingPolygons{
 
                 }
             }
+            #pragma endregion 
+        
+            
+
         }
 };
 #endif
