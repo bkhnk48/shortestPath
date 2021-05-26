@@ -80,13 +80,15 @@ class PlanningController{
                 for(int i = 0; i < route.size(); i++){
                     cout<<route.at(i)<<" ";
                 }
-                vector<point> shortestPath = echo(rawRoute, polygons, route, points);
-                Homotopy* homotopy = new Homotopy();
-                vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
+                //vector<point> shortestPath = echo(rawRoute, polygons, route, points);
+                //Homotopy* homotopy = new Homotopy();
+                //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 string fileName = "test/test";
                 fileName += to_string(nmrMovement);
                 fileName += ".svg";
-                drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
+                //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
+                //drawShortestPath(fileName, start, end, polygons, distance, points, shortestPath, graph);
+                drawShortestPath(fileName, start, end, polygons, distance, points, rawRoute->points, graph);
                 nmrMovement++;
                 return vector<point>();	
             }
