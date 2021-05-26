@@ -12,7 +12,7 @@
 #include <algorithm>
 
 //#include "preprocess.cpp"
-#include "CollectingPoints.cpp"
+#include "Homotopy.cpp"
 
 #ifndef _PLANNING_CONTROLLER_
 #define _PLANNING_CONTROLLER_
@@ -156,6 +156,8 @@ class PlanningController{
             CollectingPoints* collectionPoints = new CollectingPoints();
             
             vector<point> result = collectionPoints->assignValueToMatrix(PATHS, ROUTE2, SHORTEST_PATH, VISITED, route, points, group);
+
+
             return result;
         }
 
@@ -166,6 +168,7 @@ class PlanningController{
             
         }
 
+        //bool couldReachLine()
         
 };
 
