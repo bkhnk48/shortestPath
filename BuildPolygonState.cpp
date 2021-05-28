@@ -429,6 +429,14 @@ class BuildingPolygons{
             return p;
         }
 
+        int getWIDTH(){
+            return this->WIDTH;
+        }
+
+        int getLENGTH(){
+            return this->LENGTH;
+        }
+
         //draw the polygon again as an AV is going to get out its slot.
         virtual void removeEdgesAndVertices(int indexOfStack, int row, int column) {}
 
