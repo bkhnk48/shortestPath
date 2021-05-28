@@ -80,14 +80,14 @@ class PlanningController{
                 for(int i = 0; i < route.size(); i++){
                     cout<<route.at(i)<<" ";
                 }
-                vector<point> shortestPath = echo(rawRoute, polygons, route, points);
-                Homotopy* homotopy = new Homotopy();
-                vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
+                vector<point> shortestPath = echo(rawRoute, polygons, route, points, generator);
+                //Homotopy* homotopy = new Homotopy();
+                //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 string fileName = "test/test";
                 fileName += to_string(nmrMovement);
                 fileName += ".svg";
-                drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
-                //drawShortestPath(fileName, start, end, polygons, distance, points, shortestPath, graph);
+                //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
+                drawShortestPath(fileName, start, end, polygons, distance, points, shortestPath, graph);
                 //drawShortestPath(fileName, start, end, polygons, distance, points, rawRoute->points, graph);
                 nmrMovement++;
                 return vector<point>();	
@@ -122,7 +122,7 @@ class PlanningController{
             }
         }
 
-        vector<point> echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route, vector<point> & points){
+        vector<point> echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route, vector<point> & points, BuildingPolygons* generator){
             vector<lineSegment> group;
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
@@ -160,7 +160,7 @@ class PlanningController{
             CollectingPoints* collectionPoints = new CollectingPoints();
             
             vector<point> result = collectionPoints->assignValueToMatrix(PATHS, ROUTE2, SHORTEST_PATH, VISITED, route, points, group);
-
+            movementOfTheSide(generator->getWIDTH(), generator->getLENGTH(), result);
 
             return result;
         }
@@ -168,8 +168,17 @@ class PlanningController{
     private:
         int nmrMovement = 0;
 
-        void stayAwayFromEdges(vector< vector< lineSegment> > polygons, vector<point> result){
+        void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory){  
             
+            if(trajectory.at(1).x > trajectory.at(0).x){
+                trajectory.at(0).x += WIDTH/2;
+            }
+            else if(trajectory.at(1).x < trajectory.at(0).x){
+                trajectory.at(0).x -= WIDTH/2;
+            }
+            trajectory.at(0).y -= LENGTH/2;
+
+            int last = trajectory.size() - 1;
         }
 
         //bool couldReachLine()
