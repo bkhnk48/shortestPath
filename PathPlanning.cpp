@@ -23,9 +23,21 @@ using namespace std;
 
 class PlanningController{
     public:
-
+        //double dotProduct;
+        bool clockWise = false;
+        
         PlanningController(){
 
+        }
+
+        PlanningController(int WIDTH, int LENGTH){
+            double uX = 0;
+            double uY = LENGTH/2;
+            double vX = WIDTH/2;
+            double vY = 0;
+            //dotProductLeft = uX*vY - uY*vX;
+            //vX = -vX;
+            dotProductRight = - uY*vX;
         }
 
         
@@ -80,7 +92,8 @@ class PlanningController{
                 for(int i = 0; i < route.size(); i++){
                     cout<<route.at(i)<<" ";
                 }
-                vector<point> shortestPath = echo(rawRoute, polygons, route, points, generator);
+                vector<point> shortestPath = this->echo(rawRoute, polygons, route, points, generator);
+                
                 //Homotopy* homotopy = new Homotopy();
                 //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 string fileName = "test/test";
@@ -167,8 +180,13 @@ class PlanningController{
 
     private:
         int nmrMovement = 0;
+        //double dotProductLeft;
+        double dotProductRight;
+        
 
-        void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory){  
+        void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory){ 
+
+            //this->clockWise = this->isClockwise(trajectory.at(0), trajectory.at(1), trajectory.at(2)); 
             
             if(trajectory.at(1).x > trajectory.at(0).x){
                 trajectory.at(0).x += WIDTH/2;
@@ -179,8 +197,44 @@ class PlanningController{
             trajectory.at(0).y -= LENGTH/2;
 
             int last = trajectory.size() - 1;
+            int preLast = last - 1;
+            double uX = trajectory.at(last).x - trajectory.at(preLast).x;
+            double uY = trajectory.at(last).y - trajectory.at(preLast).y;
+            double u = sqrt(uX*uX + uY*uY);
+            //double U = sqrt((WIDTH*WIDTH/4) + (LENGTH*LENGTH/4));
+            uX = (uX/u)*(WIDTH/2);
+            uY = (uY/u)*(WIDTH/2);
+
+            double vX, vY;
+
+            if(uY == 0){
+                vX = 0;
+                vY = dotProductRight/uX;
+            }
+            else{
+                double tag = uX/uY;
+                double tag_1 = 1/sqrt(1 + tag*tag);
+                double sin = tag*tag_1;
+                double cos = tag_1*0.5;
+                vY = (WIDTH/2)*sin;
+                vX = (WIDTH/2)*cos;
+                double newDotProduct = uX*vY - uY*vX;
+                if(newDotProduct > 0){
+                    vX = -vX;
+                }
+            }
+            trajectory.at(last).x += vX;
+            trajectory.at(last).y += vY;
         }
 
+        bool isClockwise(point p1, point p2){
+            double uX = 0;
+            double uY = 1;
+            double vX = p2.x - p1.x;
+            //double vY = p2.y - p1.y;
+            double uv = /*uX*vY*/ - vX;
+            return (uv < 0);
+        }
         //bool couldReachLine()
         
 };
