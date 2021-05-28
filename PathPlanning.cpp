@@ -26,20 +26,12 @@ class PlanningController{
         //double dotProduct;
         bool clockWise = false;
         
+        
         PlanningController(){
 
         }
 
-        PlanningController(int WIDTH, int LENGTH){
-            double uX = 0;
-            double uY = LENGTH/2;
-            double vX = WIDTH/2;
-            double vY = 0;
-            //dotProductLeft = uX*vY - uY*vX;
-            //vX = -vX;
-            dotProductRight = - uY*vX;
-        }
-
+        
         
         vector<point> getTrajectory(BuildingPolygons* generator, point start, point end){
             vector<point> points = generator->points;
@@ -94,13 +86,19 @@ class PlanningController{
                 }
                 vector<point> shortestPath = this->echo(rawRoute, polygons, route, points, generator);
                 
-                //Homotopy* homotopy = new Homotopy();
-                //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
+                Homotopy* homotopy = new Homotopy(generator->getWIDTH(), this->clockWise);
+                vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 string fileName = "test/test";
                 fileName += to_string(nmrMovement);
                 fileName += ".svg";
                 //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
-                drawShortestPath(fileName, start, end, polygons, distance, points, shortestPath, graph);
+                if(distance != -1){
+                    drawShortestPath(fileName, start, end, polygons, sideSteps, points, shortestPath, graph);
+                }
+                else{
+                    cout<<"Runtime error"<<endl;
+                    exit(-1);
+                }
                 //drawShortestPath(fileName, start, end, polygons, distance, points, rawRoute->points, graph);
                 nmrMovement++;
                 return vector<point>();	
@@ -136,6 +134,9 @@ class PlanningController{
         }
 
         vector<point> echo(RawRoute* r, vector< vector< lineSegment> > polygons, vector<int> route, vector<point> & points, BuildingPolygons* generator){
+
+            this->clockWise = isClockwise(r->points.at(0), r->points.at(1));
+            
             vector<lineSegment> group;
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
@@ -186,7 +187,7 @@ class PlanningController{
 
         void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory){ 
 
-            //this->clockWise = this->isClockwise(trajectory.at(0), trajectory.at(1), trajectory.at(2)); 
+            dotProductRight = -(LENGTH/2)*(WIDTH/2);
             
             if(trajectory.at(1).x > trajectory.at(0).x){
                 trajectory.at(0).x += WIDTH/2;
