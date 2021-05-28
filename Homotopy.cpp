@@ -20,12 +20,22 @@
 
 class Homotopy{
     public:
-        Homotopy(){
+        int WIDTH;
+        //bool isClockWise = false;
+        //int LENGTH;
 
+        Homotopy(int WIDTH, bool isClockWise){
+            this->WIDTH = WIDTH;
+            //this->isClockWise = isClockWise;
+            //this->LENGTH = LENGTH;
         }
+
         vector<point> sideStepRouting(vector<point> route, vector< vector<lineSegment > > polygons, vector<point> points){
             vector<point> sideSteps;
-            point start = route.at(0);
+            point start;
+            start.x = route.at(0).x - WIDTH;
+            start.y = route.at(0).y;
+            
             sideSteps.push_back(start);
             point prev = route.at(0);
             lineSegment normalIn, normalOut;
@@ -54,6 +64,14 @@ class Homotopy{
                     normalIn.q.x = deltaY/length; normalIn.q.y = deltaX/length;
                     normalOut.q.x = -deltaY/length; normalOut.q.y = -deltaX/length;
                 }
+
+                //normalIn.q.x *= this->WIDTH;
+                //normalIn.q.y *= this->WIDTH;
+
+                //normalOut.q.x *= this->WIDTH;
+                //normalOut.q.y *= this->WIDTH;
+
+                
                 #pragma endregion
                 
                 temp1.p.x = prev.x ;
@@ -62,7 +80,8 @@ class Homotopy{
                 temp2.p.x = prev.x ;
                 temp2.p.y = prev.y ;
 
-                if(i != 1){
+                //if(i != 1)
+                {
                     temp1.p.x += (normalIn.q.x - normalIn.p.x);
                     temp1.p.y += (normalIn.q.y - normalIn.p.y);
 
@@ -70,27 +89,28 @@ class Homotopy{
                     temp2.p.y += (normalOut.q.y - normalOut.p.y);
                 }
                 
-                temp1.q.x = p.x;
-                temp1.q.y = p.y;
+                //temp1.q.x = p.x;
+                //temp1.q.y = p.y;
 
-                temp2.q.x = p.x;
-                temp2.q.y = p.y;
+                //temp2.q.x = p.x;
+                //temp2.q.y = p.y;
 
-                if(i != route.size() - 1){
-                    temp1.q.x += (normalIn.q.x - normalIn.p.x);
-                    temp1.q.y += (normalIn.q.y - normalIn.p.y);
+                //if(i != route.size() - 1)
+                {
+                    temp1.q.x = p.x + (normalIn.q.x - normalIn.p.x);
+                    temp1.q.y = p.y + (normalIn.q.y - normalIn.p.y);
 
-                    temp2.q.x += (normalOut.q.x - normalOut.p.x);
-                    temp2.q.y += (normalOut.q.y - normalOut.p.y);
+                    temp2.q.x = p.x + (normalOut.q.x - normalOut.p.x);
+                    temp2.q.y = p.y + (normalOut.q.y - normalOut.p.y);
                 }
 
                 //if(!insidePolygon(temp1, polygons)){
                 if(numberOfCuttingThrough(polygons, temp1) == 0){
-                    addNewPoints(temp1, i, route.size(), sideSteps);
+                    addNewPoints(temp1, i, route.size(), sideSteps, normalIn);
                 }
                 //else if(!insidePolygon(temp2, polygons)){
                 else if(numberOfCuttingThrough(polygons, temp2) == 0){
-                    addNewPoints(temp2, i, route.size(), sideSteps);
+                    addNewPoints(temp2, i, route.size(), sideSteps, normalOut);
                 }
 
                 prev = p;
@@ -101,22 +121,23 @@ class Homotopy{
         }
     
     private:
-        void addNewPoints(lineSegment line, int indexOfPoint, int size, vector<point> &route){
-            if(indexOfPoint == 1){
+        void addNewPoints(lineSegment line, int indexOfPoint, int size, vector<point> &route, lineSegment normal
+                            ){
+            /*if(indexOfPoint == 1){
                 point q;
                 q.x = line.q.x;
                 q.y = line.q.y;
 
                 route.push_back(q);
             }
-            else if(indexOfPoint > 1 && indexOfPoint <= size - 1){
+            else*/ if(indexOfPoint >= 1 && indexOfPoint <= size - 1){
                 point p;
-                p.x = line.p.x;
-                p.y = line.p.y;
+                p.x = line.p.x + normal.q.x*(this->WIDTH - 1);
+                p.y = line.p.y + normal.q.y*(this->WIDTH - 1);
 
                 point q;
-                q.x = line.q.x;
-                q.y = line.q.y;
+                q.x = line.q.x + normal.q.x*(this->WIDTH - 1);
+                q.y = line.q.y + normal.q.y*(this->WIDTH - 1);
 
                 route.push_back(p);
                 route.push_back(q);
