@@ -145,7 +145,7 @@ string drawRoute(vector<int> & route, vector<point> & points){
 	return str;
 }
 
-string drawShortestRoute(vector<point> & route//, vector<point> & points
+string drawShortestRoute(vector<point> & route//, vector<point> & sideSteps
 							){
 	string str = "<polyline stroke='red' stroke-width='2' fill='none' points='";
 	int current = route.size()-1;
@@ -375,16 +375,17 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 
 
 
-void drawShortestPath(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,double & distance,vector<point> &points, vector<point> &route,vector< vector<int> >graph){
+void drawShortestPath(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,
+						vector<point> &sideSteps, vector<point> &points, vector<point> &route,vector< vector<int> >graph){
 	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
 	string str2 = "<svg viewBox='"; //+ 
 	str2.append(std::to_string(10*min_x-5));
 	str2.append(" ");
-	str2.append(std::to_string(-10*max_y-15));
+	str2.append(std::to_string(-10*max_y-45));
 	str2.append(" ");
 	str2.append(std::to_string((abs(min_x)+abs(max_x))*10+10));
 	str2.append(" ");
-	str2.append(std::to_string((abs(min_y)+abs(max_y))*10+20));
+	str2.append(std::to_string((abs(min_y)+abs(max_y))*10 + 80));
 	str2.append("' xmlns='http://www.w3.org/2000/svg' version='1.1'>\n");
 
 	str1 = str1 + str2;
@@ -396,9 +397,10 @@ void drawShortestPath(string file_name, point & start, point & end, vector <vect
 
 	//str1 = str1 + drawTitle(testTitle,distance);
 	str1 = str1 + drawGraph(graph,points);
-	if(distance!=-1 && config.drawRoute){ 
-		str1 = str1 + drawShortestRoute(route//, points
-										);
+	//if(distance!=-1 && config.drawRoute)
+	{ 
+		str1 = str1 + drawShortestRoute(route);
+		str1 = str1 + drawShortestRoute(sideSteps);
 	}
 	str1 = str1 + "</svg>\n";
 	std::ofstream ofs(file_name.c_str());
