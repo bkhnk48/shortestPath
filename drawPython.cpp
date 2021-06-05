@@ -108,7 +108,7 @@ void writePythonCode(string file_name, vector<point> &route){
     str1.append("\ttesla.shapesize(1, 1)\n");
 
     str1.append("\n\tscreen = turtle.Screen()\n");
-	str1.append("\tscreen.screensize(2500, 1500)\n\n");
+	str1.append("\tscreen.screensize(1500, 2000)\n\n");
 
     str1.append("\n\t# draw vectors representing points in PATH\n");
     str1.append("\tfor pt in PATH:\n");
