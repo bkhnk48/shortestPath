@@ -11,7 +11,7 @@
 #include <bits/stdc++.h>
 #include <algorithm>
 
-#include "draw.cpp"
+#include "drawPython.cpp"
 
 #ifndef _BUILD_POLYGON_
 #define _BUILD_POLYGON_
