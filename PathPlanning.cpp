@@ -94,7 +94,7 @@ class PlanningController{
                 //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
                 if(distance != -1){
                     drawShortestPath(fileName, start, end, polygons, sideSteps, points, shortestPath, graph);
-                    writePythonCode("demoTrajectory.py", shortestPath);
+                    writePythonCode("test/demoTrajectory.py", shortestPath);
                 }
                 else{
                     cout<<"Runtime error"<<endl;
