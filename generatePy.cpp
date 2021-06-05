@@ -28,10 +28,10 @@ string drawIntY(point &p){
 	return to_string(r);
 }
 
-void writePythonCode(string file_name, vector<point> &route){
+void writePythonCode(string file_name, vector<point> &route, int* directionAtTheEnd){
 
-    float scale = 0.5;
-    float deltaX = 10;
+    float scale = 1;
+    float deltaX = 0;
 
 	string str1 = "import turtle\n";
     str1 = str1 + "import reeds_shepp as rs\n";
@@ -45,12 +45,46 @@ void writePythonCode(string file_name, vector<point> &route){
     str1 = str1 + "\t# points to be followed\n";
     str1 = str1 + "\n\tpts = [";
 
+    string lastAngle = "";
+
     int current = route.size()-1;
+    int xEnd, yEnd;
+    if(*directionAtTheEnd == 8)
+    {
+        xEnd = route.at(current).x;
+        yEnd = route.at(current).y + 1;
+        lastAngle = "90";
+    }
+    else if(*directionAtTheEnd == 2)
+    {
+        xEnd = route.at(current).x;
+        yEnd = route.at(current).y - 1;
+        lastAngle = "270";
+    }
+    else if(*directionAtTheEnd == 4)
+    {
+        xEnd = route.at(current).x - 1;
+        yEnd = route.at(current).y;
+        lastAngle = "180";
+    }
+    else if(*directionAtTheEnd == 6)
+    {
+        xEnd = route.at(current).x + 1;
+        yEnd = route.at(current).y;
+        lastAngle = "0";
+    }
     string strPoint = "(";
-    strPoint.append(to_string((int)(scale*route.at(current).x - deltaX)));
+    strPoint.append(to_string((scale*route.at(current).x - deltaX)));
     strPoint.append(",");
-    strPoint.append(to_string((int)(scale*route.at(current).y)));
+    strPoint.append(to_string((scale*route.at(current).y)));
     strPoint.append(")");
+
+    //strPoint.append(", (");
+    //strPoint.append(to_string((int)(xEnd - deltaX)));
+    //strPoint.append(",");
+    //strPoint.append(to_string((int)(yEnd)));
+    //strPoint.append(")");
+
     strPoint.append("] ");
     //cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
     current--;
@@ -62,10 +96,10 @@ void writePythonCode(string file_name, vector<point> &route){
 		
 		strPoint = "), " + strPoint;			
 		//str1.append(drawIntX(route.at(current)));
-        strPoint = to_string((int)(0.5*route.at(current).y)) + strPoint;
+        strPoint = to_string((scale*route.at(current).y)) + strPoint;
         strPoint = ", " + strPoint;
 		//str1.append(",");
-        strPoint = to_string((int)(scale*route.at(current).x - deltaX)) + strPoint;
+        strPoint = to_string((scale*route.at(current).x - deltaX)) + strPoint;
 		//str1.append(drawIntY(route.at(current)));
         //str1.append(to_string((int)route.at(current).y));
 		//str1.append(")");
@@ -89,7 +123,9 @@ void writePythonCode(string file_name, vector<point> &route){
     str1.append("\t    dy = pts[i+1][1] - pts[i][1]\n");
     str1.append("\t    theta = math.atan2(dy, dx)\n");
     str1.append("\t    PATH.append((pts[i][0], pts[i][1], utils.rad2deg(theta)))\n");
-    str1.append("\tPATH.append((pts[-1][0], pts[-1][1], 0))\n");
+    str1.append("\tPATH.append((pts[-1][0], pts[-1][1], ");
+    str1.append(lastAngle);
+    str1.append("))\n");
 
     str1.append("\n\t# or you can also manually set the angles:\n");
     str1.append("\t# PATH = [(-5,5,90),(-5,5,-90),(1,4,180), (5,4,0), (6,-3,90), (4,-4,-40),(-2,0,240), \n");
@@ -108,7 +144,7 @@ void writePythonCode(string file_name, vector<point> &route){
     str1.append("\ttesla.shapesize(1, 1)\n");
 
     str1.append("\n\tscreen = turtle.Screen()\n");
-	str1.append("\tscreen.screensize(1500, 2000)\n\n");
+	str1.append("\tscreen.screensize(1500, 4000)\n\n");
 
     str1.append("\n\t# draw vectors representing points in PATH\n");
     str1.append("\tfor pt in PATH:\n");
