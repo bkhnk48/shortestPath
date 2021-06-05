@@ -118,7 +118,8 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
 
     str1.append("\n\t# generate PATH so the vectors are pointing at each other\n");
     str1.append("\tPATH = []\n");
-    str1.append("\tfor i in range(len(pts) - 1):\n");
+    str1.append("\tPATH.append((pts[0][0], pts[0][1], 90))\n");
+    str1.append("\tfor i in range(1, len(pts) - 1):\n");
     str1.append("\t    dx = pts[i+1][0] - pts[i][0]\n");
     str1.append("\t    dy = pts[i+1][1] - pts[i][1]\n");
     str1.append("\t    theta = math.atan2(dy, dx)\n");
