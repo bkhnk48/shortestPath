@@ -156,7 +156,7 @@ string drawShortestRoute(vector<point> & route//, vector<point> & sideSteps
 		str.append(",");
 		str.append(drawY(p));
 		str.append(" ");
-		//cout<<"\nroute["<<current<<"] = "<<route[current]<<" => ("<<p.x<<", "<<p.y<<")";
+		cout<<"\nroute["<<current<<"] = ("<<p.x<<", "<<p.y<<")";
 		//current = route[current];
 		current--;
 	}
