@@ -91,6 +91,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 	int gateNumber = 0;
 	bool stopInput = false;
 	int input;
+	int directionAtTheEnd = 0;
 	PlanningController* plan = new PlanningController();
 	while(!stopInput && countAllStacks(stacks, numOfStacks, rowsInStack, columnsInStack) > 0){
 		stopInput = true;
@@ -114,21 +115,33 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 						printf("Type the gate number (zero - 0 - for pick up an arbitrary point): ");
 						input = scanf("%d", &gateNumber);
 						if(input != EOF && gateNumber >= 0 && gateNumber <= 4){
+							if(gateNumber == 0){
+								fflush(stdin);
+								printf("The direction from rear to center (4/8/6/2)?: ");
+								input = scanf("%d", &directionAtTheEnd);
+								if(input == EOF || 
+										(directionAtTheEnd != 4 && directionAtTheEnd != 8 && directionAtTheEnd != 6 && directionAtTheEnd != 2))
+								{
+									cout<<"Wrong direction (4-Left/8-Up/6-Right/2-Down)"<<endl;
+									break;
+								}
+							}
 							fflush(stdin);
-							printf("Do you want to get in (I/i) or get out (O/o)?");
+							printf("Do you want to get in (I/i/1/l) or get out (O/o/0)?");
 							char Mode;
 							input = scanf("%c", &Mode);
-							if(input != EOF && (Mode == 'I' || Mode == 'O' || Mode == 'i' || Mode == 'o')){
+							if(input != EOF && (Mode == 'I' || Mode == 'O' || Mode == '1' || Mode == 'l' 
+									|| Mode == 'i' || Mode == 'o' || Mode == '0')){
 								
 								stopInput = false;
-								if(Mode == 'I' || Mode == 'i'){
+								if(Mode == 'I' || Mode == 'i' || Mode == '1' || Mode == 'l'){
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, true);
-									plan->getTrajectory(generator, gate, slot);
+									plan->getTrajectory(generator, gate, slot, &directionAtTheEnd);
 								}
 								else{
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, false);
 									generator->removeEdgesAndVertices(indexOfStack, i, j);
-									plan->getTrajectory(generator, slot, gate);
+									plan->getTrajectory(generator, slot, gate, &directionAtTheEnd);
 								}
 							}
 							else{
