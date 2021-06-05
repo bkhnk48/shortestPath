@@ -29,6 +29,10 @@ string drawIntY(point &p){
 }
 
 void writePythonCode(string file_name, vector<point> &route){
+
+    float scale = 0.5;
+    float deltaX = 10;
+
 	string str1 = "import turtle\n";
     str1 = str1 + "import reeds_shepp as rs\n";
     str1 = str1 + "import utils\n";
@@ -43,23 +47,25 @@ void writePythonCode(string file_name, vector<point> &route){
 
     int current = route.size()-1;
     string strPoint = "(";
-    strPoint.append(to_string((int)route.at(current).x));
+    strPoint.append(to_string((int)(scale*route.at(current).x - deltaX)));
     strPoint.append(",");
-    strPoint.append(to_string((int)route.at(current).y));
+    strPoint.append(to_string((int)(scale*route.at(current).y)));
     strPoint.append(")");
     strPoint.append("] ");
     //cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
     current--;
+
+    
     
 
 	while(current != -1){
 		
 		strPoint = "), " + strPoint;			
 		//str1.append(drawIntX(route.at(current)));
-        strPoint = to_string((int)route.at(current).y) + strPoint;
+        strPoint = to_string((int)(0.5*route.at(current).y)) + strPoint;
         strPoint = ", " + strPoint;
 		//str1.append(",");
-        strPoint = to_string((int)route.at(current).x) + strPoint;
+        strPoint = to_string((int)(scale*route.at(current).x - deltaX)) + strPoint;
 		//str1.append(drawIntY(route.at(current)));
         //str1.append(to_string((int)route.at(current).y));
 		//str1.append(")");
@@ -102,7 +108,7 @@ void writePythonCode(string file_name, vector<point> &route){
     str1.append("\ttesla.shapesize(1, 1)\n");
 
     str1.append("\n\tscreen = turtle.Screen()\n");
-	str1.append("\tscreen.screensize(6000, 4500)\n\n");
+	str1.append("\tscreen.screensize(2500, 1500)\n\n");
 
     str1.append("\n\t# draw vectors representing points in PATH\n");
     str1.append("\tfor pt in PATH:\n");
