@@ -33,7 +33,7 @@ class PlanningController{
 
         
         
-        vector<point> getTrajectory(BuildingPolygons* generator, point start, point end){
+        vector<point> getTrajectory(BuildingPolygons* generator, point start, point end, int* directionAtTheEnd){
             vector<point> points = generator->points;
             vector< vector< lineSegment> > polygons = generator->polygons;
             
@@ -94,7 +94,7 @@ class PlanningController{
                 //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
                 if(distance != -1){
                     drawShortestPath(fileName, start, end, polygons, sideSteps, points, shortestPath, graph);
-                    writePythonCode("test/demoTrajectory.py", shortestPath);
+                    writePythonCode("test/demoTrajectory.py", shortestPath, directionAtTheEnd);
                 }
                 else{
                     cout<<"Runtime error"<<endl;
