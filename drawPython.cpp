@@ -42,44 +42,39 @@ void writePythonCode(string file_name, vector<point> &route){
     str1 = str1 + "\n\tpts = [";
 
     int current = route.size()-1;
-    str1.append("(");
-    str1.append(to_string((int)route.at(current).x));
-    str1.append(",");
-    str1.append(to_string((int)route.at(current).y));
-    str1.append(")");
-    cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
+    string strPoint = "(";
+    strPoint.append(to_string((int)route.at(current).x));
+    strPoint.append(",");
+    strPoint.append(to_string((int)route.at(current).y));
+    strPoint.append(")");
+    strPoint.append("] ");
+    //cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
     current--;
     
 
 	while(current != -1){
 		
-		str1.append(", (");			
+		strPoint = "), " + strPoint;			
 		//str1.append(drawIntX(route.at(current)));
-        str1.append(to_string((int)route.at(current).x));
-		str1.append(",");
+        strPoint = to_string((int)route.at(current).y) + strPoint;
+        strPoint = ", " + strPoint;
+		//str1.append(",");
+        strPoint = to_string((int)route.at(current).x) + strPoint;
 		//str1.append(drawIntY(route.at(current)));
-        str1.append(to_string((int)route.at(current).y));
-		str1.append(")");
-		cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
+        //str1.append(to_string((int)route.at(current).y));
+		//str1.append(")");
+        strPoint = "(" + strPoint;
+		//cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
 
 		current--;
 	}
 
-    //cout<<"("<<drawX(route.at(0))<<","<<drawY(route.at(0))<<")";
-
-    /*for(int i = 1; i < route.size(); i++)
-    {
-        str1.append(", (");
-        str1.append(drawX(route.at(i)));
-        str1.append(",");
-        str1.append(drawY(route.at(i)));
-        str1.append(")");
-        cout<<", ("<<drawX(route.at(i))<<","<<drawY(route.at(i))<<")";
-    }*/
+    str1.append(strPoint);
+    
 
     cout<<endl;
 
-    str1.append("]");
+    
 
     str1.append("\n\t# generate PATH so the vectors are pointing at each other\n");
     str1.append("\tPATH = []\n");
@@ -105,6 +100,9 @@ void writePythonCode(string file_name, vector<point> &route){
     str1.append("\ttesla.shape('arrow')\n");
     str1.append("\ttesla.resizemode('user')\n");
     str1.append("\ttesla.shapesize(1, 1)\n");
+
+    str1.append("\n\tscreen = turtle.Screen()\n");
+	str1.append("\tscreen.screensize(6000, 4500)\n\n");
 
     str1.append("\n\t# draw vectors representing points in PATH\n");
     str1.append("\tfor pt in PATH:\n");
