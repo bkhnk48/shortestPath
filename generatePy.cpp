@@ -48,29 +48,21 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     string lastAngle = "";
 
     int current = route.size()-1;
-    int xEnd, yEnd;
+    
     if(*directionAtTheEnd == 8)
     {
-        xEnd = route.at(current).x;
-        yEnd = route.at(current).y + 1;
         lastAngle = "90";
     }
     else if(*directionAtTheEnd == 2)
     {
-        xEnd = route.at(current).x;
-        yEnd = route.at(current).y - 1;
         lastAngle = "270";
     }
     else if(*directionAtTheEnd == 4)
     {
-        xEnd = route.at(current).x - 1;
-        yEnd = route.at(current).y;
         lastAngle = "180";
     }
     else if(*directionAtTheEnd == 6)
     {
-        xEnd = route.at(current).x + 1;
-        yEnd = route.at(current).y;
         lastAngle = "0";
     }
     string strPoint = "(";
@@ -78,12 +70,6 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     strPoint.append(",");
     strPoint.append(to_string((scale*route.at(current).y)));
     strPoint.append(")");
-
-    //strPoint.append(", (");
-    //strPoint.append(to_string((int)(xEnd - deltaX)));
-    //strPoint.append(",");
-    //strPoint.append(to_string((int)(yEnd)));
-    //strPoint.append(")");
 
     strPoint.append("] ");
     //cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
