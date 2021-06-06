@@ -150,19 +150,23 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1.append("\ttesla.speed(10)\n");
     str1.append("\tdraw.goto(tesla, PATH[0])\n");
     str1.append("\tpath_length = 0\n");
-    str1.append("\tf = open(\"myfile.txt\",\"w\")\n");
+    str1.append("\ttrajectory = []\n");
+    str1.append("\tf = open(\"trajectory.txt\",\"w\")\n");
+    str1.append("\ts = str(round(pts[0][0], 3)) + \" \" + str(round(pts[0][1], 3)) + \" Start\\n\"\n");
+    str1.append("\tf.write(s)\n\n");
     str1.append("\tfor i in range(len(PATH) - 1):\n");
     str1.append("\t    path = rs.get_optimal_path(PATH[i], PATH[i+1])\n");
     str1.append("\t    path_length += rs.path_length(path)\n");
-    str1.append("\t    draw.draw_path(tesla, path)\n");
+    str1.append("\t    trajectory = draw.draw_path(tesla, path)\n");
+    str1.append("\t    for j in range(len(trajectory)):\n");
+	str1.append("\t        s = str(round(trajectory[j][0], 3)) + \" \" + str(round(trajectory[j][1], 3)) + \" \" + trajectory[j][2] + \"\\n\"\n");
+	str1.append("\t        f.write(s)\n\n");
 
     str1.append("\n\tprint(\"Shortest path length: {} px.\".format(int(draw.scale(path_length))))\n");
+    str1.append("\tf.close()\n");
 
     str1.append("\n\tturtle.done()\n");
-    str1.append("\tf.close()\n");
-	//str1.append("\tturtle.mainloop()\n");
-	//str1.append("\tsys.exit('Fuck')\n");
-
+    
 
     str1.append("\n\nif __name__ == '__main__':\n");
     str1.append("\t    main()\n");
