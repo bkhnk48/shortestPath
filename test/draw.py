@@ -72,7 +72,7 @@ def draw_path(bob, path):
             typeOfTraj = "Forward"
         
         #print(bob.position())
-        trajectory.append((bob.position()[0], bob.position()[1], typeOfTraj))
+        trajectory.append((bob.position()[0], bob.position()[1], e.param, typeOfTraj))
 
     #print(trajectory)
     return trajectory
