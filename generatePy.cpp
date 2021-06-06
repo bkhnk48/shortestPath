@@ -31,7 +31,8 @@ string drawIntY(point &p){
 void writePythonCode(string file_name, vector<point> &route, int* directionAtTheEnd){
 
     float scale = 1;
-    float deltaX = 0;
+    float deltaX = 22;
+    float deltaY = 18;
 
 	string str1 = "import turtle\n";
     str1 = str1 + "import reeds_shepp as rs\n";
@@ -68,7 +69,7 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     string strPoint = "(";
     strPoint.append(to_string((scale*route.at(current).x - deltaX)));
     strPoint.append(",");
-    strPoint.append(to_string((scale*route.at(current).y)));
+    strPoint.append(to_string((scale*route.at(current).y - deltaY)));
     strPoint.append(")");
 
     strPoint.append("] ");
@@ -82,7 +83,7 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
 		
 		strPoint = "), " + strPoint;			
 		//str1.append(drawIntX(route.at(current)));
-        strPoint = to_string((scale*route.at(current).y)) + strPoint;
+        strPoint = to_string((scale*route.at(current).y - deltaY)) + strPoint;
         strPoint = ", " + strPoint;
 		//str1.append(",");
         strPoint = to_string((scale*route.at(current).x - deltaX)) + strPoint;
