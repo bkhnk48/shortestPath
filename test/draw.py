@@ -74,7 +74,7 @@ def draw_path(bob, path):
         #print(bob.position())
         trajectory.append((bob.position()[0], bob.position()[1], typeOfTraj))
 
-    print(trajectory)
+    #print(trajectory)
     return trajectory
 
 def set_random_pencolor(bob):
