@@ -5,7 +5,7 @@ import random as rd
 
 
 # drawing n units (eg turtle.forward(n)) will draw n * SCALE pixels
-SCALE = 20
+SCALE = 1
 
 def scale(x):
     """
@@ -58,6 +58,9 @@ def draw_path(bob, path):
     """
     Draw the path (list of rs.PathElements).
     """
+    trajectory = []
+    typeOfTraj = "Circle"
+
     for e in path:
         gear = 1 if e.gear == rs.Gear.FORWARD else -1
         if e.steering == rs.Steering.LEFT:
@@ -66,6 +69,13 @@ def draw_path(bob, path):
             bob.circle(- scale(1), gear * rad2deg(e.param))
         elif e.steering == rs.Steering.STRAIGHT:
             bob.forward(gear * scale(e.param))
+            typeOfTraj = "Forward"
+        
+        #print(bob.position())
+        trajectory.append((bob.position()[0], bob.position()[1], typeOfTraj))
+
+    print(trajectory)
+    return trajectory
 
 def set_random_pencolor(bob):
     """
