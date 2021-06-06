@@ -10,6 +10,8 @@
 #include <queue>
 #include <bits/stdc++.h>
 #include <algorithm>
+//#include <string.h> 
+
 
 #include "draw.cpp"
 
@@ -17,6 +19,7 @@
 #define _BUILD_PYTHON_CODE_
 
 using namespace std;
+
 
 string drawIntX(point &p){
 	int r = (int)p.x*10;
@@ -40,6 +43,8 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1 = str1 + "import draw\n";
     str1 = str1 + "import math\n";
     str1 = str1 + "import random as rd\n";
+    str1 = str1 + "import sys\n";
+    str1 = str1 + "import os\n";
 
     str1 = str1 + "\n\n\n";
     str1 = str1 + "def main():\n";
@@ -145,6 +150,7 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1.append("\ttesla.speed(10)\n");
     str1.append("\tdraw.goto(tesla, PATH[0])\n");
     str1.append("\tpath_length = 0\n");
+    str1.append("\tf = open(\"myfile.txt\",\"w\")\n");
     str1.append("\tfor i in range(len(PATH) - 1):\n");
     str1.append("\t    path = rs.get_optimal_path(PATH[i], PATH[i+1])\n");
     str1.append("\t    path_length += rs.path_length(path)\n");
@@ -153,6 +159,9 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1.append("\n\tprint(\"Shortest path length: {} px.\".format(int(draw.scale(path_length))))\n");
 
     str1.append("\n\tturtle.done()\n");
+    str1.append("\tf.close()\n");
+	//str1.append("\tturtle.mainloop()\n");
+	//str1.append("\tsys.exit('Fuck')\n");
 
 
     str1.append("\n\nif __name__ == '__main__':\n");
@@ -164,5 +173,10 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
 
 	ofs << str1;
 	ofs.close();
+
+    char cmd[50];
+    strcpy(cmd,"test\\demoTrajectory.py");
+    system(cmd);
+
 }
 #endif
