@@ -31,8 +31,8 @@ string drawIntY(point &p){
 void writePythonCode(string file_name, vector<point> &route, int* directionAtTheEnd){
 
     float scale = 1;
-    float deltaX = 22;
-    float deltaY = 18;
+    float deltaX = 0; //22;
+    float deltaY = 0; //18;
 
 	string str1 = "import turtle\n";
     str1 = str1 + "import reeds_shepp as rs\n";
@@ -82,26 +82,16 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
 	while(current != -1){
 		
 		strPoint = "), " + strPoint;			
-		//str1.append(drawIntX(route.at(current)));
         strPoint = to_string((scale*route.at(current).y - deltaY)) + strPoint;
         strPoint = ", " + strPoint;
-		//str1.append(",");
         strPoint = to_string((scale*route.at(current).x - deltaX)) + strPoint;
-		//str1.append(drawIntY(route.at(current)));
-        //str1.append(to_string((int)route.at(current).y));
-		//str1.append(")");
         strPoint = "(" + strPoint;
-		//cout<<"("<<route.at(current).x<<","<<route.at(current).y<<")";
-
 		current--;
 	}
 
     str1.append(strPoint);
     
-
     cout<<endl;
-
-    
 
     str1.append("\n\t# generate PATH so the vectors are pointing at each other\n");
     str1.append("\tPATH = []\n");
