@@ -127,6 +127,27 @@ string drawY(point &p){
 	return to_string(r);
 }
 
+void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, double *xOut, double *yOut)
+{
+	if(deltaX == 0){
+		*xIn = 1; *yIn = 0;
+		
+		*xOut = -1; *yOut = 0;
+	}
+	else if(deltaY == 0){
+		*xIn = 0; *yIn = 1;
+
+		*xOut = 0; *yOut = -1;
+	}
+	else{
+		
+		double length = sqrt(deltaX*deltaX + deltaY*deltaY);
+		
+		*xIn = deltaY/length; *yIn = deltaX/length;
+		*xOut = -deltaY/length; *yOut = -deltaX/length;
+	}
+}
+
 string drawRoute(vector<int> & route, vector<point> & points){
 	string str = "<polyline stroke='red' stroke-width='2' fill='none' points='";
 	int current = route.size()-1;
