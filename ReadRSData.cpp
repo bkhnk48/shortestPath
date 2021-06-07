@@ -26,6 +26,7 @@ vector<point> readRSFile(string fileName){
      
     ifstream infile(fileName);
     string line;
+    string steering;
     double x, y, distance;
     string typeOfTraj;
     getline(infile, line);
@@ -40,11 +41,11 @@ vector<point> readRSFile(string fileName){
         {
             istringstream iss(line);
             
-            if (!(iss >> x >> y >> distance >> typeOfTraj)) 
+            if (!(iss >> x >> y >> distance >> typeOfTraj >> steering)) 
             { 
                 break; 
             } // error
-            cout<<"X = "<<x<<" Y = "<<y<<" dis = "<<distance<<" "<<typeOfTraj<<endl;
+            cout<<"X = "<<x<<" Y = "<<y<<" dis = "<<distance<<" "<<typeOfTraj<<" "<<steering<<endl;
             // process pair (a,b)
         }
     }
@@ -57,6 +58,8 @@ vector<point> readRSFile(string fileName){
 vector<point> getSegmentOfCircle(point &p1, point &p2, double rotatedAngle)
 {
     vector<point> segment;
+    double centerX = (p1.x + p2.x)/2;
+    double centerY = (p1.y + p2.y)/2;
     
     return segment;
 }
