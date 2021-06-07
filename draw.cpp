@@ -6,8 +6,7 @@
 #include <float.h>
 #include <string>
 #include <stdlib.h>
-//#include "RawRoute.cpp"
-//#include "naive.cpp"
+#include "Constant.cpp"
 
 #ifndef _DRAW_
 #define _DRAW_
@@ -44,6 +43,18 @@ struct point {
 	bool operator==(const point &other) const {
 		return (this->x==other.x && this->y==other.y);
 	}
+};
+
+struct Trajectory{
+	point position;
+	double t;
+
+	Trajectory(double x, double y, double t){
+		this->position.x = x;
+		this->position.y = x;
+		this->t = t;
+	}
+
 };
 
 class RawRoute{
