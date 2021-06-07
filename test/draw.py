@@ -77,7 +77,7 @@ def draw_path(bob, path):
             typeOfSteering = "Straight"
         
         #print(bob.position())
-        trajectory.append((bob.position()[0]/SCALE, bob.position()[1]/SCALE, e.param, typeOfTraj, typeOfSteering))
+        trajectory.append((bob.position()[0]/SCALE, bob.position()[1]/SCALE, gear * e.param, typeOfTraj, typeOfSteering))
         typeOfTraj = "Circle"
 
     #print(trajectory)
