@@ -5,7 +5,7 @@ import random as rd
 
 
 # drawing n units (eg turtle.forward(n)) will draw n * SCALE pixels
-SCALE = 1
+SCALE = 40
 
 def scale(x):
     """
@@ -60,19 +60,25 @@ def draw_path(bob, path):
     """
     trajectory = []
     typeOfTraj = "Circle"
+    typeOfSteering = "Straight"
 
     for e in path:
+        #trajectory.append((bob.position()[0], bob.position()[1], 0, "Start"))
         gear = 1 if e.gear == rs.Gear.FORWARD else -1
         if e.steering == rs.Steering.LEFT:
+            typeOfSteering = "Left"
             bob.circle(scale(1), gear * rad2deg(e.param))
         elif e.steering == rs.Steering.RIGHT:
+            typeOfSteering = "Right"
             bob.circle(- scale(1), gear * rad2deg(e.param))
         elif e.steering == rs.Steering.STRAIGHT:
             bob.forward(gear * scale(e.param))
             typeOfTraj = "Forward"
+            typeOfSteering = "Straight"
         
         #print(bob.position())
-        trajectory.append((bob.position()[0], bob.position()[1], e.param, typeOfTraj))
+        trajectory.append((bob.position()[0]/SCALE, bob.position()[1]/SCALE, e.param, typeOfTraj, typeOfSteering))
+        typeOfTraj = "Circle"
 
     #print(trajectory)
     return trajectory
