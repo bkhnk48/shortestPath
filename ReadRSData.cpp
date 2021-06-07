@@ -20,7 +20,7 @@
 
 using namespace std;
 
-vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, string steering);
+vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
 vector<point> readRSFile(string fileName){
 
@@ -28,9 +28,9 @@ vector<point> readRSFile(string fileName){
      
     ifstream infile(fileName);
     string line;
-    string steering;
+    char steering;
     double x, y, distance;
-    string typeOfTraj;
+    char typeOfTraj;
     getline(infile, line);
     istringstream firstIss(line);
     if (firstIss >> x >> y >> typeOfTraj) 
@@ -53,7 +53,7 @@ vector<point> readRSFile(string fileName){
             } // error
             //cout<<"X = "<<x<<" Y = "<<y<<" dis = "<<distance<<" "<<typeOfTraj<<" "<<steering<<endl;
             
-            if(CIRCLE.compare(typeOfTraj)){
+            if(CIRCLE == typeOfTraj){
                 double rotatedAngle = distance;
                 vector<point> tempVector = getSegmentOfCircle(tempPointX, tempPointY, p2X, p2Y, rotatedAngle, steering);
                 if(tempVector.size() > 0){
@@ -63,7 +63,9 @@ vector<point> readRSFile(string fileName){
 
             tempPointX = p2X;
             tempPointY = p2Y;
-            // process pair (a,b)
+            point p2(p2X, p2Y);
+            discreteTrajectory.push_back(p2);
+            
         }
     }
     cout<<"Close file"<<endl;
@@ -75,7 +77,7 @@ vector<point> readRSFile(string fileName){
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, string steering)
+vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering)
 {
     vector<point> segment;
     if(rotatedAngle == 0)
@@ -87,10 +89,22 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
     double y = p2Y - p1Y;
     double distance = sqrt(x*x + y*y)/2;
 
+    double R = distance/sin(abs(rotatedAngle)/2);
+    
+
+    //angle velocity
+    double omegaVelocity = MAX_VELOCITY/R;
+    double t = rotatedAngle/omegaVelocity;
+    int n = (int)abs(t);
+
+    if(n <= 1){
+        return segment;//shortcut to prevent wasted floating-point calculation
+    }
+
     double xIn = 0, yIn = 0, xOut = 0, yOut = 0;
     getNormalInAndOut(p2X - p1X, p2Y - p1Y, &xIn, &yIn, &xOut, &yOut);
     double xNormal, yNormal;
-    if(LEFT.compare(steering))
+    if(LEFT == steering)
     {
         xNormal = xOut;
         yNormal = yOut;
@@ -100,15 +114,9 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
         yNormal = yIn;
     }
 
-    double R = distance/sin(abs(rotatedAngle)/2);
     double h = distance/tan(abs(rotatedAngle)/2);
     double centerX = midPointX + h*xNormal;
     double centerY = midPointY + h*yNormal;
-
-    //angle velocity
-    double omegaVelocity = MAX_VELOCITY/R;
-    double t = rotatedAngle/omegaVelocity;
-    int n = (int)abs(t);
     
     //sin(omega_T0) = (p1.y - centerY)/R;
     //cos(omega_T0) = (p1.x - centerX)/R;
