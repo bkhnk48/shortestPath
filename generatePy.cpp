@@ -159,7 +159,7 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1.append("\t    path_length += rs.path_length(path)\n");
     str1.append("\t    trajectory = draw.draw_path(tesla, path)\n");
     str1.append("\t    for j in range(len(trajectory)):\n");
-	str1.append("\t        s = str(round(trajectory[j][0], 3)) + \" \" + str(round(trajectory[j][1], 3)) + \" \" + str(round(trajectory[j][2], 3)) + \" \" + trajectory[j][3] + \"\\n\"\n");
+	str1.append("\t        s = str(round(trajectory[j][0], 3)) + \" \" + str(round(trajectory[j][1], 3)) + \" \" + str(round(trajectory[j][2], 2)) + \" \" + trajectory[j][3] + \" \" + trajectory[j][4] + \"\\n\"\n");
 	str1.append("\t        f.write(s)\n\n");
 
     str1.append("\n\tprint(\"Shortest path length: {} px.\".format(int(draw.scale(path_length))))\n");
