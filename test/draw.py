@@ -59,26 +59,26 @@ def draw_path(bob, path):
     Draw the path (list of rs.PathElements).
     """
     trajectory = []
-    typeOfTraj = "Circle"
-    typeOfSteering = "Straight"
+    typeOfTraj = "C"
+    typeOfSteering = "S"
 
     for e in path:
         #trajectory.append((bob.position()[0], bob.position()[1], 0, "Start"))
         gear = 1 if e.gear == rs.Gear.FORWARD else -1
         if e.steering == rs.Steering.LEFT:
-            typeOfSteering = "Left"
+            typeOfSteering = "L"
             bob.circle(scale(1), gear * rad2deg(e.param))
         elif e.steering == rs.Steering.RIGHT:
-            typeOfSteering = "Right"
+            typeOfSteering = "R"
             bob.circle(- scale(1), gear * rad2deg(e.param))
         elif e.steering == rs.Steering.STRAIGHT:
             bob.forward(gear * scale(e.param))
-            typeOfTraj = "Forward"
-            typeOfSteering = "Straight"
+            typeOfTraj = "F"
+            typeOfSteering = "S"
         
         #print(bob.position())
         trajectory.append((bob.position()[0]/SCALE, bob.position()[1]/SCALE, gear * e.param, typeOfTraj, typeOfSteering))
-        typeOfTraj = "Circle"
+        typeOfTraj = "C"
 
     #print(trajectory)
     return trajectory
