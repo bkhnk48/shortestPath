@@ -53,4 +53,11 @@ vector<point> readRSFile(string fileName){
 
     return discreteTrajectory;
 }
+
+vector<point> getSegmentOfCircle(point &p1, point &p2, double rotatedAngle)
+{
+    vector<point> segment;
+    
+    return segment;
+}
 #endif
