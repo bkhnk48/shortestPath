@@ -53,7 +53,7 @@ vector<point> readRSFile(string fileName){
             } // error
             //cout<<"X = "<<x<<" Y = "<<y<<" dis = "<<distance<<" "<<typeOfTraj<<" "<<steering<<endl;
             
-            if(CIRCLE == typeOfTraj){
+            if(CIRCLE == typeOfTraj && distance != 0){
                 double rotatedAngle = distance;
                 vector<point> tempVector = getSegmentOfCircle(tempPointX, tempPointY, p2X, p2Y, rotatedAngle, steering);
                 if(tempVector.size() > 0){
@@ -90,7 +90,7 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
     double distance = sqrt(x*x + y*y)/2;
 
     double R = distance/sin(abs(rotatedAngle)/2);
-    
+    cout<<"R = "<<R<<"as angle = "<<rotatedAngle<<" dis "<<distance<<endl;
 
     //angle velocity
     double omegaVelocity = MAX_VELOCITY/R;
