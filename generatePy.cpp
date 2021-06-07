@@ -43,8 +43,6 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1 = str1 + "import draw\n";
     str1 = str1 + "import math\n";
     str1 = str1 + "import random as rd\n";
-    str1 = str1 + "import sys\n";
-    str1 = str1 + "import os\n";
 
     str1 = str1 + "\n\n\n";
     str1 = str1 + "def main():\n";
