@@ -49,25 +49,6 @@ class Homotopy{
                 double deltaX = prev.x - p.x;
                 getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y
                                         , &normalOut.q.x, &normalOut.q.y);
-                /*if(p.x == prev.x){
-                    normalIn.q.x = 1; normalIn.q.y = 0;
-                    
-                    normalOut.q.x = -1; normalOut.q.y = 0;
-                }
-                else if(p.y == prev.y){
-                    normalIn.q.x = 0; normalIn.q.y = 1;
-
-                    normalOut.q.x = 0; normalOut.q.y = -1;
-                }
-                else{
-                    double deltaY = p.y - prev.y;
-                    double deltaX = prev.x - p.x;
-
-                    double length = sqrt(deltaX*deltaX + deltaY*deltaY);
-                    
-                    normalIn.q.x = deltaY/length; normalIn.q.y = deltaX/length;
-                    normalOut.q.x = -deltaY/length; normalOut.q.y = -deltaX/length;
-                }*/
                 #pragma endregion
                 
                 temp1.p.x = prev.x ;
