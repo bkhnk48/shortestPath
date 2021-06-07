@@ -20,6 +20,9 @@
 
 using namespace std;
 
+const string LEFT("Left");
+//const string RIGHT("Right");
+
 vector<point> readRSFile(string fileName){
 
     vector<point> discreteTrajectory;
@@ -55,12 +58,23 @@ vector<point> readRSFile(string fileName){
     return discreteTrajectory;
 }
 
-vector<point> getSegmentOfCircle(point &p1, point &p2, double rotatedAngle)
+vector<point> getSegmentOfCircle(point &p1, point &p2, double rotatedAngle, string steering)
 {
     vector<point> segment;
     double centerX = (p1.x + p2.x)/2;
     double centerY = (p1.y + p2.y)/2;
-    
+    double xIn = 0, yIn = 0, xOut =0, yOut = 0;
+    getNormalInAndOut(p2.x - p1.x, p2.y - p1.y, &xIn, &yIn, &xOut, &yOut);
+    double xNormal, yNormal;
+    if(LEFT.compare(steering))
+    {
+        xNormal = xOut;
+        yNormal = yOut;
+    }
+    else{
+        xNormal = xIn;
+        yNormal = yIn;
+    }
     return segment;
 }
 #endif
