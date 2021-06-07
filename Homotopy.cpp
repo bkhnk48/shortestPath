@@ -45,7 +45,11 @@ class Homotopy{
             for(int i = 1; i < route.size(); i++){
                 point p = route.at(i);
                 #pragma region Calculate the normal vector
-                if(p.x == prev.x){
+                double deltaY = p.y - prev.y;
+                double deltaX = prev.x - p.x;
+                getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y
+                                        , &normalOut.q.x, &normalOut.q.y);
+                /*if(p.x == prev.x){
                     normalIn.q.x = 1; normalIn.q.y = 0;
                     
                     normalOut.q.x = -1; normalOut.q.y = 0;
@@ -63,15 +67,7 @@ class Homotopy{
                     
                     normalIn.q.x = deltaY/length; normalIn.q.y = deltaX/length;
                     normalOut.q.x = -deltaY/length; normalOut.q.y = -deltaX/length;
-                }
-
-                //normalIn.q.x *= this->WIDTH;
-                //normalIn.q.y *= this->WIDTH;
-
-                //normalOut.q.x *= this->WIDTH;
-                //normalOut.q.y *= this->WIDTH;
-
-                
+                }*/
                 #pragma endregion
                 
                 temp1.p.x = prev.x ;
