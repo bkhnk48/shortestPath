@@ -18,9 +18,9 @@
 
 using namespace std;
 
-const string LEFT("Left");
+const char LEFT = 'L';
 
-const string RIGHT("Right");
+const char RIGHT = 'R';
 
 const char CIRCLE = 'C';
 
