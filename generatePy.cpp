@@ -47,7 +47,8 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1 = str1 + "\n\n\n";
     str1 = str1 + "def main():\n";
     str1 = str1 + "\t# points to be followed\n";
-    str1 = str1 + "\n\tpts = [";
+    str1 = str1 + "\tratio = 6.8\n\n";
+    str1 = str1 + "\n\tpts1 = [";
 
     string lastAngle = "";
 
@@ -95,6 +96,10 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1.append(strPoint);
     
     cout<<endl;
+
+    str1.append("\n\tpts = []\n");
+    str1.append("\tfor i in range(len(pts1)):\n");
+    str1.append("\t\tpts.append((pts1[i][0]/ ratio, pts1[i][1]/ratio))\n");
 
     str1.append("\n\t# generate PATH so the vectors are pointing at each other\n");
     str1.append("\tPATH = []\n");
@@ -150,14 +155,15 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
     str1.append("\tpath_length = 0\n");
     str1.append("\ttrajectory = []\n");
     str1.append("\tf = open(\"trajectory.txt\",\"w\")\n");
-    str1.append("\ts = str(round(pts[0][0], 3)) + \" \" + str(round(pts[0][1], 3)) + \" Start\\n\"\n");
+    str1.append("\ts = str(round(ratio*pts[0][0], 3)) + \" \" + str(round(ratio*pts[0][1], 3)) + \" B\\n\"\n");//BEGIN
     str1.append("\tf.write(s)\n\n");
     str1.append("\tfor i in range(len(PATH) - 1):\n");
     str1.append("\t    path = rs.get_optimal_path(PATH[i], PATH[i+1])\n");
     str1.append("\t    path_length += rs.path_length(path)\n");
     str1.append("\t    trajectory = draw.draw_path(tesla, path)\n");
     str1.append("\t    for j in range(len(trajectory)):\n");
-	str1.append("\t        s = str(round(trajectory[j][0], 3)) + \" \" + str(round(trajectory[j][1], 3)) + \" \" + str(round(trajectory[j][2], 2)) + \" \" + trajectory[j][3] + \" \" + trajectory[j][4] + \"\\n\"\n");
+	str1.append("\t        s = str(round(ratio*trajectory[j][0], 3)) + \" \" + str(round(ratio*trajectory[j][1], 3)) + \\\n");
+    str1.append("\t        \t\" \" + str(round(trajectory[j][2], 2)) + \" \" + trajectory[j][3] + \" \" + trajectory[j][4] + \"\\n\"\n");
 	str1.append("\t        f.write(s)\n\n");
 
     str1.append("\n\tprint(\"Shortest path length: {} px.\".format(int(draw.scale(path_length))))\n");
