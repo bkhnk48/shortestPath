@@ -31,8 +31,43 @@ string drawIntY(point &p){
 	return to_string(r);
 }
 
-void writePythonCode(string file_name, vector<point> &route, int* directionAtTheEnd){
+void writeFile(string file_name, vector< vector< lineSegment> > &polygons){
+    if(polygons.size() == 0)
+        return;
+    
+    string str1 = to_string(polygons.size());
+    str1.append("\n");
+    //str1.append("\t");
 
+    for(int i = 0; i < polygons.size(); i++){
+        int numEdges = polygons.at(i).size();
+        str1.append(to_string(numEdges));
+        str1.append("\n");
+        for(int j = 0; j < polygons.at(i).size(); j++){
+            str1.append(to_string(polygons.at(i).at(j).p.x));
+            str1.append(" ");
+            str1.append(to_string(polygons.at(i).at(j).p.y));
+            str1.append(" ");
+            str1.append(to_string(polygons.at(i).at(j).q.x));
+            str1.append(" ");
+            str1.append(to_string(polygons.at(i).at(j).q.y));
+            str1.append("\n");
+        }
+    }
+
+    std::ofstream ofs(file_name.c_str());
+	if (!ofs.good())
+		cout<<"Could not write data to "<<file_name;
+
+	ofs << str1;
+	ofs.close();
+
+    
+}
+
+void writePythonCode(string file_name, vector<point> &route, int* directionAtTheEnd, vector< vector< lineSegment> > &polygons){
+
+    writeFile("test/polygons.txt", polygons);
     float scale = 1;
     float deltaX = 0; //22;
     float deltaY = 0; //18;
@@ -46,6 +81,9 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
 
     str1 = str1 + "\n\n\n";
     str1 = str1 + "def main():\n";
+    //str1.append("\tpolygons = [\n");
+
+    //str1.append("\t\t]\n");
     str1 = str1 + "\t# points to be followed\n";
     str1 = str1 + "\tratio = 6.8\n\n";
     str1 = str1 + "\n\tpts1 = [";
@@ -139,8 +177,9 @@ void writePythonCode(string file_name, vector<point> &route, int* directionAtThe
 
     str1.append("\n\t# draw all routes found\n");
     str1.append("\ttesla.speed(0)\n");
+    str1.append("\tedges = rs.get_all_polygons()\n");
     str1.append("\tfor i in range(len(PATH) - 1):\n");
-    str1.append("\t    paths = rs.get_all_paths(PATH[i], PATH[i+1])\n");
+    str1.append("\t    paths = rs.get_all_paths(PATH[i], PATH[i+1], edges)\n");
 
     str1.append("\n\t    for path in paths:\n");
     str1.append("\t        draw.set_random_pencolor(tesla)\n");
