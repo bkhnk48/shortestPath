@@ -100,6 +100,23 @@ def get_all_polygons():
     f.close()
     return edges
 
+def readPlots():
+	pts = []
+	f = open('trajectory.txt', 'r')
+	#line = f.readline()
+	#numPolygons = int(line[0])
+	for line in f:#doc N polygon co trong file
+		line = f.readline()
+        numEdges = int(line)
+        for j in range(numEdges):
+            coords = f.readline().split()
+            x1 = float(coords[0])
+            y1 = float(coords[1])
+            x2 = float(coords[2]) 
+            y2 = float(coords[3]) 
+            #edges.append((x1, y1, x2, y2))
+	f.close()
+	return pts
 
 def get_all_paths(start, end, polygons = []):
     """
