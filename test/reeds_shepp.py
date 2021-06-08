@@ -119,6 +119,8 @@ def readPlots():
 	return pts
 
 def cutThroughCurver(start, end, e, edges):
+    if e.steering == Steering.STRAIGHT:
+        return 0
     deltaX = -start[0] + end[0]
     deltaY = -start[1] + end[1]
     distance = math.sqrt(deltaX*deltaX + deltaY*deltaY)/2
@@ -144,8 +146,16 @@ def cutThroughCurver(start, end, e, edges):
     for segment in edges: #range(len(edges) - 1):
         l = LineString([(segment[0], segment[1]), (segment[2], segment[3])])
         i = c.intersection(l)
-        if len(i) > 0:
-            return 1
+        if len(i) >= 1:
+            xIntersection = i.geoms[0].coords[0][0]
+            yIntersection = i.geoms[0].coords[0][0]
+            if (xIntersection > start[0] or xIntersection > end[0]) and (yIntersection > start[1] or yIntersection > end[1]):
+                return 1
+        if len(i) == 2:
+            xIntersection = i.geoms[1].coords[0][0]
+            yIntersection = i.geoms[1].coords[0][0]
+            if (xIntersection > start[0] or xIntersection > end[0]) and (yIntersection > start[1] or yIntersection > end[1]):
+                return 1
     
     return 0
 
@@ -177,7 +187,8 @@ def get_all_paths(start, end, edges = []):
     # remove empty paths
     paths = list(filter(None, paths))
     if len(edges) > 0:
-        paths = list(filter(lambda e: cutThroughCurver(start, end, e, edges) > 0, paths))
+        # remove curver cuts through polygon
+        paths = list(filter(lambda e: cutThroughCurver(start, end, e, edges) == 0, paths))
 
     return paths
 
