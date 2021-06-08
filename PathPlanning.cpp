@@ -94,7 +94,7 @@ class PlanningController{
                 //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
                 if(distance != -1){
                     drawShortestPath(fileName, start, end, polygons, sideSteps, points, shortestPath, graph);
-                    writePythonCode("test/demoTrajectory.py", shortestPath, directionAtTheEnd);
+                    writePythonCode("test/demoTrajectory.py", shortestPath, directionAtTheEnd, polygons);
                     readRSFile("trajectory.txt");
                 }
                 else{
