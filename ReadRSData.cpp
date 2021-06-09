@@ -29,11 +29,13 @@ vector<point> readRSFile(string fileName){
     ifstream infile(fileName);
     string line;
     char steering;
+    string strTemp;
+    int numSegment;
     double x, y, distance;
     char typeOfTraj;
     getline(infile, line);
     istringstream firstIss(line);
-    if (firstIss >> x >> y >> typeOfTraj) 
+    if (firstIss >> strTemp >> numSegment) 
     { 
         cout<<"X = "<<x<<" Y = "<<y<<" "<<typeOfTraj<<endl;
         point p0(x, y);
