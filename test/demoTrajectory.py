@@ -61,20 +61,22 @@ def main():
     for i in range(len(PATH) - 1):
         paths = rs.get_all_paths(PATH[i], PATH[i+1])
         #forbiddenTrajectories = []
-        s = "_SegmentID " + str(i) + " from (" + str(PATH[i][0]) + ", " + str(PATH[i][1]) + ") to (" + str(PATH[i+1][0]) + ", " + str(PATH[i+1][1]) + ")\n"
+        s = "_SegmentID " + str(i) + " from " + str(PATH[i][0]) + " " + str(PATH[i][1]) + " to " + str(PATH[i+1][0]) + " " + str(PATH[i+1][1]) + "\n"
         f.write(s)
         s = "__#Possible_Paths " + str(len(paths)) + "\n"
         f.write(s)
         j = 0
         for path in paths:
-            s = "___SegmentID_" + str(i) + "_PathID_" + str(j) + "\n"
-            f.write(s)
+            s = "___SegmentID_" + str(i) + "_PathID_" + str(j) 
+            
             draw.set_random_pencolor(tesla)
             draw.goto(tesla, PATH[i])
             #first = PATH[i]
-            s = "____ " + str(PATH[i][0]) + " " + str(PATH[i][1]) + " " + str(PATH[i][2]) + "\n"
+            #s = "____ " + str(PATH[i][0]) + " " + str(PATH[i][1]) + " " + str(PATH[i][2]) + "\n"
             
             localTrajectory = draw.draw_path(tesla, path)
+            s = s + " " + str(len(localTrajectory)) + "\n"
+            f.write(s)
             j += 1
 
             for k in range(len(localTrajectory)):
