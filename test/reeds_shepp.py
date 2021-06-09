@@ -20,6 +20,7 @@ import math
 from enum import Enum
 from shapely.geometry import LineString
 from shapely.geometry import Point
+import os
 
 
 class Steering(Enum):
@@ -32,6 +33,7 @@ class Gear(Enum):
     BACKWARD = 2
 
 class PathElement():
+    RATIO = 6.8
     def __init__(self, param, steering, gear):
         self.param = param
         self.steering = steering
@@ -83,6 +85,8 @@ def get_optimal_path(start, end, polygons = []):
     return paths[i_min]
 
 def get_all_polygons():
+    print("Path at terminal when executing this file")
+    print(os.getcwd() + "\n")
     edges = []
     f = open('polygons.txt', 'r')
     line = f.readline()
@@ -92,21 +96,21 @@ def get_all_polygons():
         numEdges = int(line)
         for j in range(numEdges):
             coords = f.readline().split()
-            x1 = float(coords[0])
-            y1 = float(coords[1])
-            x2 = float(coords[2]) 
-            y2 = float(coords[3]) 
+            x1 = float(coords[0])/PathElement.RATIO
+            y1 = float(coords[1])/PathElement.RATIO
+            x2 = float(coords[2])/PathElement.RATIO
+            y2 = float(coords[3])/PathElement.RATIO 
             edges.append((x1, y1, x2, y2))
     f.close()
     return edges
 
 def readPlots():
-	pts = []
-	f = open('trajectory.txt', 'r')
-	#line = f.readline()
-	#numPolygons = int(line[0])
-	for line in f:#doc N polygon co trong file
-		line = f.readline()
+    pts = []
+    f = open('trajectory.txt', 'r')
+    #line = f.readline()
+    #numPolygons = int(line[0])
+    for line in f:#doc N polygon co trong file
+        line = f.readline()
         numEdges = int(line)
         for j in range(numEdges):
             coords = f.readline().split()
@@ -115,48 +119,54 @@ def readPlots():
             x2 = float(coords[2]) 
             y2 = float(coords[3]) 
             #edges.append((x1, y1, x2, y2))
-	f.close()
-	return pts
+    f.close()
+    return pts
 
-def cutThroughCurver(start, end, e, edges):
-    if e.steering == Steering.STRAIGHT:
+def cutThroughCurver(start, end, param, steering, edges):
+    if steering == "S":
         return 0
-    deltaX = -start[0] + end[0]
-    deltaY = -start[1] + end[1]
-    distance = math.sqrt(deltaX*deltaX + deltaY*deltaY)/2
-    midX = (start[0] + end[0])/2
-    midY = (start[1] + end[1])/2
+    deltaX = end[0] - start[0]
+    deltaY = end[1] - start[1]
+    distance = math.sqrt(deltaX*deltaX + deltaY*deltaY)
+    midX = (start[0] + end[0])*0.5
+    midY = (start[1] + end[1])*0.5
     xNormal = 0
     yNormal = 0
-    if e.steering == Steering.LEFT:
-        xNormal = -deltaY/(2*distance)
-        yNormal = -deltaX/(2*distance)
-    if e.steering == Steering.RIGHT:
-        xNormal = deltaY/(2*distance)
-        yNormal = deltaX/(2*distance)
+    if steering == "L":
+        xNormal = -deltaY/distance
+        yNormal = -deltaX/distance
+    if steering == "R":
+        xNormal = deltaY/distance
+        yNormal = deltaX/distance
 
-    alpha = e.param/2
-    Radius = distance/math.sin(alpha)
-    deltaR = distance/math.tan(alpha)
+    alpha = param/2
+    Radius = 1 #0.5*distance/math.sin(alpha)
+    deltaR = math.cos(alpha)
     xR = midX + deltaR*xNormal
     yR = midY + deltaR*yNormal
     p = Point(xR, yR)
     c = p.buffer(Radius).boundary
+
+    maxX = start[0] if start[0] > end[0] else end[0]
+    minX = start[0] if maxX == end[0] else end[0]
+
+    maxY = start[1] if start[1] > end[1] else end[1]
+    minY = start[1] if maxY == end[1] else end[1]
     
-    for segment in edges: #range(len(edges) - 1):
-        l = LineString([(segment[0], segment[1]), (segment[2], segment[3])])
+    for e in edges:
+        l = LineString([(e[0], e[1]), (e[2], e[3])])
         i = c.intersection(l)
-        if len(i) >= 1:
-            xIntersection = i.geoms[0].coords[0][0]
-            yIntersection = i.geoms[0].coords[0][0]
-            if (xIntersection > start[0] or xIntersection > end[0]) and (yIntersection > start[1] or yIntersection > end[1]):
+        if len(i.coords) >= 1:
+            xIntersection = i.coords[0][0]
+            yIntersection = i.coords[0][1]
+            if (xIntersection > minX and xIntersection < maxX) and (yIntersection > minY and yIntersection < maxY):
                 return 1
-        if len(i) == 2:
-            xIntersection = i.geoms[1].coords[0][0]
-            yIntersection = i.geoms[1].coords[0][0]
-            if (xIntersection > start[0] or xIntersection > end[0]) and (yIntersection > start[1] or yIntersection > end[1]):
-                return 1
-    
+            if len(i) == 2:
+                xIntersection = i.coords[1][0]
+                yIntersection = i.coords[1][0]
+                if (xIntersection > minX and xIntersection < maxX) and (yIntersection > minY and yIntersection < maxY):
+                    return 1
+        
     return 0
 
 def get_all_paths(start, end, edges = []):
@@ -186,9 +196,9 @@ def get_all_paths(start, end, edges = []):
 
     # remove empty paths
     paths = list(filter(None, paths))
-    if len(edges) > 0:
+    #if len(edges) > 0:
         # remove curver cuts through polygon
-        paths = list(filter(lambda e: cutThroughCurver(start, end, e, edges) == 0, paths))
+        #paths = list(filter(lambda e: cutThroughCurver(start, end, e, edges) == 0, paths))
 
     return paths
 
