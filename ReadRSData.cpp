@@ -11,6 +11,7 @@
 #include <bits/stdc++.h>
 #include <algorithm>
 #include <fstream>
+#include <float.h>
 
 
 #include "generatePy.cpp"
@@ -19,6 +20,25 @@
 #define _READ_REEDS_SHEEP_
 
 using namespace std;
+
+class PathSegment{
+    public:
+        char typeOfTrajectory ;
+        char steering;
+        float param;
+        double beganX;
+        double beganY;
+        double endedX;
+        double endedY;
+        vector<vector<point>> possiblePaths;
+        float Lmin;
+        int index;
+
+        PathSegment(){
+            this->index = -1;
+            this->Lmin = FLT_MAX;
+        }
+};
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
@@ -29,17 +49,43 @@ vector<point> readRSFile(string fileName){
     ifstream infile(fileName);
     string line;
     char steering;
-    string strTemp;
+    string strTemp, strTemp1, strTemp2, strTemp3;
     int numSegment;
-    double x, y, distance;
+    double x, y, nextX, nextY, distance;
+    int i;
     char typeOfTraj;
     getline(infile, line);
     istringstream firstIss(line);
     if (firstIss >> strTemp >> numSegment) 
     { 
-        cout<<"X = "<<x<<" Y = "<<y<<" "<<typeOfTraj<<endl;
-        point p0(x, y);
-        discreteTrajectory.push_back(p0);
+        cout<<"number of segments: "<<numSegment<<endl;
+        while(numSegment > 0){
+            PathSegment *path = new PathSegment();
+            getline(infile, line);
+            istringstream segment(line);
+            if(segment >> strTemp1 >> i >> strTemp2 >> x >> y >> strTemp3 >> nextX >> nextY)
+            {
+                path->beganX = x;
+                path->beganY = y;
+                path->endedX = nextX;
+                path->endedY = nextY;
+                int numOfPathsInThisSegment = 0;
+                getline(infile, line);
+                istringstream possiblePath(line);
+                if(possiblePath >> strTemp1 >> numOfPathsInThisSegment){
+                    path->possiblePaths.resize(numOfPathsInThisSegment);
+                    while(numOfPathsInThisSegment > 0){
+                        vector<point> aPath;
+                        
+                        numOfPathsInThisSegment--;
+                    }
+                }
+            }
+            numSegment--;
+        }
+        
+        
+        
         double tempPointX = x;
         double tempPointY = y;
         double p2X; double p2Y;
