@@ -69,7 +69,86 @@ class Path : public MovementPoint{
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
-vector<point> readRSFile(string fileName){
+
+//p1, p2: diem dau diem cuoi cua chuyen dong tron
+//rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
+//steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
+int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering, vector<point> &points, vector<vector<lineSegment>> &polygons)
+{
+    if(rotatedAngle == 0)
+        return -1;
+
+    double midPointX = (p1X + p2X)/2;
+    double midPointY = (p1Y + p2Y)/2;
+    double x = p2X - p1X;
+    double y = p2Y - p1Y;
+
+    double R = 1;
+
+    int n = (int)(rotatedAngle/SMALL_ANGLE);
+
+    if(n <= 1){
+        return -1;//shortcut to prevent from wasting floating-point calculation
+    }
+
+    double xIn = 0, yIn = 0, xOut = 0, yOut = 0;
+    getNormalInAndOut(p2X - p1X, p2Y - p1Y, &xIn, &yIn, &xOut, &yOut);
+    double xNormal, yNormal;
+    if(LEFT == steering)
+    {
+        xNormal = xOut;
+        yNormal = yOut;
+    }
+    else{
+        xNormal = xIn;
+        yNormal = yIn;
+    }
+
+    double h = cos(rotatedAngle/2);
+    double centerX = midPointX + h*xNormal;
+    double centerY = midPointY + h*yNormal;
+
+    #pragma region Comments for explaination of the below code    
+    //sin(omega_T0) = (p1.y - centerY)/R;
+    //cos(omega_T0) = (p1.x - centerX)/R;
+    //sin(deltaOmega) = ...;
+    //cos(deltaOmega) = ...;
+    //for i = 1..n
+    //  sin(omega_T) = sin(omega_T0)*cos(deltaOmega) + cos(omega_0)*sin(deltaOmega)
+    //  cos(omega_T) = cos(omega_T0)*cos(deltaOmega) - sin(omega_0)*sin(deltaOmega)
+    //  x(t) = centerX + R*cos(omega)
+    //  y(t) = centerY + R*sin(omega)
+    #pragma endregion
+    double sin_omega_T0 = (p1Y - centerY)/R;
+    double cos_omega_T0 = (p1X - centerX)/R;
+    double sin_omega, cos_omega, x_t, y_t;
+    double sin_omega_T = sin_omega_T0, cos_omega_T = cos_omega_T0;
+    double sin_deltaOmega = SMALL_ANGLE;
+    double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
+    double xT, yT;
+    for(int i = 1; i < n; i++){
+        sin_omega_T = sin_omega_T*cos_deltaOmega + cos_omega_T*sin_deltaOmega;
+        cos_omega_T = cos_omega_T*cos_deltaOmega - sin_omega_T*sin_deltaOmega;
+        xT = centerX + R*cos_omega_T;
+        yT = centerY + R*sin_omega_T;
+        for(int j = 0; j < polygons.size(); j++){
+            int check = pnpoly(polygons.at(j), xT, yT, true);
+            if(check % 2 == 1){
+                return -1;//collide with one of the polygons
+            }
+            check = pnpoly(polygons.at(j), xT, yT, false);
+            if(check % 2 == 1)
+                    return -1;//collide with one of the polygons
+        }
+        point p(xT, yT);
+        points.push_back(p);
+    }
+    return 1;
+}
+
+
+
+vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons){
 
     vector<point> discreteTrajectory;
      
@@ -120,6 +199,8 @@ vector<point> readRSFile(string fileName){
                                 if(sectionInfo >> strTemp1 >> section->endedX 
                                         >> section->endedY >> section->param
                                         >> section->typeOfTrajectory >> section->steering){
+                                    //vector<point> points = 
+                                    
                                     segment->sections.push_back(section);
                                 }
                                 //prepare for build sections, to be continued
