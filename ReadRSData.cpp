@@ -41,7 +41,7 @@ class Section : MovementPoint{
 };
 
 //A path segment is a group of continuous section to move from one point to other one.
-class PathSegment : MovementPoint{
+class PathSegment : public MovementPoint{
     public:
         vector<Section> sections;
         float L;
@@ -55,7 +55,7 @@ class PathSegment : MovementPoint{
 
 //A path is a group of possible path segment and its best choice to move from
 //one point to other one
-class Path : MovementPoint{
+class Path : public MovementPoint{
     public:
         vector<PathSegment> segments;
         float Lmin;
@@ -77,17 +77,17 @@ vector<point> readRSFile(string fileName){
     string line;
     char steering;
     string strTemp, strTemp1, strTemp2, strTemp3;
-    int numSegment;
+    int numPaths;
     double x, y, nextX, nextY, distance;
     int i;
     char typeOfTraj;
     getline(infile, line);
     istringstream firstIss(line);
-    if (firstIss >> strTemp >> numSegment) 
+    if (firstIss >> strTemp >> numPaths) 
     { 
-        cout<<"number of path: "<<numSegment<<endl;
-        while(numSegment > 0){
-            PathSegment *path = new PathSegment();
+        cout<<"number of path: "<<numPaths<<endl;
+        while(numPaths > 0){
+            Path *path = new Path();
             getline(infile, line);
             istringstream segment(line);
             if(segment >> strTemp1 >> i >> strTemp2 >> x >> y >> strTemp3 >> nextX >> nextY)
@@ -100,7 +100,7 @@ vector<point> readRSFile(string fileName){
                 getline(infile, line);
                 istringstream possiblePath(line);
                 if(possiblePath >> strTemp1 >> numOfPathsInThisSegment){
-                    path->possiblePaths.resize(numOfPathsInThisSegment);
+                    //path->possiblePaths.resize(numOfPathsInThisSegment);
                     while(numOfPathsInThisSegment > 0){
                         getline(infile, line);
                         istringstream allSections(line);
@@ -116,7 +116,7 @@ vector<point> readRSFile(string fileName){
                     }
                 }
             }
-            numSegment--;
+            numPaths--;
         }
         
         
