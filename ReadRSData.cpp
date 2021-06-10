@@ -43,7 +43,7 @@ class Section : public MovementPoint{
 //A path segment is a group of continuous section to move from one point to other one.
 class PathSegment : public MovementPoint{
     public:
-        vector<Section> sections;
+        vector<Section*> sections;
         float L;
         //int index;
 
@@ -120,7 +120,7 @@ vector<point> readRSFile(string fileName){
                                 if(sectionInfo >> strTemp1 >> section->endedX 
                                         >> section->endedY >> section->param
                                         >> section->typeOfTrajectory >> section->steering){
-                                    
+                                    segment->sections.push_back(section);
                                 }
                                 //prepare for build sections, to be continued
                                 numberSections--;
