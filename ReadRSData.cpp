@@ -36,7 +36,7 @@ class Section : public MovementPoint{
     public:
         char typeOfTrajectory ;
         char steering;
-        float param;
+        double param;
         vector<point> possiblePaths;
 };
 
