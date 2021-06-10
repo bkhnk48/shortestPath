@@ -57,7 +57,7 @@ class PathSegment : public MovementPoint{
 //one point to other one
 class Path : public MovementPoint{
     public:
-        vector<PathSegment> segments;
+        vector<PathSegment*> segments;
         float Lmin;
         int index;
 
@@ -146,7 +146,88 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
     return 1;
 }
 
+PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, vector<vector<lineSegment>> &polygons, int *error){
+    PathSegment *segment = new PathSegment();
+    segment->beganX = x;
+    segment->beganY = y;
+    segment->endedX = nextX;
+    segment->endedY = nextY;
+    string line;
+    string strTemp1;
+    getline(infile, line);
+    *error = 1;
+    istringstream allSections(line);
+    int numberSections = 0;
+    if(allSections >> strTemp1 >> numberSections){
+        double startX = x; 
+        double startY = y;
+        while(numberSections > 0){
+            Section *section = new Section();
+            getline(infile, line);
+            istringstream sectionInfo(line);
+            if(sectionInfo >> strTemp1 >> section->endedX 
+                    >> section->endedY >> section->param
+                    >> section->typeOfTrajectory >> section->steering){
+                int check = getPointsOfCircle(startX, startY, 
+                                section->endedX, section->endedY, 
+                                section->param, section->steering, 
+                                section->possiblePoints, polygons);
+                if(check == 1){
+                    segment->sections.push_back(section);
+                    *error = 0;
+                }
+                else{
+                    *error = 1;
+                    return segment;
+                }
+            }
+            //prepare for build sections, to be continued
+            numberSections--;
+        }
+    }
+    return segment;
+}
 
+vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons){
+    string line;
+    string strTemp, strTemp1, strTemp2, strTemp3;
+    
+    double x, y, nextX, nextY, distance;
+    int i;
+    char typeOfTraj;
+    vector<Path*> result;
+    while(numPaths > 0){
+        Path *path = new Path();
+        getline(infile, line);
+        istringstream segment(line);
+        if(segment >> strTemp1 >> i >> strTemp2 >> x >> y >> strTemp3 >> nextX >> nextY)
+        {
+            path->beganX = x;
+            path->beganY = y;
+            path->endedX = nextX;
+            path->endedY = nextY;
+            int numOfSegmentsInPath = 0;
+            getline(infile, line);
+            istringstream possiblePathSegment(line);
+            if(possiblePathSegment >> strTemp1 >> numOfSegmentsInPath){
+                //path->segments.resize(numOfPathsInThisSegment);
+                while(numOfSegmentsInPath > 0){
+                    int error = 0;
+                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, polygons, &error);
+                    if(error == 0)
+                        path->segments.push_back(segment);
+                    numOfSegmentsInPath--;
+                }
+
+                
+            }
+        }
+        numPaths--;
+        result.push_back(path);
+    }
+
+    return result;
+}
 
 vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons){
 
@@ -165,59 +246,8 @@ vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons)
     if (firstIss >> strTemp >> numPaths) 
     { 
         cout<<"number of paths: "<<numPaths<<endl;
-        while(numPaths > 0){
-            Path *path = new Path();
-            getline(infile, line);
-            istringstream segment(line);
-            if(segment >> strTemp1 >> i >> strTemp2 >> x >> y >> strTemp3 >> nextX >> nextY)
-            {
-                path->beganX = x;
-                path->beganY = y;
-                path->endedX = nextX;
-                path->endedY = nextY;
-                int numOfSegmentsInPath = 0;
-                getline(infile, line);
-                istringstream possiblePathSegment(line);
-                if(possiblePathSegment >> strTemp1 >> numOfSegmentsInPath){
-                    //path->segments.resize(numOfPathsInThisSegment);
-                    while(numOfSegmentsInPath > 0){
-                        PathSegment *segment = new PathSegment();
-                        segment->beganX = x;
-                        segment->beganY = y;
-                        segment->endedX = nextX;
-                        segment->endedY = nextY;
-                        getline(infile, line);
-                        istringstream allSections(line);
-                        int numberSections = 0;
-                        if(allSections >> strTemp1 >> numberSections){
-                            double startX = x; 
-                            double startY = y;
-                            while(numberSections > 0){
-                                Section *section = new Section();
-                                getline(infile, line);
-                                istringstream sectionInfo(line);
-                                if(sectionInfo >> strTemp1 >> section->endedX 
-                                        >> section->endedY >> section->param
-                                        >> section->typeOfTrajectory >> section->steering){
-                                    int check = getPointsOfCircle(startX, startY, 
-                                                    section->endedX, section->endedY, 
-                                                    section->param, section->steering, 
-                                                    section->possiblePoints, polygons);
-                                    if(check == 1)
-                                        segment->sections.push_back(section);
-                                }
-                                //prepare for build sections, to be continued
-                                numberSections--;
-                            }
-                        }
-
-                        numOfSegmentsInPath--;
-                    }
-                }
-            }
-            numPaths--;
-        }
         
+        readPath(infile, numPaths, polygons);
         
         
         double tempPointX = x;
@@ -255,6 +285,7 @@ vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons)
 
     return discreteTrajectory;
 }
+
 
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
