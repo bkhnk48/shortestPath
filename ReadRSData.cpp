@@ -32,7 +32,7 @@ class MovementPoint{
 
 //A section is a small trajectory which routes AV to move (both forward and backward) from
 //a point to other one. 
-class Section : MovementPoint{
+class Section : public MovementPoint{
     public:
         char typeOfTrajectory ;
         char steering;
@@ -96,23 +96,38 @@ vector<point> readRSFile(string fileName){
                 path->beganY = y;
                 path->endedX = nextX;
                 path->endedY = nextY;
-                int numOfPathsInThisSegment = 0;
+                int numOfSegmentsInPath = 0;
                 getline(infile, line);
-                istringstream possiblePath(line);
-                if(possiblePath >> strTemp1 >> numOfPathsInThisSegment){
-                    //path->possiblePaths.resize(numOfPathsInThisSegment);
-                    while(numOfPathsInThisSegment > 0){
+                istringstream possiblePathSegment(line);
+                if(possiblePathSegment >> strTemp1 >> numOfSegmentsInPath){
+                    //path->segments.resize(numOfPathsInThisSegment);
+                    while(numOfSegmentsInPath > 0){
+                        PathSegment *segment = new PathSegment();
+                        segment->beganX = x;
+                        segment->beganY = y;
+                        segment->endedX = nextX;
+                        segment->endedY = nextY;
                         getline(infile, line);
                         istringstream allSections(line);
                         int numberSections = 0;
                         if(allSections >> strTemp1 >> numberSections){
+                            double startX = x; 
+                            double startY = y;
                             while(numberSections > 0){
+                                Section *section = new Section();
+                                getline(infile, line);
+                                istringstream sectionInfo(line);
+                                if(sectionInfo >> strTemp1 >> section->endedX 
+                                        >> section->endedY >> section->param
+                                        >> section->typeOfTrajectory >> section->steering){
+                                    
+                                }
                                 //prepare for build sections, to be continued
                                 numberSections--;
                             }
                         }
 
-                        numOfPathsInThisSegment--;
+                        numOfSegmentsInPath--;
                     }
                 }
             }
