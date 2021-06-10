@@ -304,6 +304,26 @@ int cutThrough(lineSegment l1, lineSegment l2){
 
 }
 
+// check point p inside line 
+bool isPointInsideLineSegment(lineSegment line, point p){
+	point p_1 = line.p;
+	point p_2 = line.q;
+
+	pair<int, int> intersec_1; // create vector (p, p_1)
+	intersec_1.first = p_1.x - p.x;
+	intersec_1.second = p_1.y - p.y;
+
+	pair<int, int> intersec_2; // create vector (p, p_2)
+	intersec_2.first = p_2.x - p.x;
+	intersec_2.second = p_2.y - p.y;
+
+	// check vector intersec_1 or intersec_2 is proportional to each other
+	if(intersec_1.first / intersec_2.first - intersec_1.second / intersec_2.second < 0.0001){ // denta = 0.0001
+		return true;
+	}
+
+	return false;
+}
 
 int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
 {
