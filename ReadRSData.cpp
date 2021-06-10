@@ -37,7 +37,7 @@ class Section : public MovementPoint{
         char typeOfTrajectory ;
         char steering;
         double param;
-        vector<point> possiblePaths;
+        vector<point> possiblePoints;
 };
 
 //A path segment is a group of continuous section to move from one point to other one.
@@ -199,9 +199,12 @@ vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons)
                                 if(sectionInfo >> strTemp1 >> section->endedX 
                                         >> section->endedY >> section->param
                                         >> section->typeOfTrajectory >> section->steering){
-                                    //vector<point> points = 
-                                    
-                                    segment->sections.push_back(section);
+                                    int check = getPointsOfCircle(startX, startY, 
+                                                    section->endedX, section->endedY, 
+                                                    section->param, section->steering, 
+                                                    section->possiblePoints, polygons);
+                                    if(check == 1)
+                                        segment->sections.push_back(section);
                                 }
                                 //prepare for build sections, to be continued
                                 numberSections--;
