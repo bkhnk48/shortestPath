@@ -95,7 +95,7 @@ class PlanningController{
                 if(distance != -1){
                     drawShortestPath(fileName, start, end, polygons, sideSteps, points, shortestPath, graph);
                     runPythonCode("test/demoTrajectory.py", shortestPath, directionAtTheEnd, polygons);
-                    readRSFile("trajectory.txt");
+                    readRSFile("trajectory.txt", polygons);
                 }
                 else{
                     cout<<"Runtime error"<<endl;
