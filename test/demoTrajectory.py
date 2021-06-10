@@ -55,19 +55,19 @@ def main():
 
     f = open("trajectory.txt","w")
     
-    s = "#Segments " + str(len(PATH) - 1) + "\n"
+    s = "#Paths " + str(len(PATH) - 1) + "\n"
     f.write(s)#number of segments at all
     #allBannedTrajectories = []
     for i in range(len(PATH) - 1):
         paths = rs.get_all_paths(PATH[i], PATH[i+1])
         #forbiddenTrajectories = []
-        s = "_SegmentID " + str(i) + " from " + str(PATH[i][0]) + " " + str(PATH[i][1]) + " to " + str(PATH[i+1][0]) + " " + str(PATH[i+1][1]) + "\n"
+        s = "_PathID " + str(i) + " from " + str(PATH[i][0]) + " " + str(PATH[i][1]) + " to " + str(PATH[i+1][0]) + " " + str(PATH[i+1][1]) + "\n"
         f.write(s)
-        s = "__#Possible_Paths " + str(len(paths)) + "\n"
+        s = "__#Possible_Path_Segment " + str(len(paths)) + "\n"
         f.write(s)
         j = 0
         for path in paths:
-            s = "___SegmentID_" + str(i) + "_PathID_" + str(j) 
+            s = "___SegmentID_" + str(j) + "_PathID_" + str(i) 
             
             draw.set_random_pencolor(tesla)
             draw.goto(tesla, PATH[i])
@@ -80,7 +80,7 @@ def main():
             j += 1
 
             for k in range(len(localTrajectory)):
-                s = "_____ " + str(round(localTrajectory[k][0], 3)) + " "
+                s = "_____Section " + str(round(localTrajectory[k][0], 3)) + " "
                 s = s + str(round(localTrajectory[k][1], 3)) + " "
                 param = round(localTrajectory[k][2], 2)
                 s = s + str(param) + " "
