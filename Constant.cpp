@@ -28,4 +28,6 @@ const double MIN_VELOCITY = 2; //(m/s)
 
 const double MAX_VELOCITY = 2.5; //(m/s)
 
+const double SMALL_ANGLE = 0.01; //small angle which allows sin(alpha) = alpha
+
 #endif
