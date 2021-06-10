@@ -304,7 +304,7 @@ int cutThrough(lineSegment l1, lineSegment l2){
 
 }
 
-
+//If the return value is an odd, the point definitely is inside polygon
 int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
 {
 	int i, j, c = 0;
