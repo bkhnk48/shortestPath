@@ -21,22 +21,49 @@
 
 using namespace std;
 
-class PathSegment{
+//Each instance of movement point is the point which AV should reach before a time
+class MovementPoint{
     public:
-        char typeOfTrajectory ;
-        char steering;
-        float param;
         double beganX;
         double beganY;
         double endedX;
         double endedY;
-        vector<vector<point>> possiblePaths;
+};
+
+//A section is a small trajectory which routes AV to move (both forward and backward) from
+//a point to other one. 
+class Section : MovementPoint{
+    public:
+        char typeOfTrajectory ;
+        char steering;
+        float param;
+        vector<point> possiblePaths;
+};
+
+//A path segment is a group of continuous section to move from one point to other one.
+class PathSegment : MovementPoint{
+    public:
+        vector<Section> sections;
+        float L;
+        //int index;
+
+        PathSegment(){
+            //this->index = -1;
+            this->L = 0;
+        }
+};
+
+//A path is a group of possible path segment and its best choice to move from
+//one point to other one
+class Path : MovementPoint{
+    public:
+        vector<PathSegment> segments;
         float Lmin;
         int index;
 
-        PathSegment(){
-            this->index = -1;
+        Path(){
             this->Lmin = FLT_MAX;
+            this->index = -1;
         }
 };
 
@@ -58,7 +85,7 @@ vector<point> readRSFile(string fileName){
     istringstream firstIss(line);
     if (firstIss >> strTemp >> numSegment) 
     { 
-        cout<<"number of segments: "<<numSegment<<endl;
+        cout<<"number of path: "<<numSegment<<endl;
         while(numSegment > 0){
             PathSegment *path = new PathSegment();
             getline(infile, line);
@@ -75,8 +102,16 @@ vector<point> readRSFile(string fileName){
                 if(possiblePath >> strTemp1 >> numOfPathsInThisSegment){
                     path->possiblePaths.resize(numOfPathsInThisSegment);
                     while(numOfPathsInThisSegment > 0){
-                        vector<point> aPath;
-                        
+                        getline(infile, line);
+                        istringstream allSections(line);
+                        int numberSections = 0;
+                        if(allSections >> strTemp1 >> numberSections){
+                            while(numberSections > 0){
+                                //prepare for build sections, to be continued
+                                numberSections--;
+                            }
+                        }
+
                         numOfPathsInThisSegment--;
                     }
                 }
