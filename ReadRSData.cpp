@@ -85,7 +85,7 @@ vector<point> readRSFile(string fileName){
     istringstream firstIss(line);
     if (firstIss >> strTemp >> numPaths) 
     { 
-        cout<<"number of path: "<<numPaths<<endl;
+        cout<<"number of paths: "<<numPaths<<endl;
         while(numPaths > 0){
             Path *path = new Path();
             getline(infile, line);
