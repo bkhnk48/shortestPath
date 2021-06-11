@@ -99,28 +99,28 @@ def main():
 
     f.close()
     # draw shortest route
-    #tesla.pencolor(1, 0, 0)
-    #tesla.pensize(3)
-    #tesla.speed(10)
-    #draw.goto(tesla, PATH[0])
-    #path_length = 0
-    #trajectory = []
-    #f = open("trajectory.txt","w")
-    #s = str(round(rs.PathElement.RATIO*pts[0][0], 3)) + " " + str(round(rs.PathElement.RATIO*pts[0][1], 3)) + " B\n"
-    #f.write(s)
+    tesla.pencolor(1, 0, 0)
+    tesla.pensize(3)
+    tesla.speed(10)
+    draw.goto(tesla, PATH[0])
+    path_length = 0
+    trajectory = []
+    g = open("Trace.txt","w")
+    s = str(round(rs.PathElement.RATIO*pts[0][0], 3)) + " " + str(round(rs.PathElement.RATIO*pts[0][1], 3)) + " B\n"
+    g.write(s)
 
-    #for i in range(len(PATH) - 1):
-        #path = rs.get_optimal_path(PATH[i], PATH[i+1])
-        #path_length += rs.path_length(path)
-        #trajectory = draw.draw_path(tesla, path)
-        #for j in range(len(trajectory)):
-        ##    s = str(round(rs.PathElement.RATIO*trajectory[j][0], 3)) + " " + str(round(rs.PathElement.RATIO*trajectory[j][1], 3)) + \
-        #        " " + str(round(trajectory[j][2], 2)) + " " + trajectory[j][3] + " " + trajectory[j][4] + "\n"
-        #    f.write(s)
+    for i in range(len(PATH) - 1):
+        path = rs.get_optimal_path(PATH[i], PATH[i+1])
+        path_length += rs.path_length(path)
+        trajectory = draw.draw_path(tesla, path)
+        for j in range(len(trajectory)):
+            s = str(round(rs.PathElement.RATIO*trajectory[j][0], 3)) + " " + str(round(rs.PathElement.RATIO*trajectory[j][1], 3)) + \
+                " " + str(round(trajectory[j][2], 2)) + " " + trajectory[j][3] + " " + trajectory[j][4] + "\n"
+            g.write(s)
 
 
-    #print("Shortest path length: {} px.".format(int(draw.scale(path_length))))
-    #f.close()
+    print("Shortest path length: {} px.".format(int(draw.scale(path_length))))
+    g.close()
 
     turtle.done()
 
