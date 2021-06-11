@@ -67,13 +67,29 @@ class Path : public MovementPoint{
         }
 };
 
+class Range{
+    public:
+        double xMax;
+        double xMin;
+        double yMax;
+        double yMin;
+
+        Range(){
+            this->xMax = FLT_MIN;
+            this->yMax = FLT_MIN;
+            this->xMin = FLT_MAX;
+            this->yMin = FLT_MAX;
+        }
+};
+
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
 
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering, vector<point> &points, vector<vector<lineSegment>> &polygons)
+int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering, 
+                            vector<point> &points, vector<vector<lineSegment>> &polygons, vector<Range*> ranges)
 {
     if(rotatedAngle == 0)
         return -1;
@@ -132,13 +148,17 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
         xT = centerX + R*cos_omega_T;
         yT = centerY + R*sin_omega_T;
         for(int j = 0; j < polygons.size(); j++){
-            int check = pnpoly(polygons.at(j), xT, yT, true);
-            if(check % 2 == 1){
-                return -1;//collide with one of the polygons
-            }
-            check = pnpoly(polygons.at(j), xT, yT, false);
-            if(check % 2 == 1)
+            if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
+                yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
+            {
+                int check = pnpoly(polygons.at(j), xT, yT, true);
+                if(check % 2 == 1){
                     return -1;//collide with one of the polygons
+                }
+                check = pnpoly(polygons.at(j), xT, yT, false);
+                if(check % 2 == 1)
+                        return -1;//collide with one of the polygons
+            }
         }
         point p(xT, yT);
         points.push_back(p);
@@ -146,7 +166,8 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
     return 1;
 }
 
-PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, vector<vector<lineSegment>> &polygons, int *error){
+PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
+                            vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error){
     PathSegment *segment = new PathSegment();
     segment->beganX = x;
     segment->beganY = y;
@@ -171,7 +192,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                 int check = getPointsOfCircle(startX, startY, 
                                 section->endedX, section->endedY, 
                                 section->param, section->steering, 
-                                section->possiblePoints, polygons);
+                                section->possiblePoints, scaledPolygons, ranges);
                 if(check == 1){
                     segment->sections.push_back(section);
                     *error = 0;
@@ -191,6 +212,34 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
 vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons){
     string line;
     string strTemp, strTemp1, strTemp2, strTemp3;
+
+    vector<vector<lineSegment>> scaledPolygons;
+    vector<Range*> ranges;
+    scaledPolygons.resize(polygons.size());
+    for(int i = 0; i < polygons.size(); i++){
+        vector<lineSegment> lines;
+        Range *rangeOfAPolygon = new Range();
+        for(int j = 0; j < polygons.at(i).size(); j++){
+            
+            point p(polygons.at(i).at(j).p.x/RATIO, polygons.at(i).at(j).p.y/RATIO);
+            point q(polygons.at(i).at(j).q.x/RATIO, polygons.at(i).at(j).q.y/RATIO);
+
+            if(rangeOfAPolygon->xMax < p.x)
+                rangeOfAPolygon->xMax = p.x;
+            if(rangeOfAPolygon->xMin > p.x)
+                rangeOfAPolygon->xMin = p.x;
+
+            if(rangeOfAPolygon->yMax < p.y)
+                rangeOfAPolygon->xMax = p.y;
+            if(rangeOfAPolygon->xMin > p.y)
+                rangeOfAPolygon->xMin = p.y;
+
+            lineSegment aLine(p, q);
+            lines.push_back(aLine);
+        }
+        ranges.push_back(rangeOfAPolygon);
+        scaledPolygons.push_back(lines);
+    }
     
     double x, y, nextX, nextY, distance;
     int i;
@@ -213,7 +262,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                 //path->segments.resize(numOfPathsInThisSegment);
                 while(numOfSegmentsInPath > 0){
                     int error = 0;
-                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, polygons, &error);
+                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
                     if(error == 0)
                         path->segments.push_back(segment);
                     numOfSegmentsInPath--;
