@@ -310,7 +310,8 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
             for(int k = 0; k < numSections; k++){
                 cout<<"\t\t("<<sections.at(k)->beganX<<", "<<sections.at(k)->beganY
                     <<") to ("<<sections.at(k)->endedX<<", "<<sections.at(k)->endedY<<") param = "
-                    <<sections.at(k)->param<<" steering = "<<sections.at(k)->steering<<" along with "<<sections.at(k)->possiblePoints.size()<<endl;
+                    <<sections.at(k)->param<<" steering = "<<sections.at(k)->steering<<" along with "<<sections.at(k)->possiblePoints.size()
+                    <<" pts."<<endl;
             }
         }
     }
