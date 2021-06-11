@@ -296,6 +296,26 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
     return result;
 }
 
+void printReedSheppTrajectories(vector<Path*> trajectories){
+    int numPaths = trajectories.size();
+    for(int i = 0; i < numPaths; i++){
+        Path* path = trajectories.at(i);
+        cout<<"Path "<<i<<endl;
+        vector<PathSegment*> segments = path->segments;
+        int numPossibleSegments = segments.size();
+        for(int j = 0; j < numPossibleSegments; j++){
+            cout<<"\tSegment "<<j<<endl;
+            vector<Section*> sections = segments.at(j)->sections;
+            int numSections = sections.size();
+            for(int k = 0; k < numSections; k++){
+                cout<<"\t\t("<<sections.at(k)->beganX<<", "<<sections.at(k)->beganY
+                    <<") to ("<<sections.at(k)->endedX<<", "<<sections.at(k)->endedY<<") param = "
+                    <<sections.at(k)->param<<" steering = "<<sections.at(k)->steering<<" along with "<<sections.at(k)->possiblePoints.size()<<endl;
+            }
+        }
+    }
+}
+
 vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons){
 
     vector<point> discreteTrajectory;
@@ -315,37 +335,7 @@ vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons)
         cout<<"number of paths: "<<numPaths<<endl;
         
         vector<Path*> result = readPath(infile, numPaths, polygons);
-        
-        
-        double tempPointX = x;
-        double tempPointY = y;
-        double p2X; double p2Y;
-
-        while (getline(infile, line))
-        {
-            istringstream iss(line);
-            
-            
-            if (!(iss >> p2X >> p2Y >> distance >> typeOfTraj >> steering)) 
-            { 
-                break; 
-            } // error
-            //cout<<"X = "<<x<<" Y = "<<y<<" dis = "<<distance<<" "<<typeOfTraj<<" "<<steering<<endl;
-            
-            if(CIRCLE == typeOfTraj && distance != 0){
-                double rotatedAngle = distance;
-                vector<point> tempVector = getSegmentOfCircle(tempPointX, tempPointY, p2X, p2Y, rotatedAngle, steering);
-                if(tempVector.size() > 0){
-                    discreteTrajectory.insert(discreteTrajectory.end(), tempVector.begin(), tempVector.end());
-                }
-            }
-
-            tempPointX = p2X;
-            tempPointY = p2Y;
-            point p2(p2X, p2Y);
-            discreteTrajectory.push_back(p2);
-            
-        }
+        printReedSheppTrajectories(result);
     }
     cout<<"Close file"<<endl;
     infile.close();
