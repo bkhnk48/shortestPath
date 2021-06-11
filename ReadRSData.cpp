@@ -101,7 +101,7 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
 
     double R = 1;
 
-    int n = (int)(rotatedAngle/SMALL_ANGLE);
+    int n = abs((int)(rotatedAngle/SMALL_ANGLE));//the rotatedAngle sometime is negative lets n < 0
 
     if(n <= 1){
         return -1;//shortcut to prevent from wasting floating-point calculation
@@ -169,14 +169,11 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
                             vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error){
     PathSegment *segment = new PathSegment();
-    segment->beganX = x;
-    segment->beganY = y;
-    segment->endedX = nextX;
-    segment->endedY = nextY;
-    string line;
-    string strTemp1;
+    segment->beganX = x;       segment->beganY = y;
+    segment->endedX = nextX;   segment->endedY = nextY;
+    string line;               string strTemp1;
     getline(infile, line);
-    *error = 1;
+    *error = 0;
     istringstream allSections(line);
     int numberSections = 0;
     if(allSections >> strTemp1 >> numberSections){
@@ -189,20 +186,28 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
             if(sectionInfo >> strTemp1 >> section->endedX 
                     >> section->endedY >> section->param
                     >> section->typeOfTrajectory >> section->steering){
-                int check = getPointsOfCircle(startX, startY, 
-                                section->endedX, section->endedY, 
-                                section->param, section->steering, 
-                                section->possiblePoints, scaledPolygons, ranges);
-                if(check == 1){
-                    segment->sections.push_back(section);
-                    *error = 0;
-                }
-                else{
-                    *error = 1;
-                    return segment;
+                if(*error == 0){//Neu *error con bang 0
+                //tuc chua tim thay section nao va cham voi polygon
+                //thi con nap cac diem cua section do vao quy dao
+                //nguoc lai: chi duyet file chu khong tinh toan cac diem cua section
+                    int check = 1;
+                    if(section->steering != 'S'){
+                        check = getPointsOfCircle(startX, startY, 
+                                        section->endedX, section->endedY, 
+                                        section->param, section->steering, 
+                                        section->possiblePoints, scaledPolygons, ranges);
+                    }
+                    if(check == 1){
+                        segment->sections.push_back(section);
+                        startX = section->endedX; startY = section->endedY; 
+                        //the end of this section is the begin of the next section
+                        *error = 0;
+                    }
+                    else{
+                        *error = 1;
+                    }
                 }
             }
-            //prepare for build sections, to be continued
             numberSections--;
         }
     }
@@ -215,7 +220,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
 
     vector<vector<lineSegment>> scaledPolygons;
     vector<Range*> ranges;
-    scaledPolygons.resize(polygons.size());
+    
     for(int i = 0; i < polygons.size(); i++){
         vector<lineSegment> lines;
         Range *rangeOfAPolygon = new Range();
@@ -265,6 +270,9 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                     PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
                     if(error == 0)
                         path->segments.push_back(segment);
+                    else{
+                        cout<<"Va cham tai path "<<numPaths<<" segment "<<numOfSegmentsInPath<<endl;
+                    }
                     numOfSegmentsInPath--;
                 }
 
