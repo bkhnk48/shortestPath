@@ -46,7 +46,8 @@ class Homotopy{
                 point p = route.at(i);
                 #pragma region Calculate the normal vector
                 double deltaY = p.y - prev.y;
-                double deltaX = prev.x - p.x;
+                //double deltaX = prev.x - p.x;
+                double deltaX = p.x - prev.x;
                 getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y
                                         , &normalOut.q.x, &normalOut.q.y);
                 #pragma endregion
