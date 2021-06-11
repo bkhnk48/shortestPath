@@ -208,6 +208,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                         section->beganX = startX; section->beganY = startY; 
                         startX = section->endedX; startY = section->endedY; 
                         segment->sections.push_back(section);
+                        segment->L += abs(section->param);
                         //the end of this section is the begin of the next section
                     }
                     else{
@@ -278,7 +279,17 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                     int error = 0;
                     PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
                     if(error == 0){
-                        path->segments.push_back(segment);
+                        if(path->segments.size() == 0){
+                            path->segments.push_back(segment);
+                            path->Lmin = segment->L;
+                        }
+                        else{
+                            if(path->Lmin > segment->L){
+                                path->segments.erase(path->segments.begin());
+                                path->segments.push_back(segment);
+                                path->Lmin = segment->L;
+                            }
+                        }
                     }
                     /*else{
                         cout<<"Va cham tai path "<<numPaths<<" segment "<<numOfSegmentsInPath<<endl;
