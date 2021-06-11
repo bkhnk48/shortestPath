@@ -136,10 +136,18 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
     //  y(t) = centerY + R*sin(omega)
     #pragma endregion
     double sin_omega_T0 = (p1Y - centerY)/R;
+    
     double cos_omega_T0 = (p1X - centerX)/R;
+    if(sin_omega_T0 > 1){ sin_omega_T0 = 1; cos_omega_T0 = 0; }
+    if(sin_omega_T0 < -1){ sin_omega_T0 = -1; cos_omega_T0 = 0; }
+    if(cos_omega_T0 > 1){ cos_omega_T0 = 1; sin_omega_T0 = 0; }
+    if(cos_omega_T0 < -1){ cos_omega_T0 = -1; sin_omega_T0 = 0; }
+
     double sin_omega, cos_omega, x_t, y_t;
     double sin_omega_T = sin_omega_T0, cos_omega_T = cos_omega_T0;
-    double sin_deltaOmega = SMALL_ANGLE;
+
+    //rotatedAngle > 0 <=> clockwise <=> omega reduces
+    double sin_deltaOmega = (rotatedAngle > 0 ? -SMALL_ANGLE : SMALL_ANGLE);
     double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
     double xT, yT;
     for(int i = 1; i < n; i++){
@@ -224,7 +232,8 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
     for(int i = 0; i < polygons.size(); i++){
         vector<lineSegment> lines;
         Range *rangeOfAPolygon = new Range();
-        for(int j = 0; j < polygons.at(i).size(); j++){
+        int j = 0;
+        for(j = 0; j < polygons.at(i).size(); j++){
             
             point p(polygons.at(i).at(j).p.x/RATIO, polygons.at(i).at(j).p.y/RATIO);
             point q(polygons.at(i).at(j).q.x/RATIO, polygons.at(i).at(j).q.y/RATIO);
@@ -235,13 +244,14 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                 rangeOfAPolygon->xMin = p.x;
 
             if(rangeOfAPolygon->yMax < p.y)
-                rangeOfAPolygon->xMax = p.y;
-            if(rangeOfAPolygon->xMin > p.y)
-                rangeOfAPolygon->xMin = p.y;
+                rangeOfAPolygon->yMax = p.y;
+            if(rangeOfAPolygon->yMin > p.y)
+                rangeOfAPolygon->yMin = p.y;
 
             lineSegment aLine(p, q);
             lines.push_back(aLine);
         }
+        //cout<<"Polygon "<<j<<" Max X = "<<RATIO*rangeOfAPolygon->xMax<<" "<<" Min X = "<<RATIO*rangeOfAPolygon->xMin<<" Max Y = "<<RATIO*rangeOfAPolygon->yMax<<" Min Y = "<<RATIO*rangeOfAPolygon->yMin<<endl;
         ranges.push_back(rangeOfAPolygon);
         scaledPolygons.push_back(lines);
     }
