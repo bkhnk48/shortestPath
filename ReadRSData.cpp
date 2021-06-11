@@ -205,8 +205,9 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                                         section->possiblePoints, scaledPolygons, ranges);
                     }
                     if(check == 1){
-                        segment->sections.push_back(section);
+                        section->beganX = startX; section->beganY = startY; 
                         startX = section->endedX; startY = section->endedY; 
+                        segment->sections.push_back(section);
                         //the end of this section is the begin of the next section
                     }
                     else{
