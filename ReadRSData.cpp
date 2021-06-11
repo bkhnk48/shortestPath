@@ -91,8 +91,13 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
 int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering, 
                             vector<point> &points, vector<vector<lineSegment>> &polygons, vector<Range*> ranges)
 {
-    if(rotatedAngle == 0)
-        return -1;
+    int n = abs((int)(rotatedAngle/SMALL_ANGLE));//the rotatedAngle sometime is negative lets n < 0
+    if(n <= 1){
+        point p(p2X, p2Y);
+        points.push_back(p);
+        return 1;
+    }
+        
 
     double midPointX = (p1X + p2X)/2;
     double midPointY = (p1Y + p2Y)/2;
@@ -100,12 +105,6 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
     double y = p2Y - p1Y;
 
     double R = 1;
-
-    int n = abs((int)(rotatedAngle/SMALL_ANGLE));//the rotatedAngle sometime is negative lets n < 0
-
-    if(n <= 1){
-        return -1;//shortcut to prevent from wasting floating-point calculation
-    }
 
     double xIn = 0, yIn = 0, xOut = 0, yOut = 0;
     getNormalInAndOut(p2X - p1X, p2Y - p1Y, &xIn, &yIn, &xOut, &yOut);
@@ -209,7 +208,6 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                         segment->sections.push_back(section);
                         startX = section->endedX; startY = section->endedY; 
                         //the end of this section is the begin of the next section
-                        *error = 0;
                     }
                     else{
                         *error = 1;
@@ -278,11 +276,12 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                 while(numOfSegmentsInPath > 0){
                     int error = 0;
                     PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
-                    if(error == 0)
+                    if(error == 0){
                         path->segments.push_back(segment);
-                    else{
-                        cout<<"Va cham tai path "<<numPaths<<" segment "<<numOfSegmentsInPath<<endl;
                     }
+                    /*else{
+                        cout<<"Va cham tai path "<<numPaths<<" segment "<<numOfSegmentsInPath<<endl;
+                    }*/
                     numOfSegmentsInPath--;
                 }
 
@@ -290,6 +289,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
             }
         }
         numPaths--;
+        //cout<<"Path: "<<numPaths<<" has: "<<(path->segments).size()<<" segments"<<endl;
         result.push_back(path);
     }
 
@@ -314,7 +314,7 @@ vector<point> readRSFile(string fileName, vector<vector<lineSegment>> &polygons)
     { 
         cout<<"number of paths: "<<numPaths<<endl;
         
-        readPath(infile, numPaths, polygons);
+        vector<Path*> result = readPath(infile, numPaths, polygons);
         
         
         double tempPointX = x;
