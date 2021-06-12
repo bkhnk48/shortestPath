@@ -468,7 +468,11 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 	return result;
 }
 
-
+string drawCurverMovement(vector<Path*> trajectory){
+	string str;
+	///https://xuanthulab.net/anh-svg-trong-html5.html
+	return str;
+}
 
 void drawShortestPath(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,
 						vector<point> &sideSteps, vector<point> &points, vector<point> &route,vector< vector<int> >graph){
