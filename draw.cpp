@@ -135,6 +135,8 @@ class PathSegment : public MovementPoint{
     public:
         vector<Section*> sections;
         float L;
+		lineSegment firstVelocity;
+		lineSegment lastVelocity;
         //int index;
 
         PathSegment(){
@@ -469,8 +471,43 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 }
 
 string drawCurverMovement(vector<Path*> trajectory){
-	string str;
+	string str = "<path d=\"M";
+	vector<lineSegment> buildingLines;
+	vector<char> typeOfTrajectory;
+	lineSegment prev;
 	///https://xuanthulab.net/anh-svg-trong-html5.html
+	int numPaths = trajectory.size();
+    for(int i = 0; i < numPaths; i++){
+        Path* path = trajectory.at(i);
+        //cout<<"Path "<<i<<endl;
+        vector<PathSegment*> segments = path->segments;
+        int numPossibleSegments = segments.size();
+        //for(int j = 0; j < numPossibleSegments; j++)
+		{
+            //cout<<"\tSegment "<<j<<endl;
+            vector<Section*> sections = segments.at(0)->sections;
+            int numSections = sections.size();
+            for(int k = 0; k < numSections; k++)
+			{
+                /*cout<<"\t\t("<<RATIO*(sections.at(k)->beganX)<<", "<<RATIO*(sections.at(k)->beganY)
+                    <<") to ("<<RATIO*(sections.at(k)->endedX)<<", "<<RATIO*(sections.at(k)->endedY)<<") param = "
+                    <<sections.at(k)->param<<" steering = "<<sections.at(k)->steering<<" along with "<<sections.at(k)->possiblePoints.size()
+                    <<" pts."<<endl;*/
+				if(buildingLines.size() == 0){
+					lineSegment firstLine;
+					firstLine.p.x = RATIO*(sections.at(k)->beganX);
+					firstLine.p.y = RATIO*(sections.at(k)->beganY);
+					firstLine.q.x = firstLine.p.x;
+					firstLine.q.y = 1;//all first vectors are norm 1 and parallizes the Oy axis
+					buildingLines.push_back(firstLine);
+					
+				}
+				lineSegment secondLine = segments.at(0)->lastVelocity;
+				buildingLines.push_back(secondLine);
+				//typeOfTrajectory.push_back(segments.at(0)->)
+            }
+        }
+    }
 	return str;
 }
 
