@@ -111,6 +111,67 @@ struct lineSegment {
 	}
 };
 
+//Each instance of movement point is the point which AV should reach before a time
+class MovementPoint{
+    public:
+        double beganX;
+        double beganY;
+        double endedX;
+        double endedY;
+};
+
+//A section is a small trajectory which routes AV to move (both forward and backward) from
+//a point to other one. 
+class Section : public MovementPoint{
+    public:
+        char typeOfTrajectory ;
+        char steering;
+        double param;
+        vector<point> possiblePoints;
+};
+
+//A path segment is a group of continuous section to move from one point to other one.
+class PathSegment : public MovementPoint{
+    public:
+        vector<Section*> sections;
+        float L;
+        //int index;
+
+        PathSegment(){
+            //this->index = -1;
+            this->L = 0;
+        }
+};
+
+//A path is a group of possible path segment and its best choice to move from
+//one point to other one
+class Path : public MovementPoint{
+    public:
+        vector<PathSegment*> segments;
+        float Lmin;
+        int index;
+
+        Path(){
+            this->Lmin = FLT_MAX;
+            this->index = -1;
+        }
+};
+
+class Range{
+    public:
+        double xMax;
+        double xMin;
+        double yMax;
+        double yMin;
+
+        Range(){
+            this->xMax = FLT_MIN;
+            this->yMax = FLT_MIN;
+            this->xMin = FLT_MAX;
+            this->yMin = FLT_MAX;
+        }
+};
+
 double max_y,max_x,min_y,min_x;
 
 void setMinMax(double x, double y){
