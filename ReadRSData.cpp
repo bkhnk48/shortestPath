@@ -222,12 +222,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
     return segment;
 }
 
-vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons){
-    string line;
-    string strTemp, strTemp1, strTemp2, strTemp3;
-
-    vector<vector<lineSegment>> scaledPolygons;
-    vector<Range*> ranges;
+void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &scaledPolygons, vector<vector<lineSegment>> &polygons){
     
     for(int i = 0; i < polygons.size(); i++){
         vector<lineSegment> lines;
@@ -251,10 +246,22 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
             lineSegment aLine(p, q);
             lines.push_back(aLine);
         }
-        //cout<<"Polygon "<<j<<" Max X = "<<RATIO*rangeOfAPolygon->xMax<<" "<<" Min X = "<<RATIO*rangeOfAPolygon->xMin<<" Max Y = "<<RATIO*rangeOfAPolygon->yMax<<" Min Y = "<<RATIO*rangeOfAPolygon->yMin<<endl;
+        /*cout<<"Polygon "<<j<<" Max X = "
+            <<RATIO*rangeOfAPolygon->xMax<<" "
+            <<" Min X = "<<RATIO*rangeOfAPolygon->xMin
+            <<" Max Y = "<<RATIO*rangeOfAPolygon->yMax
+            <<" Min Y = "<<RATIO*rangeOfAPolygon->yMin<<endl;*/
         ranges.push_back(rangeOfAPolygon);
         scaledPolygons.push_back(lines);
     }
+}
+
+vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons){
+    string line;
+    string strTemp, strTemp1, strTemp2, strTemp3;
+
+    vector<Range*> ranges;      vector<vector<lineSegment>> scaledPolygons;
+    scaleAndGenerateRange(ranges, scaledPolygons, polygons);
     
     double x, y, nextX, nextY, distance;
     int i;
@@ -262,19 +269,15 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
     vector<Path*> result;
     while(numPaths > 0){
         Path *path = new Path();
-        getline(infile, line);
-        istringstream segment(line);
+        getline(infile, line);      istringstream segment(line);
         if(segment >> strTemp1 >> i >> strTemp2 >> x >> y >> strTemp3 >> nextX >> nextY)
         {
-            path->beganX = x;
-            path->beganY = y;
-            path->endedX = nextX;
-            path->endedY = nextY;
+            path->beganX = x;                  path->beganY = y;
+            path->endedX = nextX;              path->endedY = nextY;
             int numOfSegmentsInPath = 0;
             getline(infile, line);
             istringstream possiblePathSegment(line);
             if(possiblePathSegment >> strTemp1 >> numOfSegmentsInPath){
-                //path->segments.resize(numOfPathsInThisSegment);
                 while(numOfSegmentsInPath > 0){
                     int error = 0;
                     PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
@@ -290,18 +293,12 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                                 path->Lmin = segment->L;
                             }
                         }
-                    }
-                    /*else{
-                        cout<<"Va cham tai path "<<numPaths<<" segment "<<numOfSegmentsInPath<<endl;
-                    }*/
+                    }/*else{     cout<<"Va cham tai path "<<numPaths<<" segment "<<numOfSegmentsInPath<<endl;      }*/
                     numOfSegmentsInPath--;
                 }
-
-                
             }
         }
         numPaths--;
-        //cout<<"Path: "<<numPaths<<" has: "<<(path->segments).size()<<" segments"<<endl;
         result.push_back(path);
     }
 
