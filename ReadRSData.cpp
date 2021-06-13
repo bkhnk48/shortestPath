@@ -29,13 +29,18 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering, double *p3X, double *p3Y,
-                            vector<point> &points, vector<vector<lineSegment>> &polygons, vector<Range*> ranges)
+int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges)
 {
-    int n = abs((int)(rotatedAngle/SMALL_ANGLE));//the rotatedAngle sometime is negative lets n < 0
+    double p1X = section->beganX;
+    double p1Y = section->beganY;
+    double p2X = section->endedX;
+    double p2Y = section->endedY;
+
+    int n = abs((int)(section->param/SMALL_ANGLE));
+    //the rotatedAngle (section->param) sometime is negative and then lets n < 0 unless you call abs func
     if(n <= 1){
         point p(p2X, p2Y);
-        points.push_back(p);
+        section->possiblePoints.push_back(p);
         return 1;
     }
         
@@ -50,7 +55,7 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
     double xIn = 0, yIn = 0, xOut = 0, yOut = 0;
     getNormalInAndOut(p2X - p1X, p2Y - p1Y, &xIn, &yIn, &xOut, &yOut);
     double xNormal, yNormal;
-    if(LEFT == steering)
+    if(LEFT == section->steering)
     {
         xNormal = xOut;
         yNormal = yOut;
@@ -60,11 +65,13 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
         yNormal = yIn;
     }
 
-    double h = cos(rotatedAngle/2);
+    double h = cos(section->param/2);
     double centerX = midPointX + h*xNormal;
     double centerY = midPointY + h*yNormal;
 
-    getNormalInAndOut(p2X - centerX, p2Y - centerY, p3X, p3Y, &xOut, &yOut);
+    double p3X = 0, p3Y = 0;
+    getNormalInAndOut(p2X - centerX, p2Y - centerY, &p3X, &p3Y, &xOut, &yOut);
+    section->setLastVelocity(p3X, p3Y);
 
     #pragma region Comments for explaination of the below code    
     //sin(omega_T0) = (p1.y - centerY)/R;
@@ -89,7 +96,7 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
     double sin_omega_T = sin_omega_T0, cos_omega_T = cos_omega_T0;
 
     //rotatedAngle > 0 <=> clockwise <=> omega reduces
-    double sin_deltaOmega = (rotatedAngle > 0 ? -SMALL_ANGLE : SMALL_ANGLE);
+    double sin_deltaOmega = (section->param > 0 ? -SMALL_ANGLE : SMALL_ANGLE);
     double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
     double xT, yT;
     for(int i = 1; i < n; i++){
@@ -111,7 +118,7 @@ int getPointsOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rot
             }
         }
         point p(xT, yT);
-        points.push_back(p);
+        section->possiblePoints.push_back(p);
     }
     return 1;
 }
@@ -142,22 +149,15 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                 //thi con nap cac diem cua section do vao quy dao
                 //nguoc lai: chi duyet file chu khong tinh toan cac diem cua section
                     int check = 1;
+                    section->beganX = startX; section->beganY = startY; 
                     if(section->steering != 'S'){
-                        check = getPointsOfCircle(startX, startY, 
-                                        section->endedX, section->endedY, 
-                                        section->param, section->steering, &p3X, &p3Y,
-                                        section->possiblePoints, scaledPolygons, ranges);
+                        check = getPointsOfCircle(section, scaledPolygons, ranges);
                     }
                     if(check == 1){
-                        section->beganX = startX; section->beganY = startY; 
                         startX = section->endedX; startY = section->endedY; 
+                        
                         segment->sections.push_back(section);
                         segment->L += abs(section->param);
-                        segment->lastVelocity.p.x = section->endedX;
-                        segment->lastVelocity.p.y = section->endedY;
-                        segment->lastVelocity.q.x = section->endedX + p3X;
-                        segment->lastVelocity.q.y = section->endedY + p3Y;
-                        //the end of this section is the begin of the next section
                     }
                     else{
                         *error = 1;
@@ -267,7 +267,8 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
             for(int k = 0; k < numSections; k++){
                 cout<<"\t\t("<<RATIO*(sections.at(k)->beganX)<<", "<<RATIO*(sections.at(k)->beganY)
                     <<") to ("<<RATIO*(sections.at(k)->endedX)<<", "<<RATIO*(sections.at(k)->endedY)<<") param = "
-                    <<sections.at(k)->param<<" steering = "<<sections.at(k)->steering<<" along with "<<sections.at(k)->possiblePoints.size()
+                    <<sections.at(k)->param<<" traj = "<<sections.at(k)->typeOfTrajectory
+                    <<" along with "<<sections.at(k)->possiblePoints.size()
                     <<" pts."<<endl;
             }
         }
