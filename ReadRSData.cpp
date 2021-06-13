@@ -29,12 +29,15 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges)
+int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, double yawAngle = 1.57079632679 )
 {
     double p1X = section->beganX;
     double p1Y = section->beganY;
+
+    double deltaP1X = p1X*cos(yawAngle);
+    double deltaP1Y = p1Y*sin(yawAngle);
     double p2X = section->endedX;
-    double p2Y = section->endedY;
+    double p2Y = section->endedY;   
 
     int n = abs((int)(section->param/SMALL_ANGLE));
     //the rotatedAngle (section->param) sometime is negative and then lets n < 0 unless you call abs func
@@ -53,7 +56,8 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double R = 1;
 
     double xIn = 0, yIn = 0, xOut = 0, yOut = 0;
-    getNormalInAndOut(p2X - p1X, p2Y - p1Y, &xIn, &yIn, &xOut, &yOut);
+    //getNormalInAndOut(p2X - p1X, p2Y - p1Y, &xIn, &yIn, &xOut, &yOut);
+    getNormalInAndOut(deltaP1X, deltaP1Y, &xIn, &yIn, &xOut, &yOut);
     double xNormal, yNormal;
     if(LEFT == section->steering)
     {
@@ -127,7 +131,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
 }
 
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
-                            vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error){
+                            vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error
+                            , double angle0 = 1.57079632679
+                            ){
     PathSegment *segment = new PathSegment();
     segment->beganX = x;       segment->beganY = y;
     segment->endedX = nextX;   segment->endedY = nextY;
@@ -136,6 +142,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
     *error = 0;
     istringstream allSections(line);
     int numberSections = 0;
+    double angle = angle0;
     if(allSections >> strTemp1 >> numberSections){
         double startX = x; 
         double startY = y;
@@ -154,7 +161,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     int check = 1;
                     section->beganX = startX; section->beganY = startY; 
                     if(section->steering != 'S'){
-                        check = getPointsOfCircle(section, scaledPolygons, ranges);
+                        check = getPointsOfCircle(section, scaledPolygons, ranges, angle);
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
@@ -207,7 +214,7 @@ void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &
     }
 }
 
-vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons){
+vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons, double angle0 = 1.57079632679){
     string line;
     string strTemp, strTemp1, strTemp2, strTemp3;
 
@@ -271,6 +278,7 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
                 cout<<"\t\t("<<RATIO*(sections.at(k)->beganX)<<", "<<RATIO*(sections.at(k)->beganY)
                     <<") to ("<<RATIO*(sections.at(k)->endedX)<<", "<<RATIO*(sections.at(k)->endedY)<<") param = "
                     <<sections.at(k)->param<<" traj = "<<sections.at(k)->typeOfTrajectory
+                    <<" steering "<<sections.at(k)->steering
                     <<" along with "<<sections.at(k)->possiblePoints.size()
                     <<" pts."<<endl;
             }
@@ -278,7 +286,7 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
     }
 }
 
-vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons){
+vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons, double angle0 = 1.57079632679){
 
     //vector<point> discreteTrajectory;
     vector<Path*> result; 
