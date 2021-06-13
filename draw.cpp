@@ -130,7 +130,7 @@ class Section : public MovementPoint{
         char steering;
         double param;
         vector<point> possiblePoints;
-		void setLastVelocity(double x1, double y1, double x2, double y2){
+		/*void setLastVelocity(double x1, double y1, double x2, double y2){
 			lastVelocity.p.x = x1;
 			lastVelocity.p.y = y1;
 			lastVelocity.q.x = x2;
@@ -160,10 +160,10 @@ class Section : public MovementPoint{
 		}
 		lineSegment getFirstVelocity(){
 			return firstVelocity;
-		}
+		}*/
 	private:
-		lineSegment firstVelocity;
-		lineSegment lastVelocity;
+		//lineSegment firstVelocity;
+		//lineSegment lastVelocity;
 };
 
 //A path segment is a group of continuous section to move from one point to other one.
