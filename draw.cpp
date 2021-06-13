@@ -128,6 +128,24 @@ class Section : public MovementPoint{
         char steering;
         double param;
         vector<point> possiblePoints;
+		void setLastVelocity(double x1, double y1, double x2, double y2){
+			lastVelocity.p.x = x1;
+			lastVelocity.p.y = y1;
+			lastVelocity.q.x = x2;
+			lastVelocity.q.y = y2;
+		}
+		void setLastVelocity(double deltaX, double deltaY){
+			lastVelocity.p.x = this->endedX;
+			lastVelocity.p.y = this->endedY;
+			lastVelocity.q.x = this->endedX + deltaX;
+			lastVelocity.q.y = this->endedY + deltaY;
+		}
+		lineSegment getLastVelocity(){
+			return lastVelocity;
+		}
+	private:
+		//lineSegment firstVelocity;
+		lineSegment lastVelocity;
 };
 
 //A path segment is a group of continuous section to move from one point to other one.
@@ -135,8 +153,8 @@ class PathSegment : public MovementPoint{
     public:
         vector<Section*> sections;
         float L;
-		lineSegment firstVelocity;
-		lineSegment lastVelocity;
+		//lineSegment firstVelocity;
+		//lineSegment lastVelocity;
         //int index;
 
         PathSegment(){
@@ -471,17 +489,27 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 }
 
 string drawCurverMovement(vector<Path*> trajectory){
-	string str = "<path d=\"M";
-	vector<lineSegment> buildingLines;
+	string str = "<path d=\"M ";
+	//vector<Section> buildingLines;
+	bool getFirstPoint = false;
+	Section *firstSection = trajectory.at(0)->segments.at(0)->sections.at(0);
+	double x0 = RATIO*(firstSection->beganX);
+	double y0 = RATIO*(firstSection->beganY);
+	str.append(to_string(x0));
+	str.append(" ");
+	str.append(to_string(y0));
+	str.append(" ");
+
 	vector<char> typeOfTrajectory;
 	lineSegment prev;
 	///https://xuanthulab.net/anh-svg-trong-html5.html
 	int numPaths = trajectory.size();
+	char prevTypeOfTrajectory = ' ';
     for(int i = 0; i < numPaths; i++){
         Path* path = trajectory.at(i);
         //cout<<"Path "<<i<<endl;
         vector<PathSegment*> segments = path->segments;
-        int numPossibleSegments = segments.size();
+        //int numPossibleSegments = segments.size();
         //for(int j = 0; j < numPossibleSegments; j++)
 		{
             //cout<<"\tSegment "<<j<<endl;
@@ -489,22 +517,17 @@ string drawCurverMovement(vector<Path*> trajectory){
             int numSections = sections.size();
             for(int k = 0; k < numSections; k++)
 			{
-                /*cout<<"\t\t("<<RATIO*(sections.at(k)->beganX)<<", "<<RATIO*(sections.at(k)->beganY)
-                    <<") to ("<<RATIO*(sections.at(k)->endedX)<<", "<<RATIO*(sections.at(k)->endedY)<<") param = "
-                    <<sections.at(k)->param<<" steering = "<<sections.at(k)->steering<<" along with "<<sections.at(k)->possiblePoints.size()
-                    <<" pts."<<endl;*/
-				if(buildingLines.size() == 0){
-					lineSegment firstLine;
-					firstLine.p.x = RATIO*(sections.at(k)->beganX);
-					firstLine.p.y = RATIO*(sections.at(k)->beganY);
-					firstLine.q.x = firstLine.p.x;
-					firstLine.q.y = 1;//all first vectors are norm 1 and parallizes the Oy axis
-					buildingLines.push_back(firstLine);
-					
+				if(sections.at(k)->typeOfTrajectory == 'C'){
+					if(prevTypeOfTrajectory != sections.at(k)->typeOfTrajectory){
+						prevTypeOfTrajectory = sections.at(k)->typeOfTrajectory;
+						if(prevTypeOfTrajectory == 'S')
+							str.append("L ");
+						else{
+							str.append("C ");
+						}
+					}
 				}
-				lineSegment secondLine = segments.at(0)->lastVelocity;
-				buildingLines.push_back(secondLine);
-				//typeOfTrajectory.push_back(segments.at(0)->)
+				//str.append(to_string(sections.at(k)->getLastVelocity().q.x));
             }
         }
     }
