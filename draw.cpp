@@ -221,24 +221,30 @@ string drawY(point &p){
 
 //we define the "normal in" vector v of vector u is a vector such that
 //(u^v) has direction to go in the plan of (u, v)
-void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, double *xOut, double *yOut)
+void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, double *xOut = NULL, double *yOut = NULL)
 {
 	if(deltaX == 0){
 		*xIn = (deltaY > 0 ? 1 : -1); *yIn = 0;
 		
-		*xOut = -(*xIn); *yOut = 0;
+		if(xOut && yOut){
+			*xOut = -(*xIn); *yOut = 0;
+		}
 	}
 	else if(deltaY == 0){
 		*xIn = 0; *yIn = (deltaX > 0 ? -1 : 1);
 
-		*xOut = 0; *yOut = -(*yIn);
+		if(xOut && yOut){
+			*xOut = 0; *yOut = -(*yIn);
+		}
 	}
 	else{
 		
 		double length = sqrt(deltaX*deltaX + deltaY*deltaY);
 		
 		*xIn = deltaY/length; *yIn = -deltaX/length;
-		*xOut = -deltaY/length; *yOut = deltaX/length;
+		if(xOut && yOut){
+			*xOut = -deltaY/length; *yOut = deltaX/length;
+		}
 	}
 }
 
