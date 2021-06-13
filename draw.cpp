@@ -143,8 +143,24 @@ class Section : public MovementPoint{
 		lineSegment getLastVelocity(){
 			return lastVelocity;
 		}
+
+		void setFirstVelocity(double x1, double y1, double x2, double y2){
+			firstVelocity.p.x = x1;
+			firstVelocity.p.y = y1;
+			firstVelocity.q.x = x2;
+			firstVelocity.q.y = y2;
+		}
+		void setFirstVelocity(double deltaX, double deltaY){
+			firstVelocity.p.x = this->endedX;
+			firstVelocity.p.y = this->endedY;
+			firstVelocity.q.x = this->endedX + deltaX;
+			firstVelocity.q.y = this->endedY + deltaY;
+		}
+		lineSegment getFirstVelocity(){
+			return firstVelocity;
+		}
 	private:
-		//lineSegment firstVelocity;
+		lineSegment firstVelocity;
 		lineSegment lastVelocity;
 };
 
