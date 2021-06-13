@@ -151,10 +151,10 @@ class Section : public MovementPoint{
 			firstVelocity.q.y = y2;
 		}
 		void setFirstVelocity(double deltaX, double deltaY){
-			firstVelocity.p.x = this->endedX;
-			firstVelocity.p.y = this->endedY;
-			firstVelocity.q.x = this->endedX + deltaX;
-			firstVelocity.q.y = this->endedY + deltaY;
+			firstVelocity.p.x = this->beganX;
+			firstVelocity.p.y = this->beganY;
+			firstVelocity.q.x = this->beganX + deltaX;
+			firstVelocity.q.y = this->beganY + deltaY;
 		}
 		lineSegment getFirstVelocity(){
 			return firstVelocity;
@@ -237,6 +237,7 @@ string drawY(point &p){
 
 //we define the "normal in" vector v of vector u is a vector such that
 //(u^v) has direction to go in the plan of (u, v)
+//deltaX, deltaY is coords of vector u
 void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, double *xOut = NULL, double *yOut = NULL)
 {
 	if(deltaX == 0){
