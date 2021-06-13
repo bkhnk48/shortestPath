@@ -1,3 +1,5 @@
+//#define _USE_MATH_DEFINES
+
 #include <iostream>
 #include <sstream> //ostringstream
 #include <fstream> 
@@ -512,16 +514,10 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 }
 
 string drawCurverMovement(vector<Path*> trajectory){
-	string str = "<path d=\"M ";
+	string str = "\n";
 	//vector<Section> buildingLines;
 	bool getFirstPoint = false;
-	Section *firstSection = trajectory.at(0)->segments.at(0)->sections.at(0);
-	double x0 = RATIO*(firstSection->beganX);
-	double y0 = RATIO*(firstSection->beganY);
-	str.append(to_string(x0));
-	str.append(" ");
-	str.append(to_string(y0));
-	str.append(" ");
+	
 
 	vector<char> typeOfTrajectory;
 	lineSegment prev;
@@ -540,16 +536,44 @@ string drawCurverMovement(vector<Path*> trajectory){
             int numSections = sections.size();
             for(int k = 0; k < numSections; k++)
 			{
+				
 				if(sections.at(k)->typeOfTrajectory == 'C'){
-					if(prevTypeOfTrajectory != sections.at(k)->typeOfTrajectory){
-						prevTypeOfTrajectory = sections.at(k)->typeOfTrajectory;
-						if(prevTypeOfTrajectory == 'S')
-							str.append("L ");
-						else{
-							str.append("C ");
-						}
+					//if(prevTypeOfTrajectory != sections.at(k)->typeOfTrajectory)
+					{
+						//prevTypeOfTrajectory = sections.at(k)->typeOfTrajectory;
+						str.append("<path d=\"M ");
+				
+						double x0 = RATIO*(sections.at(k)->beganX)*10;
+						double y0 = RATIO*(sections.at(k)->beganY*(-10));
+						str.append(to_string(x0));
+						str.append(" ");
+						str.append(to_string(y0));
+						str.append(" ");
+
+						str.append("A ");
+						str.append(to_string(RATIO*10));
+						str.append(" ");
+						str.append(to_string(RATIO*10));
+						str.append(" 0 ");
+						int fA = sections.at(k)->param > 3.14 ? 1 : 0;
+						int fB = sections.at(k)->param > 0 ? 1 : 0;
+						str.append(to_string(fA));
+						str.append(" ");
+						str.append(to_string(fB));
+						str.append(" ");
+						str.append(to_string(sections.at(k)->endedX*RATIO*(10)));
+						str.append(" ");
+						str.append(to_string(sections.at(k)->endedY*RATIO*(-10)));
+						str.append("\"");
+						str.append(" style=\"stroke:red; fill:transparent\" />\n");
+						//}
 					}
 				}
+				//str.append(to_string(RATIO*(sections.at(k)->getFirstVelocity().q.x)*(10)));
+				//str.append(" ");
+				//str.append(to_string(sections.at(k)->getFirstVelocity().q.y*RATIO*(-10)));
+				//str.append(" A ");
+				
 				//str.append(to_string(sections.at(k)->getLastVelocity().q.x));
             }
         }
@@ -558,7 +582,11 @@ string drawCurverMovement(vector<Path*> trajectory){
 }
 
 void drawShortestPath(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,
-						vector<point> &sideSteps, vector<point> &points, vector<point> &route,vector< vector<int> >graph){
+						//vector<point> &sideSteps, 
+						vector<point> &points, 
+						//vector<point> &route,
+						vector<Path*> trajectory,
+						vector< vector<int> >graph){
 	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
 	string str2 = "<svg viewBox='"; //+ 
 	str2.append(std::to_string(10*min_x-5));
@@ -581,8 +609,9 @@ void drawShortestPath(string file_name, point & start, point & end, vector <vect
 	str1 = str1 + drawGraph(graph,points);
 	//if(distance!=-1 && config.drawRoute)
 	{ 
-		str1 = str1 + drawShortestRoute(route);
-		str1 = str1 + drawShortestRoute(sideSteps);
+		//str1 = str1 + drawShortestRoute(route);
+		//str1 = str1 + drawShortestRoute(sideSteps);
+		str1 = str1 + drawCurverMovement(trajectory);
 	}
 	str1 = str1 + "</svg>\n";
 	std::ofstream ofs(file_name.c_str());
