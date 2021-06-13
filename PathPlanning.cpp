@@ -93,9 +93,14 @@ class PlanningController{
                 fileName += ".svg";
                 //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
                 if(distance != -1){
-                    drawShortestPath(fileName, start, end, polygons, sideSteps, points, shortestPath, graph);
-                    runPythonCode("test/AllPossibleTrajectories.py", shortestPath, directionAtTheEnd, polygons);
-                    readRSFile("trajectory.txt", polygons);
+                    
+                    runPythonCode("test\\AllPossibleTrajectories.py", shortestPath, directionAtTheEnd, polygons);
+                    vector<Path*> paths = readRSFile("trajectory.txt", polygons);
+                    drawShortestPath(fileName, start, end, polygons, //sideSteps, 
+                                                                    points, 
+                                                                    //shortestPath, 
+                                                                    paths,
+                                                                    graph);
                 }
                 else{
                     cout<<"Runtime error"<<endl;
