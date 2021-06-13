@@ -70,6 +70,8 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double centerY = midPointY + h*yNormal;
 
     double p3X = 0, p3Y = 0;
+    getNormalInAndOut(p1X - centerX, p1Y - centerY, &p3X, &p3Y); //, &xOut, &yOut);
+    section->setFirstVelocity(p3X, p3Y);
     getNormalInAndOut(p2X - centerX, p2Y - centerY, &p3X, &p3Y); //, &xOut, &yOut);
     section->setLastVelocity(p3X, p3Y);
 
