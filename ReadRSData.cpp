@@ -70,7 +70,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double centerY = midPointY + h*yNormal;
 
     double p3X = 0, p3Y = 0;
-    getNormalInAndOut(p2X - centerX, p2Y - centerY, &p3X, &p3Y, &xOut, &yOut);
+    getNormalInAndOut(p2X - centerX, p2Y - centerY, &p3X, &p3Y); //, &xOut, &yOut);
     section->setLastVelocity(p3X, p3Y);
 
     #pragma region Comments for explaination of the below code    
