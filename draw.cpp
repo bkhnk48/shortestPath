@@ -121,7 +121,7 @@ class MovementPoint{
         double endedX;
         double endedY;
 		int idOfAV;//A point belongs to one AV
-		enum SIDE side;//the point in which side of AV: left or right
+		enum SIDE side;//The AV which in the first movement turns right or left?
 };
 
 //A section is a small trajectory which routes AV to move (both forward and backward) from
@@ -149,6 +149,14 @@ class PathSegment : public MovementPoint{
             //this->index = -1;
             this->L = 0;
         }
+
+		void setSide(enum SIDE side){
+			for(int i = 0; i < sections.size(); i++){
+				sections.at(i)->side = side;
+			}
+		}
+
+
 };
 
 //A path is a group of possible path segment and its best choice to move from
@@ -483,21 +491,50 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 	return result;
 }
 
+vector<double> getXYOfOtherSide(double X, double Y, int signedValue, double centerX, double centerY, int WIDTH){
+	double xOtherSide, yOtherSide;
+
+	//double tag = (Y - centerY)/(X - centerX);
+	double sin = (Y - centerY); ///RATIO;
+	double cos = (X - centerX); ///RATIO;
+	xOtherSide = centerX + cos*(1 + signedValue*WIDTH/RATIO);
+	yOtherSide = centerY + sin*(1 + signedValue*WIDTH/RATIO);
+
+	vector<double> result;
+	result.push_back(xOtherSide);
+	result.push_back(yOtherSide);
+	return result;
+}
+
+/*
+* this function return a string which is combination of two substrings
+the first one is drew path trajectory of one AV's side 
+the second one is the other path of the remaining AV's side 
+*/
 string drawCircleArc(Section *section, int WIDTH){
+	int signedValue = (
+						(section->steering == 'R' && section->side == RightSide)
+						|| (section->side == LeftSide && section->steering == 'L')
+						//(section->normal == IN && section->side == RightSide)
+						//|| (section->side == LeftSide && section->normal == OUT)
+							) ? 1 : -1;
 	string str = "";  string strSub = "";
 	str.append("<path d=\"M ");			strSub.append("<path d=\"M ");
 
-	double x0 = RATIO*(section->beganX)*10;
-	double y0 = RATIO*(section->beganY*(-10));
-	str.append(to_string(x0));			strSub.append(to_string(x0));
+	vector<double> otherPositions = getXYOfOtherSide(section->beganX, 
+										section->beganY, signedValue, section->centerX, section->centerY, WIDTH);
+
+	double x0 = RATIO*(section->beganX)*10;				double u0 = otherPositions.at(0);
+	double y0 = RATIO*(section->beganY*(-10));			double v0 = otherPositions.at(1);
+	str.append(to_string(x0));			strSub.append(to_string(u0*RATIO*10));
 	str.append(" ");					strSub.append(" ");
-	str.append(to_string(y0));			strSub.append(to_string(y0));		
+	str.append(to_string(y0));			strSub.append(to_string(v0*RATIO*(-10)));
 	str.append(" ");					strSub.append(" ");
 
 	str.append("A ");					strSub.append("A ");
-	str.append(to_string(RATIO*10));	strSub.append(to_string((WIDTH + RATIO)*10));
+	str.append(to_string(RATIO*10));	strSub.append(to_string((signedValue*WIDTH + RATIO)*10));
 	str.append(" ");					strSub.append(" ");
-	str.append(to_string(RATIO*10));	strSub.append(to_string((WIDTH + RATIO)*10));
+	str.append(to_string(RATIO*10));	strSub.append(to_string((signedValue*WIDTH + RATIO)*10));
 	str.append(" 0 ");					strSub.append(" 0 ");
 	int fA = section->param > 3.14 ? 1 : 0;
 	int fB = ((section->param < 0 && section->steering == 'R')
@@ -507,21 +544,28 @@ string drawCircleArc(Section *section, int WIDTH){
 	str.append(" ");					strSub.append(" ");
 	str.append(to_string(fB));			strSub.append(to_string(fB));
 	str.append(" ");					strSub.append(" ");
+
+	otherPositions = getXYOfOtherSide(section->endedX, 
+										section->endedY, signedValue, section->centerX, section->centerY, WIDTH);
+
+
 	str.append(to_string(section->endedX*RATIO*(10)));
 
-	strSub.append(to_string(section->endedX*RATIO*(10)));
+	strSub.append(to_string(otherPositions.at(0)*RATIO*(10)));
 
 	str.append(" ");					strSub.append(" ");
 	str.append(to_string(section->endedY*RATIO*(-10)));
 
-	strSub.append(to_string(section->endedY*RATIO*(-10)));
+	strSub.append(to_string(otherPositions.at(1)*RATIO*(-10)));
 	
 	str.append("\"");					strSub.append("\"");
 	str.append(" style=\"stroke:red; fill:transparent\" />\n");
 
 	strSub.append(" style=\"stroke:blue; fill:transparent\" />\n");
 
+	str.append("\n");
 	str.append(strSub);
+	str.append("\n");
 
 	return str;
 }
