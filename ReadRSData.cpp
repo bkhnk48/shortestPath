@@ -77,6 +77,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double centerX = midPointX + h*xNormal;
     double centerY = midPointY + h*yNormal;
 
+    section->centerX = centerX;
+    section->centerY = centerY;
+
     #pragma region Comments for explaination of the below code    
     //sin(omega_T0) = (p1.y - centerY)/R;
     //cos(omega_T0) = (p1.x - centerX)/R;
@@ -143,6 +146,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
         double startX = x; 
         double startY = y;
         double p3X = 0, p3Y = 0;
+        bool firstSetSide = true; enum SIDE side = LeftSide;
         while(numberSections > 0){
             Section *section = new Section();
             getline(infile, line);
@@ -161,7 +165,11 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
-                        
+                        if(firstSetSide){
+                            if(section->steering == 'R')
+                                side = RightSide;
+                        }
+                        section->side = side;
                         segment->sections.push_back(section);
                         segment->L += abs(section->param);
                     }
