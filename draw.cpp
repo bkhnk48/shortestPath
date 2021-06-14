@@ -556,7 +556,9 @@ string drawCurverMovement(vector<Path*> trajectory){
 						str.append(to_string(RATIO*10));
 						str.append(" 0 ");
 						int fA = sections.at(k)->param > 3.14 ? 1 : 0;
-						int fB = 1; //sections.at(k)->param > 0 ? 1 : 0;
+						int fB = ((sections.at(k)->param < 0 && sections.at(k)->steering == 'R')
+										|| (sections.at(k)->param > 0 && sections.at(k)->steering == 'L')
+										) ? 0 : 1;
 						str.append(to_string(fA));
 						str.append(" ");
 						str.append(to_string(fB));
