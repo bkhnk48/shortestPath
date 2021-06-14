@@ -134,40 +134,6 @@ class Section : public MovementPoint{
         vector<point> possiblePoints;
 		double centerX = FLT_MAX;
 		double centerY = FLT_MAX;
-		/*void setLastVelocity(double x1, double y1, double x2, double y2){
-			lastVelocity.p.x = x1;
-			lastVelocity.p.y = y1;
-			lastVelocity.q.x = x2;
-			lastVelocity.q.y = y2;
-		}
-		void setLastVelocity(double deltaX, double deltaY){
-			lastVelocity.p.x = this->endedX;
-			lastVelocity.p.y = this->endedY;
-			lastVelocity.q.x = this->endedX + deltaX;
-			lastVelocity.q.y = this->endedY + deltaY;
-		}
-		lineSegment getLastVelocity(){
-			return lastVelocity;
-		}
-
-		void setFirstVelocity(double x1, double y1, double x2, double y2){
-			firstVelocity.p.x = x1;
-			firstVelocity.p.y = y1;
-			firstVelocity.q.x = x2;
-			firstVelocity.q.y = y2;
-		}
-		void setFirstVelocity(double deltaX, double deltaY){
-			firstVelocity.p.x = this->beganX;
-			firstVelocity.p.y = this->beganY;
-			firstVelocity.q.x = this->beganX + deltaX;
-			firstVelocity.q.y = this->beganY + deltaY;
-		}
-		lineSegment getFirstVelocity(){
-			return firstVelocity;
-		}*/
-	private:
-		//lineSegment firstVelocity;
-		//lineSegment lastVelocity;
 };
 
 //A path segment is a group of continuous section to move from one point to other one.
