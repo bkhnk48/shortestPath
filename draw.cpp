@@ -120,6 +120,8 @@ class MovementPoint{
         double beganY;
         double endedX;
         double endedY;
+		int idOfAV;//A point belongs to one AV
+		enum SIDE side;//the point in which side of AV: left or right
 };
 
 //A section is a small trajectory which routes AV to move (both forward and backward) from
@@ -130,6 +132,8 @@ class Section : public MovementPoint{
         char steering;
         double param;
         vector<point> possiblePoints;
+		double centerX = FLT_MAX;
+		double centerY = FLT_MAX;
 		/*void setLastVelocity(double x1, double y1, double x2, double y2){
 			lastVelocity.p.x = x1;
 			lastVelocity.p.y = y1;
@@ -513,40 +517,50 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 	return result;
 }
 
-string drawCircleArc(Section *section){
-	string str = "";
-	//prevTypeOfTrajectory = sections.at(k)->typeOfTrajectory;
-	str.append("<path d=\"M ");
+string drawCircleArc(Section *section, int WIDTH){
+	string str = "";  string strSub = "";
+	str.append("<path d=\"M ");			strSub.append("<path d=\"M ");
 
 	double x0 = RATIO*(section->beganX)*10;
 	double y0 = RATIO*(section->beganY*(-10));
-	str.append(to_string(x0));
-	str.append(" ");
-	str.append(to_string(y0));
-	str.append(" ");
+	str.append(to_string(x0));			strSub.append(to_string(x0));
+	str.append(" ");					strSub.append(" ");
+	str.append(to_string(y0));			strSub.append(to_string(y0));		
+	str.append(" ");					strSub.append(" ");
 
-	str.append("A ");
-	str.append(to_string(RATIO*10));
-	str.append(" ");
-	str.append(to_string(RATIO*10));
-	str.append(" 0 ");
+	str.append("A ");					strSub.append("A ");
+	str.append(to_string(RATIO*10));	strSub.append(to_string((WIDTH + RATIO)*10));
+	str.append(" ");					strSub.append(" ");
+	str.append(to_string(RATIO*10));	strSub.append(to_string((WIDTH + RATIO)*10));
+	str.append(" 0 ");					strSub.append(" 0 ");
 	int fA = section->param > 3.14 ? 1 : 0;
 	int fB = ((section->param < 0 && section->steering == 'R')
 					|| (section->param > 0 && section->steering == 'L')
 					) ? 0 : 1;
-	str.append(to_string(fA));
-	str.append(" ");
-	str.append(to_string(fB));
-	str.append(" ");
+	str.append(to_string(fA));			strSub.append(to_string(fA));
+	str.append(" ");					strSub.append(" ");
+	str.append(to_string(fB));			strSub.append(to_string(fB));
+	str.append(" ");					strSub.append(" ");
 	str.append(to_string(section->endedX*RATIO*(10)));
-	str.append(" ");
+
+	strSub.append(to_string(section->endedX*RATIO*(10)));
+
+	str.append(" ");					strSub.append(" ");
 	str.append(to_string(section->endedY*RATIO*(-10)));
-	str.append("\"");
+
+	strSub.append(to_string(section->endedY*RATIO*(-10)));
+	
+	str.append("\"");					strSub.append("\"");
 	str.append(" style=\"stroke:red; fill:transparent\" />\n");
+
+	strSub.append(" style=\"stroke:blue; fill:transparent\" />\n");
+
+	str.append(strSub);
+
 	return str;
 }
 
-string drawCurverMovement(vector<Path*> trajectory){
+string drawCurverMovement(vector<Path*> trajectory, int WIDTH){
 	string str = "\n";
 
 	vector<char> typeOfTrajectory;
@@ -563,7 +577,7 @@ string drawCurverMovement(vector<Path*> trajectory){
 		{
 			
 			if(sections.at(k)->typeOfTrajectory == 'C'){
-				str.append(drawCircleArc(sections.at(k)));
+				str.append(drawCircleArc(sections.at(k), WIDTH));
 			}
 			else if(sections.at(k)->typeOfTrajectory == 'F'){
 				str.append("\n<line x1='");
@@ -581,7 +595,9 @@ string drawCurverMovement(vector<Path*> trajectory){
 	return str;
 }
 
-void drawShortestPath(string file_name, point & start, point & end, vector <vector < lineSegment > > & polygons,
+void drawShortestPath(string file_name, point & start, point & end, 
+						int WIDTH,
+						vector <vector < lineSegment > > & polygons,
 						//vector<point> &sideSteps, 
 						vector<point> &points, 
 						//vector<point> &route,
@@ -611,7 +627,7 @@ void drawShortestPath(string file_name, point & start, point & end, vector <vect
 	{ 
 		//str1 = str1 + drawShortestRoute(route);
 		//str1 = str1 + drawShortestRoute(sideSteps);
-		str1 = str1 + drawCurverMovement(trajectory);
+		str1 = str1 + drawCurverMovement(trajectory, WIDTH);
 	}
 	str1 = str1 + "</svg>\n";
 	std::ofstream ofs(file_name.c_str());
