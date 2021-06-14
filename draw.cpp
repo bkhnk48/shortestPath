@@ -513,72 +513,70 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 	return result;
 }
 
+string drawCircleArc(Section *section){
+	string str = "";
+	//prevTypeOfTrajectory = sections.at(k)->typeOfTrajectory;
+	str.append("<path d=\"M ");
+
+	double x0 = RATIO*(section->beganX)*10;
+	double y0 = RATIO*(section->beganY*(-10));
+	str.append(to_string(x0));
+	str.append(" ");
+	str.append(to_string(y0));
+	str.append(" ");
+
+	str.append("A ");
+	str.append(to_string(RATIO*10));
+	str.append(" ");
+	str.append(to_string(RATIO*10));
+	str.append(" 0 ");
+	int fA = section->param > 3.14 ? 1 : 0;
+	int fB = ((section->param < 0 && section->steering == 'R')
+					|| (section->param > 0 && section->steering == 'L')
+					) ? 0 : 1;
+	str.append(to_string(fA));
+	str.append(" ");
+	str.append(to_string(fB));
+	str.append(" ");
+	str.append(to_string(section->endedX*RATIO*(10)));
+	str.append(" ");
+	str.append(to_string(section->endedY*RATIO*(-10)));
+	str.append("\"");
+	str.append(" style=\"stroke:red; fill:transparent\" />\n");
+	return str;
+}
+
 string drawCurverMovement(vector<Path*> trajectory){
 	string str = "\n";
-	//vector<Section> buildingLines;
-	bool getFirstPoint = false;
-	
 
 	vector<char> typeOfTrajectory;
 	lineSegment prev;
-	///https://xuanthulab.net/anh-svg-trong-html5.html
 	int numPaths = trajectory.size();
 	char prevTypeOfTrajectory = ' ';
     for(int i = 0; i < numPaths; i++){
         Path* path = trajectory.at(i);
         //cout<<"Path "<<i<<endl;
         vector<PathSegment*> segments = path->segments;
-        //int numPossibleSegments = segments.size();
-        //for(int j = 0; j < numPossibleSegments; j++)
+		vector<Section*> sections = segments.at(0)->sections;
+		int numSections = sections.size();
+		for(int k = 0; k < numSections; k++)
 		{
-            //cout<<"\tSegment "<<j<<endl;
-            vector<Section*> sections = segments.at(0)->sections;
-            int numSections = sections.size();
-            for(int k = 0; k < numSections; k++)
-			{
-				
-				if(sections.at(k)->typeOfTrajectory == 'C'){
-					//if(prevTypeOfTrajectory != sections.at(k)->typeOfTrajectory)
-					{
-						//prevTypeOfTrajectory = sections.at(k)->typeOfTrajectory;
-						str.append("<path d=\"M ");
-				
-						double x0 = RATIO*(sections.at(k)->beganX)*10;
-						double y0 = RATIO*(sections.at(k)->beganY*(-10));
-						str.append(to_string(x0));
-						str.append(" ");
-						str.append(to_string(y0));
-						str.append(" ");
-
-						str.append("A ");
-						str.append(to_string(RATIO*10));
-						str.append(" ");
-						str.append(to_string(RATIO*10));
-						str.append(" 0 ");
-						int fA = sections.at(k)->param > 3.14 ? 1 : 0;
-						int fB = ((sections.at(k)->param < 0 && sections.at(k)->steering == 'R')
-										|| (sections.at(k)->param > 0 && sections.at(k)->steering == 'L')
-										) ? 0 : 1;
-						str.append(to_string(fA));
-						str.append(" ");
-						str.append(to_string(fB));
-						str.append(" ");
-						str.append(to_string(sections.at(k)->endedX*RATIO*(10)));
-						str.append(" ");
-						str.append(to_string(sections.at(k)->endedY*RATIO*(-10)));
-						str.append("\"");
-						str.append(" style=\"stroke:red; fill:transparent\" />\n");
-						//}
-					}
-				}
-				//str.append(to_string(RATIO*(sections.at(k)->getFirstVelocity().q.x)*(10)));
-				//str.append(" ");
-				//str.append(to_string(sections.at(k)->getFirstVelocity().q.y*RATIO*(-10)));
-				//str.append(" A ");
-				
-				//str.append(to_string(sections.at(k)->getLastVelocity().q.x));
-            }
-        }
+			
+			if(sections.at(k)->typeOfTrajectory == 'C'){
+				str.append(drawCircleArc(sections.at(k)));
+			}
+			else if(sections.at(k)->typeOfTrajectory == 'F'){
+				str.append("\n<line x1='");
+				str.append(to_string(sections.at(k)->beganX*RATIO*(10)));
+				str.append("' y1='");
+				str.append(to_string(sections.at(k)->beganY*RATIO*(-10)));
+				str.append("' x2='");
+				str.append(to_string(sections.at(k)->endedX*RATIO*(10)));
+				str.append("' y2='");
+				str.append(to_string(sections.at(k)->endedY*RATIO*(-10)));
+				str.append("' style=\"stroke:red; fill:transparent\" />\n");
+			}
+		}
     }
 	return str;
 }
