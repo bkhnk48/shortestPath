@@ -157,11 +157,11 @@ class Path : public MovementPoint{
     public:
         vector<PathSegment*> segments;
         float Lmin;
-        int index;
+        //int index;
 
         Path(){
             this->Lmin = FLT_MAX;
-            this->index = -1;
+            //this->index = -1;
         }
 };
 
