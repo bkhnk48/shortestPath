@@ -145,7 +145,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
     *error = 0;
     istringstream allSections(line);
     int numberSections = 0;
-    double angle = angle0;
+    
     if(allSections >> strTemp1 >> numberSections){
         double startX = x; 
         double startY = y;
@@ -164,7 +164,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     int check = 1;
                     section->beganX = startX; section->beganY = startY; 
                     if(section->steering != 'S'){
-                        check = getPointsOfCircle(section, scaledPolygons, ranges, angle);
+                        check = getPointsOfCircle(section, scaledPolygons, ranges);
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
