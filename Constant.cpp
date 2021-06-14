@@ -32,4 +32,6 @@ const double SMALL_ANGLE = 0.01; //small angle which allows sin(alpha) = alpha
 
 const double RATIO = 6.8; //it is also the maximum of minumun rotated radius for all cars in the market recent years:https://laithutoyota.vn/ban-kinh-quay-vong-xe/
 
+enum SIDE{LeftSide, RightSide};
+
 #endif
