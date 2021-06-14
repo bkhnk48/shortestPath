@@ -29,13 +29,13 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, double yawAngle = 1.57079632679 )
+int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges)
 {
     double p1X = section->beganX;
     double p1Y = section->beganY;
 
-    double deltaP1X = p1X*cos(yawAngle);
-    double deltaP1Y = p1Y*sin(yawAngle);
+    //double deltaP1X = p1X*cos(yawAngle);
+    //double deltaP1Y = p1Y*sin(yawAngle);
     double p2X = section->endedX;
     double p2Y = section->endedY;   
 
@@ -56,8 +56,12 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double R = 1;
 
     double xIn = 0, yIn = 0, xOut = 0, yOut = 0;
-    //getNormalInAndOut(p2X - p1X, p2Y - p1Y, &xIn, &yIn, &xOut, &yOut);
-    getNormalInAndOut(deltaP1X, deltaP1Y, &xIn, &yIn, &xOut, &yOut);
+    if(section->param < 0){
+        x = -x;
+        y = -y;
+    }
+    getNormalInAndOut(x, y, &xIn, &yIn, &xOut, &yOut);
+    //getNormalInAndOut(deltaP1X, deltaP1Y, &xIn, &yIn, &xOut, &yOut);
     double xNormal, yNormal;
     if(LEFT == section->steering)
     {
@@ -69,7 +73,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         yNormal = yIn;
     }
 
-    double h = cos(section->param/2);
+    double h = (cos(section->param/2));
     double centerX = midPointX + h*xNormal;
     double centerY = midPointY + h*yNormal;
     cout<<"Rx = "<<centerX*RATIO*10<<" RX = "<<centerY*RATIO*(-10)<<endl;
@@ -121,7 +125,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                 }
                 check = pnpoly(polygons.at(j), xT, yT, false);
                 if(check % 2 == 1)
-                        return -1;//collide with one of the polygons
+                    return -1;//collide with one of the polygons
             }
         }
         point p(xT, yT);
@@ -132,7 +136,6 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
 
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
                             vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error
-                            , double angle0 = 1.57079632679
                             ){
     PathSegment *segment = new PathSegment();
     segment->beganX = x;       segment->beganY = y;
@@ -214,7 +217,7 @@ void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &
     }
 }
 
-vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons, double angle0 = 1.57079632679){
+vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons){
     string line;
     string strTemp, strTemp1, strTemp2, strTemp3;
 
@@ -286,7 +289,7 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
     }
 }
 
-vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons, double angle0 = 1.57079632679){
+vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons){
 
     //vector<point> discreteTrajectory;
     vector<Path*> result; 
