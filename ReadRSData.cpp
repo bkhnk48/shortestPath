@@ -43,6 +43,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     //the rotatedAngle (section->param) sometime is negative and then lets n < 0 unless you call abs func
     if(n <= 1){
         point p(p2X, p2Y);
+        section->typeOfTrajectory = 'F';
         section->possiblePoints.push_back(p);
         return 1;
     }
@@ -146,7 +147,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
         double startX = x; 
         double startY = y;
         double p3X = 0, p3Y = 0;
-        bool firstSetSide = true; enum SIDE side = LeftSide;
+        
         while(numberSections > 0){
             Section *section = new Section();
             getline(infile, line);
@@ -165,11 +166,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
-                        if(firstSetSide){
-                            if(section->steering == 'R')
-                                side = RightSide;
-                        }
-                        section->side = side;
+                        
                         segment->sections.push_back(section);
                         segment->L += abs(section->param);
                     }
@@ -229,6 +226,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
     int i;
     char typeOfTraj;
     vector<Path*> result;
+    bool firstSetSide = true; enum SIDE side = LeftSide;
     while(numPaths > 0){
         Path *path = new Path();
         getline(infile, line);      istringstream segment(line);
@@ -243,7 +241,15 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                 while(numOfSegmentsInPath > 0){
                     int error = 0;
                     PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
+
                     if(error == 0){
+                        if(firstSetSide){
+                            if(segment->sections.at(0)->steering == 'R')
+                                side = RightSide;
+                            firstSetSide = false;
+                        }
+                        segment->setSide(side);
+
                         if(path->segments.size() == 0){
                             path->segments.push_back(segment);
                             path->Lmin = segment->L;
