@@ -76,13 +76,6 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double h = (cos(section->param/2));
     double centerX = midPointX + h*xNormal;
     double centerY = midPointY + h*yNormal;
-    cout<<"Rx = "<<centerX*RATIO*10<<" RX = "<<centerY*RATIO*(-10)<<endl;
-
-    /*double p3X = 0, p3Y = 0;
-    getNormalInAndOut(p1X - centerX, p1Y - centerY, &p3X, &p3Y); //, &xOut, &yOut);
-    section->setFirstVelocity(p3X, p3Y);
-    getNormalInAndOut(p2X - centerX, p2Y - centerY, &p3X, &p3Y); //, &xOut, &yOut);
-    section->setLastVelocity(p3X, p3Y);*/
 
     #pragma region Comments for explaination of the below code    
     //sin(omega_T0) = (p1.y - centerY)/R;
