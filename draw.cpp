@@ -221,14 +221,18 @@ string drawY(point &p){
 void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, double *xOut = NULL, double *yOut = NULL)
 {
 	if(deltaX == 0){
-		*xIn = (deltaY > 0 ? 1 : -1); *yIn = 0;
+		if(xIn && yIn){
+			*xIn = (deltaY > 0 ? 1 : -1); *yIn = 0;
+		}
 		
 		if(xOut && yOut){
 			*xOut = -(*xIn); *yOut = 0;
 		}
 	}
 	else if(deltaY == 0){
-		*xIn = 0; *yIn = (deltaX > 0 ? -1 : 1);
+		if(xIn && yIn){
+			*xIn = 0; *yIn = (deltaX > 0 ? -1 : 1);
+		}
 
 		if(xOut && yOut){
 			*xOut = 0; *yOut = -(*yIn);
@@ -238,7 +242,10 @@ void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, d
 		
 		double length = sqrt(deltaX*deltaX + deltaY*deltaY);
 		
-		*xIn = deltaY/length; *yIn = -deltaX/length;
+		if(xIn && yIn){
+			*xIn = deltaY/length; *yIn = -deltaX/length;
+		}
+		
 		if(xOut && yOut){
 			*xOut = -deltaY/length; *yOut = deltaX/length;
 		}
