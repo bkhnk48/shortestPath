@@ -245,7 +245,7 @@ void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, d
 		if(xIn && yIn){
 			*xIn = deltaY/length; *yIn = -deltaX/length;
 		}
-		
+
 		if(xOut && yOut){
 			*xOut = -deltaY/length; *yOut = deltaX/length;
 		}
@@ -584,6 +584,73 @@ string drawCircleArc(Section *section, int WIDTH){
 	return str;
 }
 
+
+string drawLines(Section *section, int WIDTH){
+	double xNormal, yNormal;
+	//double xIn, yIn, xOut, yOut;
+	string str = "";
+	if(section->param > 0 && section->side == RightSide
+		|| (section->param < 0 && section->side == LeftSide)
+		 ){
+		getNormalInAndOut(section->endedX - section->beganX, 
+								section->endedY - section->beganY, NULL, NULL, 
+								&xNormal, &yNormal);
+		//xNormal = xOut;
+		//yNormal = yOut;
+	}
+	else{
+		getNormalInAndOut(section->endedX - section->beganX, 
+								section->endedY - section->beganY, 
+								&xNormal, &yNormal);
+	}
+
+	xNormal *= WIDTH*10;//To be honest, it should be xNormal *= WIDTH/RATIO
+	yNormal *= WIDTH*(-10);
+
+	#pragma region draw the side
+	str.append("\n<line x1='");
+	str.append(to_string(section->beganX*RATIO*(10)));
+	str.append("' y1='");
+	str.append(to_string(section->beganY*RATIO*(-10)));
+	str.append("' x2='");
+	str.append(to_string(section->endedX*RATIO*(10)));
+	str.append("' y2='");
+	str.append(to_string(section->endedY*RATIO*(-10)));
+	str.append("' style=\"stroke:red; fill:transparent\" />\n");
+	#pragma endregion
+
+	#pragma region draw the center axes
+	str.append("\n<line x1='");
+	str.append(to_string((section->beganX*RATIO*(10) + xNormal/2)));
+	str.append("' y1='");
+	str.append(to_string((section->beganY*RATIO*(-10)  + yNormal/2)));
+	str.append("' x2='");
+	str.append(to_string((section->endedX*RATIO*(10) + xNormal/2)));
+	str.append("' y2='");
+	str.append(to_string((section->endedY*RATIO*(-10) + yNormal/2)));
+	str.append("' style=\"stroke:violet; fill:transparent\" />\n");
+	#pragma endregion
+
+	#pragma region draw the remaining side
+	str.append("\n<line x1='");
+	str.append(to_string((section->beganX*RATIO*(10) + xNormal)));
+	//To be honest, it should be (section->beganX + xNormal)*RATIO*(10). 
+	// But I use the shortcut to reduce number of FP arithmetic calculation
+
+	str.append("' y1='");
+	str.append(to_string((section->beganY*RATIO*(-10) + yNormal)));
+	str.append("' x2='");
+	str.append(to_string((section->endedX*RATIO*(10) + xNormal)));
+	str.append("' y2='");
+	str.append(to_string((section->endedY*RATIO*(-10) + yNormal)));
+	str.append("' style=\"stroke:blue; fill:transparent\" />\n");
+	#pragma endregion
+
+	return str;
+
+}
+
+
 string drawCurverMovement(vector<Path*> trajectory, int WIDTH){
 	string str = "\n";
 
@@ -604,15 +671,7 @@ string drawCurverMovement(vector<Path*> trajectory, int WIDTH){
 				str.append(drawCircleArc(sections.at(k), WIDTH));
 			}
 			else if(sections.at(k)->typeOfTrajectory == 'F'){
-				str.append("\n<line x1='");
-				str.append(to_string(sections.at(k)->beganX*RATIO*(10)));
-				str.append("' y1='");
-				str.append(to_string(sections.at(k)->beganY*RATIO*(-10)));
-				str.append("' x2='");
-				str.append(to_string(sections.at(k)->endedX*RATIO*(10)));
-				str.append("' y2='");
-				str.append(to_string(sections.at(k)->endedY*RATIO*(-10)));
-				str.append("' style=\"stroke:red; fill:transparent\" />\n");
+				str.append(drawLines(sections.at(k), WIDTH));
 			}
 		}
     }
