@@ -512,38 +512,37 @@ the first one is drew path trajectory of one AV's side
 the second one is the other path of the remaining AV's side 
 */
 string drawCircleArc(Section *section, int WIDTH){
-	int signedValue = (
-						(section->steering == 'R' && section->side == RightSide)
-						|| (section->side == LeftSide && section->steering == 'L')
-						//(section->normal == IN && section->side == RightSide)
-						//|| (section->side == LeftSide && section->normal == OUT)
-							) ? 1 : -1;
-	string str = "";  string strSub = "";
-	str.append("<path d=\"M ");			strSub.append("<path d=\"M ");
+	int signedValue = ((section->steering == 'R' && section->side == RightSide)
+						|| (section->side == LeftSide && section->steering == 'L')) ? 1 : -1;
+	string str = "";  string strSub = ""; 	string strCenter = "";
+	str.append("<path d=\"M ");			strCenter.append("<path d=\"M ");			strSub.append("<path d=\"M ");
 
 	vector<double> otherPositions = getXYOfOtherSide(section->beganX, 
 										section->beganY, signedValue, section->centerX, section->centerY, WIDTH);
 
+	double R1 = (signedValue*WIDTH*0.5 + RATIO)*10;
+	double R2 = (signedValue*WIDTH + RATIO)*10;
+
 	double x0 = RATIO*(section->beganX)*10;				double u0 = otherPositions.at(0);
 	double y0 = RATIO*(section->beganY*(-10));			double v0 = otherPositions.at(1);
-	str.append(to_string(x0));			strSub.append(to_string(u0*RATIO*10));
-	str.append(" ");					strSub.append(" ");
-	str.append(to_string(y0));			strSub.append(to_string(v0*RATIO*(-10)));
-	str.append(" ");					strSub.append(" ");
+	str.append(to_string(x0));			strCenter.append(to_string(x0*0.5 + u0*RATIO*5));			strSub.append(to_string(u0*RATIO*10));
+	str.append(" ");					strCenter.append(" ");										strSub.append(" ");
+	str.append(to_string(y0));			strCenter.append(to_string(y0*0.5 - v0*RATIO*5));			strSub.append(to_string(v0*RATIO*(-10)));
+	str.append(" ");					strCenter.append(" ");										strSub.append(" ");
 
-	str.append("A ");					strSub.append("A ");
-	str.append(to_string(RATIO*10));	strSub.append(to_string((signedValue*WIDTH + RATIO)*10));
-	str.append(" ");					strSub.append(" ");
-	str.append(to_string(RATIO*10));	strSub.append(to_string((signedValue*WIDTH + RATIO)*10));
-	str.append(" 0 ");					strSub.append(" 0 ");
+	str.append("A ");					strCenter.append("A ");					strSub.append("A ");
+	str.append(to_string(RATIO*10));	strCenter.append(to_string(R1));		strSub.append(to_string(R2));
+	str.append(" ");					strCenter.append(" ");					strSub.append(" ");
+	str.append(to_string(RATIO*10));	strCenter.append(to_string(R1));		strSub.append(to_string(R2));
+	str.append(" 0 ");					strCenter.append(" 0 ");				strSub.append(" 0 ");
 	int fA = section->param > 3.14 ? 1 : 0;
 	int fB = ((section->param < 0 && section->steering == 'R')
 					|| (section->param > 0 && section->steering == 'L')
 					) ? 0 : 1;
-	str.append(to_string(fA));			strSub.append(to_string(fA));
-	str.append(" ");					strSub.append(" ");
-	str.append(to_string(fB));			strSub.append(to_string(fB));
-	str.append(" ");					strSub.append(" ");
+	str.append(to_string(fA));			strCenter.append(to_string(fA));		strSub.append(to_string(fA));
+	str.append(" ");					strCenter.append(" ");					strSub.append(" ");
+	str.append(to_string(fB));			strCenter.append(to_string(fB));		strSub.append(to_string(fB));
+	str.append(" ");					strCenter.append(" ");					strSub.append(" ");
 
 	otherPositions = getXYOfOtherSide(section->endedX, 
 										section->endedY, signedValue, section->centerX, section->centerY, WIDTH);
@@ -551,18 +550,26 @@ string drawCircleArc(Section *section, int WIDTH){
 
 	str.append(to_string(section->endedX*RATIO*(10)));
 
+	strCenter.append(to_string((section->endedX + otherPositions.at(0))*RATIO*(5)));
+
 	strSub.append(to_string(otherPositions.at(0)*RATIO*(10)));
 
-	str.append(" ");					strSub.append(" ");
+	str.append(" ");					strCenter.append(" ");					strSub.append(" ");
 	str.append(to_string(section->endedY*RATIO*(-10)));
+
+	strCenter.append(to_string((section->endedY + otherPositions.at(1))*RATIO*(-5)));
 
 	strSub.append(to_string(otherPositions.at(1)*RATIO*(-10)));
 	
-	str.append("\"");					strSub.append("\"");
+	str.append("\"");					strCenter.append("\"");					strSub.append("\"");
 	str.append(" style=\"stroke:red; fill:transparent\" />\n");
+
+	strCenter.append(" style=\"stroke:violet; fill:transparent\" />\n");
 
 	strSub.append(" style=\"stroke:blue; fill:transparent\" />\n");
 
+	str.append("\n");
+	str.append(strCenter);
 	str.append("\n");
 	str.append(strSub);
 	str.append("\n");
