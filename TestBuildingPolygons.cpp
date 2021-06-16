@@ -13,6 +13,7 @@
 //#include "preprocess.cpp"
 #include "MovementController.cpp"
 #include "PathPlanning.cpp"
+#include "BuiltInMap.cpp"
 #include <cassert>  
 #include <stdio.h>
 
@@ -33,28 +34,57 @@ void testFullAVsInStacks(){
 	stacks = (K_Stack *)malloc(numOfStacks*sizeof(K_Stack));
 	stacks->k = numOfStacks;
 	buildStack(stacks, numOfStacks, rowsInStack, columnsInStack);
-	/*stacks[0].slotsOfAV[0][0] = 0;*/	stacks[0].slotsOfAV[0][1] = 0;  stacks[0].slotsOfAV[0][3] = 0;  stacks[0].slotsOfAV[0][4] = 0;  
+
+	bool loadBuiltInMap = false;
+
+	fflush(stdin);
+	printf("Do you want to load built-in map? (Y/y/1 or N/n/0) ");
+	char load;
+	int input = scanf("%c", &load);
+	if(input == EOF)
+		return;
+
+	if(load == 'Y' || load == 'y' || load == '1'){
+		printf("Which scenario you want? 0-9:  ");
+		int scenario;	
+		input = scanf("%d", &scenario);
+		switch (scenario)
+		{
+			case 0:
+				twoSeperatePolygons(stacks[0].slotsOfAV);
+				break;
+		
+			default:
+				break;
+		}
+		
+	}
+	else{
+		/*stacks[0].slotsOfAV[0][0] = 0;*/	stacks[0].slotsOfAV[0][1] = 0;  stacks[0].slotsOfAV[0][3] = 0;  stacks[0].slotsOfAV[0][4] = 0;  
 																				stacks[0].slotsOfAV[0][6] = 0;  stacks[0].slotsOfAV[0][7] = 0;
 
-	/*stacks[0].slotsOfAV[1][3] = 0;*/	stacks[0].slotsOfAV[1][6] = 0;  stacks[0].slotsOfAV[1][7] = 0;	
-	stacks[0].slotsOfAV[2][7] = 0;
-	stacks[0].slotsOfAV[3][7] = 0;
-	stacks[0].slotsOfAV[4][0] = 0;	stacks[0].slotsOfAV[4][2] = 0;  stacks[0].slotsOfAV[4][6] = 0;  stacks[0].slotsOfAV[4][7] = 0;
-	stacks[0].slotsOfAV[5][0] = 0;	stacks[0].slotsOfAV[5][2] = 0;  stacks[0].slotsOfAV[5][3] = 0;  stacks[0].slotsOfAV[5][6] = 0;  
-																				stacks[0].slotsOfAV[5][7] = 0;
-	
+		/*stacks[0].slotsOfAV[1][3] = 0;*/	stacks[0].slotsOfAV[1][6] = 0;  stacks[0].slotsOfAV[1][7] = 0;	
+		stacks[0].slotsOfAV[2][7] = 0;
+		stacks[0].slotsOfAV[3][7] = 0;
+		stacks[0].slotsOfAV[4][0] = 0;	stacks[0].slotsOfAV[4][2] = 0;  stacks[0].slotsOfAV[4][6] = 0;  stacks[0].slotsOfAV[4][7] = 0;
+		stacks[0].slotsOfAV[5][0] = 0;	stacks[0].slotsOfAV[5][2] = 0;  stacks[0].slotsOfAV[5][3] = 0;  stacks[0].slotsOfAV[5][6] = 0;  
+																					stacks[0].slotsOfAV[5][7] = 0;
+		
 
-					//stacks[0].slotsOfAV[5][1] = 0;  stacks[0].slotsOfAV[5][4] = 0;  stacks[0].slotsOfAV[5][5] = 0;
+						//stacks[0].slotsOfAV[5][1] = 0;  stacks[0].slotsOfAV[5][4] = 0;  stacks[0].slotsOfAV[5][5] = 0;
 
-	//stacks[0].slotsOfAV[1][0] = 0;  stacks[0].slotsOfAV[2][0] = 0;  stacks[0].slotsOfAV[3][0] = 0;
+		//stacks[0].slotsOfAV[1][0] = 0;  stacks[0].slotsOfAV[2][0] = 0;  stacks[0].slotsOfAV[3][0] = 0;
 
 
-	for(int i = 0; i < 6; i++){
-		for(int j = 7; j < columnsInStack; j++){
-			stacks[0].slotsOfAV[i][j] = 0;
+		for(int i = 0; i < 6; i++){
+			for(int j = 7; j < columnsInStack; j++){
+				stacks[0].slotsOfAV[i][j] = 0;
+			}
 		}
+		stacks[0].slotsOfAV[0][9] = 1;
 	}
-	stacks[0].slotsOfAV[0][9] = 1;
+
+	
     //vector< vector< lineSegment> > polygons;
 
     //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
