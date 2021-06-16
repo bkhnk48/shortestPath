@@ -10,38 +10,6 @@ import os
 
 
 def main():
-    """
-    # points to be followed
-    arguments = len(sys.argv) - 1
-
-    # Output argument-wise
-    position = 3
-    even = 0
-    odd = 0
-    pts1 = []
-    
-    firstAngle = float(sys.argv[1])
-    lastAngle = float(sys.argv[2])
-
-    while (arguments >= position):
-        #print ("Parameter %i: %s" % (position, sys.argv[position]))
-        
-        if position % 2 == 1:
-            odd = float(sys.argv[position])
-        else:
-            even = float(sys.argv[position])
-            pts1.append((odd, even))
-
-        position = position + 1
-    """    
-    """firstAngle = 90;
-    lastAngle = 270
-    pts1 = [(6.000000, 30.000000), (10.000000, 36.000000), (12.000000, 36.000000), (14.000000, 24.000000), (14.000000, 12.000000), (12.501727,0.083045)] 
-    """
-    #f = open("route.txt")
-    #print("This file full path (following symlinks)")
-    #full_path = os.path.realpath(__file__)
-    #print(full_path + "\n")
     firstAngle = 0
     lastAngle = 0
     pts = []
@@ -63,10 +31,7 @@ def main():
             i = i + 1
             prev = num
 
-    #pts = []
-    #for i in range(len(pts1)):
-        #pts.append((pts1[i][0]/ rs.PathElement.RATIO, pts1[i][1]/rs.PathElement.RATIO))
-
+    
     # generate PATH so the vectors are pointing at each other
     PATH = []
     PATH.append((pts[0][0], pts[0][1], firstAngle))
@@ -77,15 +42,7 @@ def main():
         PATH.append((pts[i][0], pts[i][1], utils.rad2deg(theta)))
     PATH.append((pts[-1][0], pts[-1][1], lastAngle))
 
-    # or you can also manually set the angles:
-    # PATH = [(-5,5,90),(-5,5,-90),(1,4,180), (5,4,0), (6,-3,90), (4,-4,-40),(-2,0,240), 
-    #         (-6, -7, 160), (-7,-1,80)]
-
-    # or just generate a random route:
-    # PATH = []
-    # for _ in range(10):
-    #     PATH.append((rd.randint(-7,7), rd.randint(-7,7), rd.randint(0,359)))
-
+    
     # init turtle
     tesla = turtle.Turtle()
     tesla.speed(0) # 0: fast; 1: slow, 8.4: cool
@@ -142,14 +99,7 @@ def main():
                 steering = localTrajectory[k][4]
                 s = s + str(steering) + "\n"
                 f.write(s)
-                #if rs.cutThroughCurver(first, last, param, steering, edges) == 1:
-                    #forbiddenTrajectories.append(j)
-                #else:
-                    #first = last
-                    #last = []
-        
-        #allBannedTrajectories.append(forbiddenTrajectories)'''
-
+    
     f.close()
     # draw shortest route
     tesla.pencolor(1, 0, 0)
