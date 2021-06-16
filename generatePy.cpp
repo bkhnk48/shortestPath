@@ -31,6 +31,26 @@ string drawIntY(point &p){
 	return to_string(r);
 }
 
+void writeRoute(string file_name, vector<point> &route, float firstAngle, float lastAngle){
+    string str = to_string(firstAngle);
+    str.append("\n");
+    str.append(to_string(lastAngle));
+    str.append("\n");
+    for(int i = 0; i < route.size(); i++){
+        str.append(to_string(route.at(i).x));
+        str.append("\n");
+        str.append(to_string(route.at(i).y));
+        str.append("\n");
+    }
+
+    std::ofstream ofs(file_name.c_str());
+	if (!ofs.good())
+		cout<<"Could not write data to "<<file_name;
+
+	ofs << str;
+	ofs.close();
+}
+
 void writeFile(string file_name, vector< vector< lineSegment> > &polygons){
     if(polygons.size() == 0)
         return;
@@ -67,14 +87,28 @@ void writeFile(string file_name, vector< vector< lineSegment> > &polygons){
 
 void runPythonCode(string file_name, vector<point> &route, int* directionAtTheEnd, vector< vector< lineSegment> > &polygons){
 
-    writeFile("test/polygons.txt", polygons);
+    //writeFile("test/polygons.txt", polygons);
+    
     float scale = 1;
     float deltaX = 0; //22;
     float deltaY = 0; //18;
 
 	char cmd[50];
-    
-    strcpy(cmd,"test\\AllPossibleTrajectories.py");
+    float lastAngle = 0;
+    switch(*directionAtTheEnd){
+        case 8:
+            lastAngle = 90;
+        case 4:
+            lastAngle = 180;
+        case 6:
+            lastAngle = 0;
+        case 2:
+            lastAngle = 270;
+    }
+
+    writeRoute("route.txt", route, 90, lastAngle);
+
+    strcpy(cmd, "test\\AllPossibleTrajectories.py");
     system(cmd);
 
 }
