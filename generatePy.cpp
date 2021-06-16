@@ -73,6 +73,7 @@ void runPythonCode(string file_name, vector<point> &route, int* directionAtTheEn
     float deltaY = 0; //18;
 
 	char cmd[50];
+    
     strcpy(cmd,"test\\AllPossibleTrajectories.py");
     system(cmd);
 
