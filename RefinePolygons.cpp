@@ -226,53 +226,36 @@ class RefinePolygons : public BuildingPolygons{
         // if vertice in points push back to p_o4
         // if vertice not in points push head to p_o1
         void getVerticesAV(point &p_o1, point &p_o2, point &p_o3, point &p_o4){
+            deque<point> queue;
+            
             if(find(points.begin(), points.end(), this->pA) != points.end()){
-                swap_point(p_o2, p_o1);
-                swap_point(p_o3, p_o2);
-                swap_point(p_o4, p_o3);
-                p_o4 = this->pA;
+                queue.push_back(this->pA);
             } else {
-                swap_point(p_o3, p_o4);
-                swap_point(p_o2, p_o3);
-                swap_point(p_o1, p_o2);
-                p_o1 = this->pA;
+                queue.push_front(this->pA);
             }
 
             if(find(points.begin(), points.end(), this->pB) != points.end()){
-                swap_point(p_o2, p_o1);
-                swap_point(p_o3, p_o2);
-                swap_point(p_o4, p_o3);
-                p_o4 = this->pB;
+                queue.push_back(this->pB);
             } else {
-                swap_point(p_o3, p_o4);
-                swap_point(p_o2, p_o3);
-                swap_point(p_o1, p_o2);
-                p_o1 = this->pB;
+                queue.push_front(this->pB);
             }
 
             if(find(points.begin(), points.end(), this->pC) != points.end()){
-                swap_point(p_o2, p_o1);
-                swap_point(p_o3, p_o2);
-                swap_point(p_o4, p_o3);
-                p_o4 = this->pC;
+                queue.push_back(this->pC);
             } else {
-                swap_point(p_o3, p_o4);
-                swap_point(p_o2, p_o3);
-                swap_point(p_o1, p_o2);
-                p_o1 = this->pC;
+                queue.push_front(this->pC);
             }
 
             if(find(points.begin(), points.end(), this->pD) != points.end()){
-                swap_point(p_o2, p_o1);
-                swap_point(p_o3, p_o2);
-                swap_point(p_o4, p_o3);
-                p_o4 = this->pD;
+                queue.push_back(this->pD);
             } else {
-                swap_point(p_o3, p_o4);
-                swap_point(p_o2, p_o3);
-                swap_point(p_o1, p_o2);
-                p_o1 = this->pD;
+                queue.push_front(this->pD);
             }
+
+            p_o1 = queue.at(0);
+            p_o2 = queue.at(1);
+            p_o3 = queue.at(2);
+            p_o4 = queue.at(3);
         }
 
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
