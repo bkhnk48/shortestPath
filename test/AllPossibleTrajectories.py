@@ -4,12 +4,30 @@ import utils
 import draw
 import math
 import random as rd
-
+import sys
 
 
 def main():
     # points to be followed
-    pts1 = [(6.000000, 30.000000), (10.000000, 36.000000), (12.000000, 36.000000), (14.000000, 24.000000), (14.000000, 12.000000), (12.501727,0.083045)] 
+    arguments = len(sys.argv) - 1
+
+    # Output argument-wise
+    position = 1
+    even = 0
+    odd = 0
+    pts1 = []
+
+    while (arguments >= position):
+        #print ("Parameter %i: %s" % (position, sys.argv[position]))
+        if position % 2 == 1:
+            odd = float(sys.argv[position])
+        else:
+            even = float(sys.argv[position])
+            pts1.append((odd, even))
+
+        position = position + 1
+        
+    #pts1 = [(6.000000, 30.000000), (10.000000, 36.000000), (12.000000, 36.000000), (14.000000, 24.000000), (14.000000, 12.000000), (12.501727,0.083045)] 
     pts = []
     for i in range(len(pts1)):
         pts.append((pts1[i][0]/ rs.PathElement.RATIO, pts1[i][1]/rs.PathElement.RATIO))
