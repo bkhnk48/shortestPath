@@ -93,7 +93,6 @@ class RefinePolygons : public BuildingPolygons{
                     {
                         sharedVertices[0] = true;
                         count++;
-                        
                     }
                     else if(!sharedVertices[1] && this->polygons.at(i).at(j).p == pB)
                     {
@@ -130,8 +129,155 @@ class RefinePolygons : public BuildingPolygons{
             return count;
         }
 
+        // calc euclid distance between two point
+        // imporve : init class/interface distance and euclid_distance implement/extends distance class/interface
+        double euclid_distance(point a, point b){
+            return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+        }
+
+        // swap 2 point, improve: replace by template
+        void swap_point(point &point1, point &point2){
+            point tmp_point = point1;
+            point1 = point2;
+            point2 = tmp_point;
+
+            return;
+        }
+
+        // swap 2 double parameter, improve: replace by template
+        void swap_double(double &dis_1, double &dis_2){
+            double tmp_dis = dis_1;
+            dis_1 = dis_2;
+            dis_2 = tmp_dis;
+
+            return;
+        }
+
+        // s_point is the first break found clockwise, and e_point is end point
+        // the method will sort p_o1 to p_o4, so that p_o1 to p_o4 order nearest and furthest compare to s_point follow clockwise
+        void sort_clockwise(point &s_point, point &e_point, point &p_o1, point &p_o2, point &p_o3, point &p_o4, int cnt){
+            if(cnt == 1){ // if cnt == 1, we only have p_o1, so no need sort_clockwise
+                return;
+            }
+
+            if(cnt == 2){ // we have two point is p_o1 and p_o2
+                double dis_1 = euclid_distance(s_point, p_o1);
+                double dis_2 = euclid_distance(s_point, p_o2);
+
+                if(dis_1 < dis_2){
+                    return;
+                } else { // if 2 point are reversed, we just reposition them
+                    swap_point(p_o1, p_o2);
+                    return;
+                }
+            }
+
+            if(cnt == 3){
+                double dis_1 = euclid_distance(s_point, p_o1);
+                double dis_2 = euclid_distance(s_point, p_o2);
+                double dis_3 = euclid_distance(s_point, p_o3);
+
+                if(dis_1 > dis_2){
+                    swap_point(p_o1, p_o2);
+                    swap_double(dis_1, dis_2);
+                }
+
+                if(dis_1 > dis_3){
+                    swap_point(p_o1, p_o3);
+                    swap_double(dis_1, dis_3);
+                } // after step, p_o1 is true location, we need replace p_o2 and p_o3 if need
+
+                dis_2 = euclid_distance(e_point, p_o2);
+                dis_3 = euclid_distance(e_point, p_o3);
+
+                if(dis_2 < dis_3){
+                    swap_point(p_o2, p_o3);
+                    // swap_double(dis_2, dis_3);
+                }
+
+                return;
+            }
+
+            if(cnt == 4){
+                return; 
+            }
+        }
+
+        // when delete lineSegment, polygon (in pylygons with index polygonIndex) was broken
+        // method find 2 point break in polygon
+        void findBreakPoint(double &x1, double &y1, double &x2, double &y2, int polygonIndex, int &breakIndex, bool &foundBreak){
+            for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
+                int j = (i + 1) % this->polygons.at(polygonIndex).size();
+                if(!(this->polygons.at(polygonIndex).at(i).q == this->polygons.at(polygonIndex).at(j).p))
+                {
+                    x1 = this->polygons.at(polygonIndex).at(i).q.x;
+                    y1 = this->polygons.at(polygonIndex).at(i).q.y;
+
+                    x2 = this->polygons.at(polygonIndex).at(j).p.x;
+                    y2 = this->polygons.at(polygonIndex).at(j).p.y;
+                    breakIndex = i;
+                    foundBreak = true;
+                    break;
+                }
+            }
+        }
+        
+        // get 4 vertices of AV assign to p_o1, p_o2, p_o3, p_o4
+        // if vertice in points push back to p_o4
+        // if vertice not in points push head to p_o1
+        void getVerticesAV(point &p_o1, point &p_o2, point &p_o3, point &p_o4){
+            if(find(points.begin(), points.end(), this->pA) != points.end()){
+                swap_point(p_o2, p_o1);
+                swap_point(p_o3, p_o2);
+                swap_point(p_o4, p_o3);
+                p_o4 = this->pA;
+            } else {
+                swap_point(p_o3, p_o4);
+                swap_point(p_o2, p_o3);
+                swap_point(p_o1, p_o2);
+                p_o1 = this->pA;
+            }
+
+            if(find(points.begin(), points.end(), this->pB) != points.end()){
+                swap_point(p_o2, p_o1);
+                swap_point(p_o3, p_o2);
+                swap_point(p_o4, p_o3);
+                p_o4 = this->pB;
+            } else {
+                swap_point(p_o3, p_o4);
+                swap_point(p_o2, p_o3);
+                swap_point(p_o1, p_o2);
+                p_o1 = this->pB;
+            }
+
+            if(find(points.begin(), points.end(), this->pC) != points.end()){
+                swap_point(p_o2, p_o1);
+                swap_point(p_o3, p_o2);
+                swap_point(p_o4, p_o3);
+                p_o4 = this->pC;
+            } else {
+                swap_point(p_o3, p_o4);
+                swap_point(p_o2, p_o3);
+                swap_point(p_o1, p_o2);
+                p_o1 = this->pC;
+            }
+
+            if(find(points.begin(), points.end(), this->pD) != points.end()){
+                swap_point(p_o2, p_o1);
+                swap_point(p_o3, p_o2);
+                swap_point(p_o4, p_o3);
+                p_o4 = this->pD;
+            } else {
+                swap_point(p_o3, p_o4);
+                swap_point(p_o2, p_o3);
+                swap_point(p_o1, p_o2);
+                p_o1 = this->pD;
+            }
+        }
+
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
+            point p_o1, p_o2, p_o3, p_o4; // init 4 vertices of AV
             int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
             
             #pragma region
@@ -179,78 +325,41 @@ class RefinePolygons : public BuildingPolygons{
 
                 }
             } else if(nmrSameVertices == 3){
-                point p_o; // if nmrSameVertices == 3, so have 1 point in AV is not belong points, it is p_o
-                // p_o is pA, pB, pC or pD. if pX not find in points, it is p_o
-                if(find(points.begin(), points.end(), this->pA) == points.end()){
-                    // p_o.x = this->pA.x;
-                    // p_o.y = this->pA.y;
-                    p_o = this->pA;
-                } else if(find(points.begin(), points.end(), this->pB) == points.end()){
-                    // p_o.x = this->pB.x;
-                    // p_o.y = this->pB.y;
-                    p_o = this->pB;
-                } else if(find(points.begin(), points.end(), this->pC) == points.end()){
-                    // p_o.x = this->pC.x;
-                    // p_o.y = this->pC.y;
-                    p_o = this->pC;
-                } else if(find(points.begin(), points.end(), this->pD) == points.end()){
-                    // p_o.x = this->pD.x;
-                    // p_o.y = this->pD.y;
-                    p_o = this->pD;
-                }
+                getVerticesAV(p_o1, p_o2, p_o3, p_o4);
 
-                // remove point in AV, only points that are vertices of the polygons
-                if(!(this->pA == p_o)){
-                    removePoint(this->pA);
-                    removeLineSegment(this->pA, polygonIndex);
-                }
+                // remove vertices and edge with vertices in points
+                removePoint(p_o4);
+                removeLineSegment(p_o4, polygonIndex);
 
-                if(!(this->pB == p_o)){
-                    removePoint(this->pB);
-                    removeLineSegment(this->pB, polygonIndex);
-                }
+                removePoint(p_o3);
+                removeLineSegment(p_o3, polygonIndex);
 
-                if(!(this->pC == p_o)){
-                    removePoint(this->pC);
-                    removeLineSegment(this->pC, polygonIndex);
-                }
-
-                if(!(this->pD == p_o)){
-                    removePoint(this->pD);
-                    removeLineSegment(this->pD, polygonIndex);
-                }
+                removePoint(p_o2);
+                removeLineSegment(p_o2, polygonIndex);
 
                 if(!this->polygons.at(polygonIndex).empty()){
                     bool foundBreak = false;
                     int breakIndex = 0;
                     double x1, x2, y1, y2;
-                    for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
-                        int j = (i + 1) % this->polygons.at(polygonIndex).size();
-                        if(!(this->polygons.at(polygonIndex).at(i).q == this->polygons.at(polygonIndex).at(j).p))
-                        {
-                            x1 = this->polygons.at(polygonIndex).at(i).q.x;
-                            y1 = this->polygons.at(polygonIndex).at(i).q.y;
+                    findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
 
-                            x2 = this->polygons.at(polygonIndex).at(j).p.x;
-                            y2 = this->polygons.at(polygonIndex).at(j).p.y;
-                            breakIndex = i;
-                            foundBreak = true;
-                            break;
-                        }
-                    }
+                    point s_point, e_point;
+                    s_point.x = x1;
+                    s_point.y = y1;
+                    e_point.x = x2;
+                    e_point.y = y2;
+
+                    // sort p_o1, p_o2, p_o3, p_o4
+                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 3);
 
                     if(foundBreak){
                         lineSegment line1;
                         lineSegment line2;
-                        line1.p.x = x1;
-                        line1.p.y = y1;
+                        line1.p = s_point;
+                        line1.q = p_o1;
 
-                        line1.q = p_o;
-
-                        line2.p = p_o; // line2.p == line1.q
-
-                        line2.q.x = x2;
-                        line2.q.y = y2;
+                        line2.p = p_o1; // line2.p == line1.q
+                        line2.q = e_point;
 
                         this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
                         this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
@@ -259,87 +368,43 @@ class RefinePolygons : public BuildingPolygons{
 
                 }
             } else if(nmrSameVertices == 2){
-                point p_o1;
-                point p_o2; 
-                
-                // if nmrSameVertices == 2, so have 2 point in AV is not belong points, it is p_o1, p_o2
-                // p_o1, p_o2 is pA, pB, pC or pD. if pX not find in points, it is p_o1 or p_o2
-                if(find(points.begin(), points.end(), this->pA) == points.end()){
-                    p_o1 = this->pA;
-                } else if(find(points.begin(), points.end(), this->pB) == points.end()){
-                    if(p_o1 == this->pA){
-                        p_o2 = this->pB;
-                    } else {
-                        p_o1 = this->pB;
-                    }
-                } else if(find(points.begin(), points.end(), this->pC) == points.end()){
-                    if(p_o1 == this->pA || p_o1 == this->pB){
-                        p_o2 = this->pC;
-                    } else {
-                        p_o1 = this->pC;
-                    }
-                } else if(find(points.begin(), points.end(), this->pD) == points.end()){
-                    p_o2 = this->pD;
-                }
+                getVerticesAV(p_o1, p_o2, p_o3, p_o4);
 
-                // remove point in AV, only points that are vertices of the polygons
-                if(!(this->pA == p_o1) && !(this->pA == p_o2)){
-                    removePoint(this->pA);
-                    removeLineSegment(this->pA, polygonIndex);
-                }
+                // remove vertices and edge with vertices in points
+                removePoint(p_o4);
+                removeLineSegment(p_o4, polygonIndex);
 
-                if(!(this->pB == p_o1) && !(this->pB == p_o2)){
-                    removePoint(this->pB);
-                    removeLineSegment(this->pB, polygonIndex);
-                }
-
-                if(!(this->pC == p_o1) && !(this->pC == p_o2)){
-                    removePoint(this->pC);
-                    removeLineSegment(this->pC, polygonIndex);
-                }
-
-                if(!(this->pD == p_o1) && !(this->pD == p_o2)){
-                    removePoint(this->pD);
-                    removeLineSegment(this->pD, polygonIndex);
-                }
+                removePoint(p_o3);
+                removeLineSegment(p_o3, polygonIndex);
 
                 if(!this->polygons.at(polygonIndex).empty()){
                     bool foundBreak = false;
                     int breakIndex = 0;
                     double x1, x2, y1, y2;
-                    for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
-                        int j = (i + 1) % this->polygons.at(polygonIndex).size();
-                        if(!(this->polygons.at(polygonIndex).at(i).q == this->polygons.at(polygonIndex).at(j).p))
-                        {
-                            x1 = this->polygons.at(polygonIndex).at(i).q.x;
-                            y1 = this->polygons.at(polygonIndex).at(i).q.y;
+                    findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
 
-                            x2 = this->polygons.at(polygonIndex).at(j).p.x;
-                            y2 = this->polygons.at(polygonIndex).at(j).p.y;
-                            breakIndex = i;
-                            foundBreak = true;
-                            break;
-                        }
-                    }
+                    point s_point, e_point;
+                    s_point.x = x1;
+                    s_point.y = y1;
+                    e_point.x = x2;
+                    e_point.y = y2;
+
+                    // sort p_o1, p_o2, p_o3, p_o4
+                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 2);
 
                     if(foundBreak){
                         lineSegment line1;
                         lineSegment line2;
                         lineSegment line3;
 
-                        line1.p.x = x1;
-                        line1.p.y = y1;
-
+                        line1.p = s_point;
                         line1.q = p_o1;
 
                         line2.p = p_o1; // line2.p == line1.q
-
                         line2.q = p_o2;
 
                         line3.p = p_o2; // line3.p == line2.q
-
-                        line3.q.x = x2;
-                        line3.q.y = y2;
+                        line3.q = e_point;
 
                         this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
                         this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
@@ -350,71 +415,26 @@ class RefinePolygons : public BuildingPolygons{
                 }
 
             } else if(nmrSameVertices == 1){
-                point p_o1;
-                point p_o2;
-                point p_o3;
+                getVerticesAV(p_o1, p_o2, p_o3, p_o4);
 
-                // if nmrSameVertices == 1, so have 3 point in AV is not belong points, it is p_o1, p_o2, p_o3
-                // p_o1, p_o2, p_o3 is pA, pB, pC or pD. if pX not find in points, it is p_o1 or p_o2, p_o3
-                if(find(points.begin(), points.end(), this->pA) == points.end()){
-                    p_o1 = this->pA;
-                } else if(find(points.begin(), points.end(), this->pB) == points.end()){
-                    if(p_o1 == this->pA){
-                        p_o2 = this->pB;
-                    } else {
-                        p_o1 = this->pB;
-                    }
-                } else if(find(points.begin(), points.end(), this->pC) == points.end()){
-                    if(p_o1 == this->pA && p_o2 == this->pB){
-                        p_o3 = this->pC;
-                    } else if(p_o1 == this->pA && !(p_o2 == this->pB)){
-                        p_o2 = this->pC;
-                    } else if(!(p_o1 == this->pA) && p_o2 == this->pB){
-                        p_o2 = this->pC;
-                    }
-                } else if(find(points.begin(), points.end(), this->pD) == points.end()){
-                    p_o3 = this->pD;
-                }
-
-                // remove point in AV, only points that are vertices of the polygons
-                if(!(this->pA == p_o1) && !(this->pA == p_o2) && !(this->pA == p_o3)){
-                    removePoint(this->pA);
-                    removeLineSegment(this->pA, polygonIndex);
-                }
-
-                if(!(this->pB == p_o1) && !(this->pB == p_o2) && !(this->pB == p_o3)){
-                    removePoint(this->pB);
-                    removeLineSegment(this->pB, polygonIndex);
-                }
-
-                if(!(this->pC == p_o1) && !(this->pC == p_o2) && !(this->pC == p_o3)){
-                    removePoint(this->pC);
-                    removeLineSegment(this->pC, polygonIndex);
-                }
-
-                if(!(this->pD == p_o1) && !(this->pD == p_o2) && !(this->pD == p_o3)){
-                    removePoint(this->pD);
-                    removeLineSegment(this->pD, polygonIndex);
-                }
+                // remove vertices and edge with vertices in points
+                removePoint(p_o4);
+                removeLineSegment(p_o4, polygonIndex);
 
                 if(!this->polygons.at(polygonIndex).empty()){
                     bool foundBreak = false;
                     int breakIndex = 0;
                     double x1, x2, y1, y2;
-                    for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
-                        int j = (i + 1) % this->polygons.at(polygonIndex).size();
-                        if(!(this->polygons.at(polygonIndex).at(i).q == this->polygons.at(polygonIndex).at(j).p))
-                        {
-                            x1 = this->polygons.at(polygonIndex).at(i).q.x;
-                            y1 = this->polygons.at(polygonIndex).at(i).q.y;
+                    findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
 
-                            x2 = this->polygons.at(polygonIndex).at(j).p.x;
-                            y2 = this->polygons.at(polygonIndex).at(j).p.y;
-                            breakIndex = i;
-                            foundBreak = true;
-                            break;
-                        }
-                    }
+                    point s_point, e_point;
+                    s_point.x = x1;
+                    s_point.y = y1;
+                    e_point.x = x2;
+                    e_point.y = y2;
+
+                    // sort p_o1, p_o2, p_o3, p_o4
+                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 2);
 
                     if(foundBreak){
                         lineSegment line1;
@@ -422,9 +442,7 @@ class RefinePolygons : public BuildingPolygons{
                         lineSegment line3;
                         lineSegment line4;
 
-                        line1.p.x = x1;
-                        line1.p.y = y1;
-
+                        line1.p = s_point;
                         line1.q = p_o1;
 
                         line2.p = p_o1; // line2.p == line1.q
@@ -434,9 +452,7 @@ class RefinePolygons : public BuildingPolygons{
                         line3.q = p_o3;
 
                         line4.p = p_o3; // line4.p == line3.q
-
-                        line4.q.x = x2;
-                        line4.q.y = y2;
+                        line4.q = e_point;
 
                         this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
                         this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
