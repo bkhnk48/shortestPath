@@ -12,13 +12,17 @@ def main():
     arguments = len(sys.argv) - 1
 
     # Output argument-wise
-    position = 1
+    position = 3
     even = 0
     odd = 0
     pts1 = []
+    
+    firstAngle = float(sys.argv[1])
+    lastAngle = float(sys.argv[2])
 
     while (arguments >= position):
         #print ("Parameter %i: %s" % (position, sys.argv[position]))
+        
         if position % 2 == 1:
             odd = float(sys.argv[position])
         else:
@@ -34,13 +38,13 @@ def main():
 
     # generate PATH so the vectors are pointing at each other
     PATH = []
-    PATH.append((pts[0][0], pts[0][1], 90))
+    PATH.append((pts[0][0], pts[0][1], firstAngle))
     for i in range(1, len(pts) - 1):
         dx = pts[i+1][0] - pts[i][0]
         dy = pts[i+1][1] - pts[i][1]
         theta = math.atan2(dy, dx)
         PATH.append((pts[i][0], pts[i][1], utils.rad2deg(theta)))
-    PATH.append((pts[-1][0], pts[-1][1], 270))
+    PATH.append((pts[-1][0], pts[-1][1], lastAngle))
 
     # or you can also manually set the angles:
     # PATH = [(-5,5,90),(-5,5,-90),(1,4,180), (5,4,0), (6,-3,90), (4,-4,-40),(-2,0,240), 
