@@ -99,7 +99,7 @@ class PlanningController{
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
-                                                                    //shortestPath, 
+                                                                    shortestPath, 
                                                                     paths,
                                                                     graph);
                 }
