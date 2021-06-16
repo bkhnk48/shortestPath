@@ -5,9 +5,12 @@ import draw
 import math
 import random as rd
 import sys
+import os
+
 
 
 def main():
+    """
     # points to be followed
     arguments = len(sys.argv) - 1
 
@@ -30,11 +33,39 @@ def main():
             pts1.append((odd, even))
 
         position = position + 1
-        
-    #pts1 = [(6.000000, 30.000000), (10.000000, 36.000000), (12.000000, 36.000000), (14.000000, 24.000000), (14.000000, 12.000000), (12.501727,0.083045)] 
+    """    
+    """firstAngle = 90;
+    lastAngle = 270
+    pts1 = [(6.000000, 30.000000), (10.000000, 36.000000), (12.000000, 36.000000), (14.000000, 24.000000), (14.000000, 12.000000), (12.501727,0.083045)] 
+    """
+    #f = open("route.txt")
+    #print("This file full path (following symlinks)")
+    #full_path = os.path.realpath(__file__)
+    #print(full_path + "\n")
+    firstAngle = 0
+    lastAngle = 0
     pts = []
-    for i in range(len(pts1)):
-        pts.append((pts1[i][0]/ rs.PathElement.RATIO, pts1[i][1]/rs.PathElement.RATIO))
+
+    with open("route.txt", "r") as reader:
+        # Read and print the entire file line by line
+        line = reader.readline()
+        firstAngle = float(line)
+        line = reader.readline()
+        lastAngle = float(line)
+        i = 0
+        prev = 0
+        line = reader.readline()
+        while line != '':  # The EOF char is an empty string
+            num = float(line)
+            if i % 2 == 1:
+                pts.append((prev/ rs.PathElement.RATIO, num/ rs.PathElement.RATIO))
+            line = reader.readline()
+            i = i + 1
+            prev = num
+
+    #pts = []
+    #for i in range(len(pts1)):
+        #pts.append((pts1[i][0]/ rs.PathElement.RATIO, pts1[i][1]/rs.PathElement.RATIO))
 
     # generate PATH so the vectors are pointing at each other
     PATH = []
