@@ -683,7 +683,7 @@ void drawShortestPath(string file_name, point & start, point & end,
 						vector <vector < lineSegment > > & polygons,
 						//vector<point> &sideSteps, 
 						vector<point> &points, 
-						//vector<point> &route,
+						vector<point> &route,
 						vector<Path*> trajectory,
 						vector< vector<int> >graph){
 	string str1 = "<?xml version='1.0' encoding='UTF-8' ?>\n";
@@ -708,9 +708,9 @@ void drawShortestPath(string file_name, point & start, point & end,
 	str1 = str1 + drawGraph(graph,points);
 	//if(distance!=-1 && config.drawRoute)
 	{ 
-		//str1 = str1 + drawShortestRoute(route);
+		str1 = str1 + drawShortestRoute(route);
 		//str1 = str1 + drawShortestRoute(sideSteps);
-		str1 = str1 + drawCurverMovement(trajectory, WIDTH);
+		//str1 = str1 + drawCurverMovement(trajectory, WIDTH);
 	}
 	str1 = str1 + "</svg>\n";
 	std::ofstream ofs(file_name.c_str());
