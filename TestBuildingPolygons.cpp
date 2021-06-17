@@ -57,7 +57,18 @@ void testFullAVsInStacks(){
 			default:
 				break;
 		}
+
+		printf("Which wall do you want? 0-9:   ");
+		input = scanf("%d", &scenario);
+		switch (scenario)
+		{
+			case 0:
+				twoSeperatePolygons(stacks[0].slotsOfAV);
+				break;
 		
+			default:
+				break;
+		}
 	}
 	else{
 		/*stacks[0].slotsOfAV[0][0] = 0;*/	stacks[0].slotsOfAV[0][1] = 0;  stacks[0].slotsOfAV[0][3] = 0;  stacks[0].slotsOfAV[0][4] = 0;  
