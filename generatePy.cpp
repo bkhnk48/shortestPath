@@ -59,12 +59,16 @@ void runPythonCode(string file_name, vector<point> &route, int* directionAtTheEn
     switch(*directionAtTheEnd){
         case 8:
             lastAngle = 90;
+            break;
         case 4:
             lastAngle = 180;
+            break;
         case 6:
             lastAngle = 0;
+            break;
         case 2:
             lastAngle = 270;
+            break;
     }
 
     writeRoute("route.txt", route, 90, lastAngle);
