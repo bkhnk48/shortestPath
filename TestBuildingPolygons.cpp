@@ -40,17 +40,18 @@ void testFullAVsInStacks(){
 	fflush(stdin);
 	printf("Do you want to load built-in map? (Y/y/1 or N/n/0) ");
 	char load;
+	char scenario;	
 	int input = scanf("%c", &load);
 	if(input == EOF)
 		return;
 
 	if(load == 'Y' || load == 'y' || load == '1'){
 		printf("Which scenario you want? 0-9:  ");
-		int scenario;	
-		input = scanf("%d", &scenario);
+		fflush(stdin);
+		input = scanf("%c", &scenario);
 		switch (scenario)
 		{
-			case 0:
+			case '0':
 				twoSeperatePolygons(stacks[0].slotsOfAV);
 				break;
 		
@@ -58,17 +59,7 @@ void testFullAVsInStacks(){
 				break;
 		}
 
-		printf("Which wall do you want? 0-9:   ");
-		input = scanf("%d", &scenario);
-		switch (scenario)
-		{
-			case 0:
-				twoSeperatePolygons(stacks[0].slotsOfAV);
-				break;
 		
-			default:
-				break;
-		}
 	}
 	else{
 		/*stacks[0].slotsOfAV[0][0] = 0;*/	stacks[0].slotsOfAV[0][1] = 0;  stacks[0].slotsOfAV[0][3] = 0;  stacks[0].slotsOfAV[0][4] = 0;  
@@ -95,13 +86,27 @@ void testFullAVsInStacks(){
 		stacks[0].slotsOfAV[0][9] = 1;
 	}
 
-	
-    //vector< vector< lineSegment> > polygons;
-
-    //readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
+	//readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
 	BuildingPolygons* generator = new RefinePolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
 	generator->NUMBER_STACKS = numOfStacks;
 	generator->getRawPolygons(0, stacks[0].slotsOfAV);
+
+	printf("Do you want wall? N/n/0 or Y/y/1:   ");
+	fflush(stdin);
+	input = scanf("%c", &scenario);
+	int*** walls;
+	switch (scenario)
+	{
+		case 'Y':
+		case 'y':
+		case '1':
+			walls = loadWall(rowsInStack, columnsInStack, 5, widthOfAV, lengthOfAV);
+			generator->loadWall(walls, 2);
+			break;
+	
+		default:
+			break;
+	}
 	
 	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
 
