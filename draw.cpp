@@ -96,10 +96,19 @@ typedef std::pair<double,std::pair<int,int> > pq_pair;
 struct lineSegment {
 	point p;
 	point q;
+	bool isWall;
 	lineSegment(point p,point q){
 		this->p = p;
 		this->q = q;
+		this->isWall = false;
 	};
+
+	lineSegment(point p,point q, bool isWall){
+		this->p = p;
+		this->q = q;
+		this->isWall = isWall;
+	};
+
 	lineSegment(){
 
 	}
