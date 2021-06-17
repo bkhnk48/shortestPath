@@ -699,11 +699,11 @@ void drawShortestPath(string file_name, point & start, point & end,
 	string str2 = "<svg viewBox='"; //+ 
 	str2.append(std::to_string(10*min_x-5));
 	str2.append(" ");
-	str2.append(std::to_string(/*-10*max_y-45*/-455));
+	str2.append(std::to_string(/*-10*max_y-45*/-655));
 	str2.append(" ");
 	str2.append(std::to_string((abs(min_x)+abs(max_x))*10+10));
 	str2.append(" ");
-	str2.append(std::to_string((455/*abs(min_y)+abs(max_y))*10 + 80)*/)));
+	str2.append(std::to_string((955/*abs(min_y)+abs(max_y))*10 + 80)*/)));
 	str2.append("' xmlns='http://www.w3.org/2000/svg' version='1.1'>\n");
 
 	str1 = str1 + str2;
