@@ -187,6 +187,22 @@ class BuildingPolygons{
             }
         }
 
+        void loadWall(int*** walls, int numOfWalls = 4, int numOfVertices = 6){
+            //double prevX, prevY;
+            for(int i = 0; i < numOfWalls; i++){
+                vector<lineSegment> edges;
+                for(int j = 0; j < numOfVertices; j++){
+                    point p(walls[i][j][0], walls[i][j][1]);
+                    checkedPoints.push_back(p);
+                    point next(walls[i][(j + 1)%numOfVertices][0], walls[i][(j + 1)%numOfVertices][1]);
+                    lineSegment line(p, next, true);
+                    edges.push_back(line);
+                }
+                polygons.push_back(edges);
+
+            }
+        }
+
         void drawLineSegmentsOfPolygon(int** arrayOfAVs){
             //get highest point
             int i = 0;
