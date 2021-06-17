@@ -38,3 +38,56 @@ void twoSeperatePolygons(int** slots){
     }
 }
 
+int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGTH_SLOT, int numOfStacks = 0, int WIDTH_LINE = 10){
+    int numOfWalls = 2;
+    int numOfVertices = 6;
+    int*** walls = (int ***)malloc(sizeof * walls * numOfWalls);
+    for(int i = 0; i < numOfWalls; i++){
+        walls[i] = (int **)malloc(sizeof * walls[i] * numOfVertices);
+        for(int j = 0; j < numOfVertices; j++){
+            walls[i][j] = (int *)malloc(sizeof * walls[i][j] * 2);
+            walls[i][j][0] = 0;
+            walls[i][j][1] = 0;
+        }
+    }
+
+     
+    walls[0][0][0] = -WIDTH_LINE;   walls[0][0][1] = -WIDTH_LINE;
+    walls[0][1][0] = walls[0][0][0] + (COLS*WIDTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + 2*WIDTH_LINE)/2;    walls[0][1][1] = -WIDTH_LINE;
+    walls[0][2][0] = walls[0][1][0];    walls[0][2][1] = -walls[0][1][1] - 1;
+    walls[0][3][0] = walls[0][0][1] - 1;   walls[0][3][1] = walls[0][0][1] - 1;
+    walls[0][4][0] = walls[0][3][0];   walls[0][4][1] = walls[0][3][1] + (ROWS*LENGTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + (numOfStacks + 1)*WIDTH_LINE/2);
+    walls[0][5][0] = walls[0][4][0] + 1;   walls[0][5][1] = walls[0][4][1];
+    /*Clockwise
+ (0, 4) __   (0, 5)
+       | |
+       | |
+       | |(0, 0)
+       | |___________ (0, 1)
+       |_____________| 
+    (0, 3)            (0, 2)
+    */
+
+    
+    walls[1][0][0] = -WIDTH_LINE - 1;    walls[1][0][1] = numOfStacks*ROWS*LENGTH_SLOT + (numOfStacks + 1)*WIDTH_LINE + 1;
+    walls[1][1][0] = -WIDTH_LINE + (COLS*WIDTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + 2*WIDTH_LINE)/2;    walls[1][1][1] = walls[1][0][1];
+    walls[1][2][0] = walls[1][1][0];    walls[1][2][1] = walls[1][1][1] - 1;
+    walls[1][3][0] = -WIDTH_LINE;   walls[1][3][1] = walls[1][2][1];
+    walls[1][4][0] = -WIDTH_LINE;   walls[1][4][1] = walls[0][5][1] + WIDTH_OF_GATE*WIDTH_SLOT;
+    walls[1][5][0] = walls[1][4][0] - 1;   walls[1][5][1] = walls[1][4][1] ;
+    
+    /*
+        Clockwise
+       (1, 0)
+        _____________  (1, 1)
+        |  __________|
+        | |(1, 3)     (1, 2)
+        | |
+        | |
+        |_|
+  (1, 5)   (1, 4)
+    */
+
+    return walls;
+}
+
