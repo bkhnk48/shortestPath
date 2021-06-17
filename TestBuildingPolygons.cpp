@@ -87,7 +87,7 @@ void testFullAVsInStacks(){
 	}
 
 	//readKStacks(polygons, stacks, numOfStacks, rowsInStack, columnsInStack);
-	BuildingPolygons* generator = new RefinePolygons(rowsInStack, columnsInStack, 1, 33, widthOfAV, lengthOfAV);
+	BuildingPolygons* generator = new RefinePolygons(rowsInStack, columnsInStack, 0, 36, widthOfAV, lengthOfAV);
 	generator->NUMBER_STACKS = numOfStacks;
 	generator->getRawPolygons(0, stacks[0].slotsOfAV);
 
