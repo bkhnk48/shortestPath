@@ -187,7 +187,7 @@ class BuildingPolygons{
             }
         }
 
-        void loadWall(int*** walls, int numOfWalls = 4, int numOfVertices = 6){
+        void loadWall(int*** walls, int numOfWalls = 8, int numOfVertices = 6){
             //double prevX, prevY;
             //enum TypeOfLineSegment type = TypeOfLineSegment.VIRTUAL;
             for(int i = 0; i < numOfWalls; i++){
