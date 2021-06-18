@@ -92,21 +92,23 @@ struct Slot {
 //Type used in the priority queue in the dijkstra function
 typedef std::pair<double,std::pair<int,int> > pq_pair;
 
+
+
 //linesegment type holding two points
 struct lineSegment {
 	point p;
 	point q;
-	bool isWall;
-	lineSegment(point p,point q){
+	enum TypeOfLineSegment type;
+	lineSegment(point p, point q){
 		this->p = p;
 		this->q = q;
-		this->isWall = false;
+		this->type = AV_EDGE;
 	};
 
-	lineSegment(point p,point q, bool isWall){
+	lineSegment(point p, point q, TypeOfLineSegment type){
 		this->p = p;
 		this->q = q;
-		this->isWall = isWall;
+		this->type = type;
 	};
 
 	lineSegment(){
