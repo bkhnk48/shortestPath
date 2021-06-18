@@ -34,6 +34,6 @@ const double RATIO = 6.8; //it is also the maximum of minumun rotated radius for
 
 enum SIDE{LeftSide, RightSide};
 //enum NORMAL_VECTOR {IN, OUT};
-
+enum TypeOfLineSegment{ AV_EDGE = 0, WALL_EDGE = 1, VIRTUAL = 2};
 
 #endif
