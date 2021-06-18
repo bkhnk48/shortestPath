@@ -86,7 +86,7 @@ class PlanningController{
                 }
                 vector<point> shortestPath = this->echo(rawRoute, polygons, route, points, generator);
                 
-                Homotopy* homotopy = new Homotopy(generator->getWIDTH(), this->clockWise);
+                Homotopy* homotopy = new Homotopy(generator->getWIDTH());
                 vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 string fileName = "test/test";
                 fileName += to_string(nmrMovement);
@@ -99,7 +99,8 @@ class PlanningController{
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
-                                                                    shortestPath, 
+                                                                    //shortestPath, 
+                                                                    sideSteps,
                                                                     paths,
                                                                     graph);
                 }
