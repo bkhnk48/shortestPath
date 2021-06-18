@@ -20,6 +20,10 @@
 
 class Homotopy{
     public:
+
+        vector<SIDE> sides;
+        vector<Clockwise> clockwises;
+
         int WIDTH;
         //bool isClockWise = false;
         //int LENGTH;
@@ -98,7 +102,47 @@ class Homotopy{
             return sideSteps;
         }
     
+
     private:
+
+        void determineClockwise(vector<point> route){
+            clockwises.push_back(NA);
+
+            double prevX, prevY, currX, currY, nextX, nextY;
+            prevX = route.at(0).x;
+            prevY = route.at(0).y;
+            currX = route.at(1).x;
+            currY = route.at(1).y;
+            double uX, uY, vX, vY;
+            Clockwise prevClock = NA;
+
+            for(int i = 2; i < route.size() - 2; i++){
+                nextX = route.at(i).x;
+                nextY = route.at(i).y;
+                uX = currX - prevX;
+                uY = currY - prevY;
+                vX = nextX - currX;
+                vY = nextY - currY;
+
+                double uv = uX*vY - uY*vX;
+                if(uv < 0){
+                    if(prevClock != NO){
+                        clockwises.push_back(/*Clockwise*/YES);
+                    }
+                    else{
+                        clockwises.push_back(TurnToClockwise);
+                    }
+                }
+                else if(uv > 0){
+                    clockwises.push_back(/*Clockwise*/NO);
+                }
+
+                
+                prevX = currX;
+                prevY = currY;
+            }
+        }
+
         void addNewPoints(lineSegment line, int indexOfPoint, int size, vector<point> &route, lineSegment normal
                             ){
             /*if(indexOfPoint == 1){
