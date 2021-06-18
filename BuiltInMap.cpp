@@ -39,7 +39,7 @@ void twoSeperatePolygons(int** slots){
 }
 
 int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGTH_SLOT, int numOfStacks = 1, int WIDTH_LINE = 10){
-    int numOfWalls = 4;
+    int numOfWalls = 6;
     int numOfVertices = 6;
     int*** walls = (int ***)malloc(sizeof * walls * numOfWalls);
     for(int i = 0; i < numOfWalls; i++){
@@ -52,7 +52,7 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
         }
     }
 
-     
+    #pragma region First hence 
     walls[0][0][0] = -WIDTH_LINE;   walls[0][0][1] = -WIDTH_LINE;
     walls[0][1][0] = walls[0][0][0] + (COLS*WIDTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + 2*WIDTH_LINE)/2;    walls[0][1][1] = -WIDTH_LINE;
     walls[0][2][0] = walls[0][1][0];    walls[0][2][1] = walls[0][1][1] - 1;
@@ -68,8 +68,9 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
        |_____________| 
     (0, 3)            (0, 2)
     */
-
+    #pragma endregion
     
+    #pragma region Second hence
     walls[1][0][0] = -WIDTH_LINE - 1;    walls[1][0][1] = numOfStacks*ROWS*LENGTH_SLOT + (numOfStacks)*WIDTH_LINE + 1;
     walls[1][1][0] = -WIDTH_LINE + (COLS*WIDTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + 2*WIDTH_LINE)/2;    walls[1][1][1] = walls[1][0][1];
     walls[1][2][0] = walls[1][1][0];    walls[1][2][1] = walls[1][1][1] - 1;
@@ -88,7 +89,9 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
         |_|
   (1, 5)   (1, 4)
     */
+    #pragma endregion
 
+    #pragma region Third hence
     walls[2][0][0] = (COLS*WIDTH_SLOT + WIDTH_OF_GATE*WIDTH_SLOT)/2;    walls[2][0][1] = walls[1][0][1];
     walls[2][1][0] = WIDTH_LINE + (COLS*WIDTH_SLOT) + 1;    walls[2][1][1] = walls[2][0][1];
     walls[2][2][0] = walls[2][1][0];    walls[2][2][1] = walls[1][4][1];
@@ -107,10 +110,13 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
                    |_|
              (2, 3)   (2, 2)
     */
+    #pragma endregion
 
+
+    #pragma region Forth hence
     walls[3][0][0] = walls[2][3][0];    walls[3][0][1] = walls[2][3][1] - WIDTH_OF_GATE*WIDTH_SLOT;
     walls[3][1][0] = walls[3][0][0] + 1;    walls[3][1][1] = walls[3][0][1];
-    walls[3][2][0] = walls[3][1][0];    walls[3][2][1] = -WIDTH_LINE;
+    walls[3][2][0] = walls[3][1][0];    walls[3][2][1] = -WIDTH_LINE - 1;
     walls[3][3][0] = walls[2][5][0];   walls[3][3][1] = walls[3][2][1];
     walls[3][4][0] = walls[3][3][0];   walls[3][4][1] = walls[3][3][1] + 1;
     walls[3][5][0] = walls[3][0][0];   walls[3][5][1] = walls[3][4][1] ;
@@ -127,6 +133,21 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
   (3, 3)              (3, 2)  
   
     */
+    #pragma endregion
+
+    #pragma region virtual gate
+    walls[4][0][0] = walls[0][1][0];    walls[4][0][1] = walls[0][1][1];  walls[4][0][2] = GATE;
+    walls[4][1][0] = walls[4][0][0] + WIDTH_OF_GATE*WIDTH_SLOT;    walls[4][1][1] = walls[4][0][1]; walls[4][1][2] = GATE;
+    walls[4][2][0] = walls[4][1][0];    walls[4][2][1] = walls[4][1][1] - 1;        walls[4][2][2] = GATE;
+    walls[4][3][0] = walls[4][0][0];    walls[4][3][1] = walls[4][2][1];            walls[4][3][2] = GATE;
+    walls[4][4][2] = NONE;      
+    walls[4][5][2] = NONE;
+    /*Clockwise
+  (4, 0) _______________________ (4, 1)
+        |_______________________|
+    (4, 3)                      (4, 2)
+    */
+    #pragma endregion
 
     return walls;
 }
