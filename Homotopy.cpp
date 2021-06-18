@@ -24,7 +24,7 @@ class Homotopy{
         //bool isClockWise = false;
         //int LENGTH;
 
-        Homotopy(int WIDTH, bool isClockWise){
+        Homotopy(int WIDTH){
             this->WIDTH = WIDTH;
             //this->isClockWise = isClockWise;
             //this->LENGTH = LENGTH;
