@@ -39,7 +39,7 @@ void twoSeperatePolygons(int** slots){
 }
 
 int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGTH_SLOT, int numOfStacks = 1, int WIDTH_LINE = 10){
-    int numOfWalls = 3;
+    int numOfWalls = 4;
     int numOfVertices = 6;
     int*** walls = (int ***)malloc(sizeof * walls * numOfWalls);
     for(int i = 0; i < numOfWalls; i++){
@@ -54,7 +54,7 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
 
      
     walls[0][0][0] = -WIDTH_LINE;   walls[0][0][1] = -WIDTH_LINE;
-    walls[0][1][0] = (COLS*WIDTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + WIDTH_LINE)/2;    walls[0][1][1] = -WIDTH_LINE;
+    walls[0][1][0] = walls[0][0][0] + (COLS*WIDTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + 2*WIDTH_LINE)/2;    walls[0][1][1] = -WIDTH_LINE;
     walls[0][2][0] = walls[0][1][0];    walls[0][2][1] = walls[0][1][1] - 1;
     walls[0][3][0] = walls[0][0][0] - 1;   walls[0][3][1] = walls[0][0][1] - 1;
     walls[0][4][0] = walls[0][3][0];   walls[0][4][1] = walls[0][0][1] + (numOfStacks*ROWS*LENGTH_SLOT - WIDTH_OF_GATE*WIDTH_SLOT + (numOfStacks + 1)*WIDTH_LINE)/2;
@@ -106,6 +106,26 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
                    | |
                    |_|
              (2, 3)   (2, 2)
+    */
+
+    walls[3][0][0] = walls[2][3][0];    walls[3][0][1] = walls[2][3][1] - WIDTH_OF_GATE*WIDTH_SLOT;
+    walls[3][1][0] = walls[3][0][0] + 1;    walls[3][1][1] = walls[3][0][1];
+    walls[3][2][0] = walls[3][1][0];    walls[3][2][1] = -WIDTH_LINE;
+    walls[3][3][0] = walls[2][5][0];   walls[3][3][1] = walls[3][2][1];
+    walls[3][4][0] = walls[3][3][0];   walls[3][4][1] = walls[3][3][1] + 1;
+    walls[3][5][0] = walls[3][0][0];   walls[3][5][1] = walls[3][4][1] ;
+    
+    /*
+        Clockwise
+
+            (3, 0)  _  (3, 1)
+                   | |
+                   | |
+             (3, 5)| |
+   (3, 4)__________| |
+        |____________|
+  (3, 3)              (3, 2)  
+  
     */
 
     return walls;
