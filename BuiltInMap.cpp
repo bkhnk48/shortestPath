@@ -48,7 +48,7 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
             walls[i][j] = (int *)malloc(sizeof * walls[i][j] * 3);
             walls[i][j][0] = 0;
             walls[i][j][1] = 0;
-            walls[i][j][2] = WALL_EDGE;
+            walls[i][j][2] = HENCE;
         }
     }
 
