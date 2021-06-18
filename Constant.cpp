@@ -36,4 +36,6 @@ enum SIDE{LeftSide, RightSide};
 //enum NORMAL_VECTOR {IN, OUT};
 enum TypeOfLineSegment{ AV_EDGE = 0, HENCE = 1, GATE = 2, NONE = 3};
 
+enum Clockwise{ YES = 1, NO = 0, NA = 2, TurnToClockwise = 3, TurnToCounterClockwise = 4};
+
 #endif
