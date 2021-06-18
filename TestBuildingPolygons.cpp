@@ -101,7 +101,7 @@ void testFullAVsInStacks(){
 		case 'y':
 		case '1':
 			walls = loadWall(rowsInStack, columnsInStack, 5, widthOfAV, lengthOfAV);
-			generator->loadWall(walls, 5);
+			generator->loadWall(walls, 8);
 			break;
 	
 		default:
