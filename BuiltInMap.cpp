@@ -7,7 +7,7 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
-//#include "BuildPolygonState.cpp"
+#include "Constant.cpp"
 
 #include <cassert>  
 #include <stdio.h>
@@ -45,9 +45,10 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
     for(int i = 0; i < numOfWalls; i++){
         walls[i] = (int **)malloc(sizeof * walls[i] * numOfVertices);
         for(int j = 0; j < numOfVertices; j++){
-            walls[i][j] = (int *)malloc(sizeof * walls[i][j] * 2);
+            walls[i][j] = (int *)malloc(sizeof * walls[i][j] * 3);
             walls[i][j][0] = 0;
             walls[i][j][1] = 0;
+            walls[i][j][2] = WALL_EDGE;
         }
     }
 

@@ -189,13 +189,14 @@ class BuildingPolygons{
 
         void loadWall(int*** walls, int numOfWalls = 4, int numOfVertices = 6){
             //double prevX, prevY;
+            //enum TypeOfLineSegment type = TypeOfLineSegment.VIRTUAL;
             for(int i = 0; i < numOfWalls; i++){
                 vector<lineSegment> edges;
                 for(int j = 0; j < numOfVertices; j++){
                     point p(walls[i][j][0], walls[i][j][1]);
                     checkedPoints.push_back(p);
                     point next(walls[i][(j + 1)%numOfVertices][0], walls[i][(j + 1)%numOfVertices][1]);
-                    lineSegment line(p, next, true);
+                    lineSegment line(p, next, walls[i][j][2] == 2 ? WALL_EDGE : VIRTUAL);
                     edges.push_back(line);
                 }
                 polygons.push_back(edges);
