@@ -39,7 +39,7 @@ void twoSeperatePolygons(int** slots){
 }
 
 int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGTH_SLOT, int numOfStacks = 1, int WIDTH_LINE = 10){
-    int numOfWalls = 6;
+    int numOfWalls = 8;
     int numOfVertices = 6;
     int*** walls = (int ***)malloc(sizeof * walls * numOfWalls);
     for(int i = 0; i < numOfWalls; i++){
@@ -146,6 +146,64 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
   (4, 0) _______________________ (4, 1)
         |_______________________|
     (4, 3)                      (4, 2)
+    */
+    #pragma endregion
+
+    #pragma region virtual gate
+    walls[5][0][0] = walls[1][1][0];    walls[5][0][1] = walls[1][1][1];  walls[5][0][2] = GATE;
+    walls[5][1][0] = walls[5][0][0] + WIDTH_OF_GATE*WIDTH_SLOT;    walls[5][1][1] = walls[5][0][1]; walls[5][1][2] = GATE;
+    walls[5][2][0] = walls[5][1][0];    walls[5][2][1] = walls[5][1][1] - 1;        walls[5][2][2] = GATE;
+    walls[5][3][0] = walls[5][0][0];    walls[5][3][1] = walls[5][2][1];            walls[5][3][2] = GATE;
+    walls[5][4][2] = NONE;      
+    walls[5][5][2] = NONE;
+    /*Clockwise
+  (5, 0) _______________________ (5, 1)
+        |_______________________|
+    (5, 3)                      (5, 2)
+    */
+    #pragma endregion
+
+    #pragma region virtual gate
+    walls[6][0][0] = walls[1][5][0];    walls[6][0][1] = walls[1][5][1];        walls[6][0][2] = GATE;
+    walls[6][1][0] = walls[6][0][0] + 1;    walls[6][1][1] = walls[6][0][1];    walls[6][1][2] = GATE;
+    walls[6][2][0] = walls[6][1][0] ;    walls[6][2][1] = walls[6][1][1] - WIDTH_OF_GATE*WIDTH_SLOT;    walls[6][2][2] = GATE;
+    walls[6][3][0] = walls[6][2][0] - 1;   walls[6][3][1] = walls[6][2][1];     walls[6][3][2] = GATE;
+    walls[6][4][2] = NONE;  
+    walls[6][5][2] = NONE;  
+    
+    /*
+        Clockwise
+
+             (6, 0) _  (6, 1)
+                   | |
+                   | |
+                   | |
+                   | |
+                   |_|
+             (6, 3)   (6, 2)  
+  
+    */
+    #pragma endregion
+
+    #pragma region virtual gate
+    walls[7][0][0] = walls[2][3][0];    walls[7][0][1] = walls[2][3][1];        walls[7][0][2] = GATE;
+    walls[7][1][0] = walls[7][0][0] + 1;    walls[7][1][1] = walls[7][0][1];    walls[7][1][2] = GATE;
+    walls[7][2][0] = walls[7][1][0] ;    walls[7][2][1] = walls[7][1][1] - WIDTH_OF_GATE*WIDTH_SLOT;    walls[7][2][2] = GATE;
+    walls[7][3][0] = walls[7][2][0] - 1;   walls[7][3][1] = walls[7][2][1];     walls[7][3][2] = GATE;
+    walls[7][4][2] = NONE;  
+    walls[7][5][2] = NONE;  
+    
+    /*
+        Clockwise
+
+             (7, 0) _  (7, 1)
+                   | |
+                   | |
+                   | |
+                   | |
+                   |_|
+             (7, 3)   (7, 2)  
+  
     */
     #pragma endregion
 
