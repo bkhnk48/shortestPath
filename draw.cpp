@@ -35,7 +35,6 @@ struct point {
 	point(double x,double y){
 		this->x = x;
 		this->y = y;
-		setMinMax( x, y);
 	}
 
 	point(){
@@ -201,7 +200,7 @@ class Range{
 
 double max_y,max_x,min_y,min_x;
 
-void setMinMax(double x, double y){
+/*void setMinMax(double x, double y){
 	if(max_y<y){
 		max_y=y;
 	}
@@ -214,7 +213,7 @@ void setMinMax(double x, double y){
 	if(min_x>x){
 		min_x=x;
 	}
-}
+}*/
 
 string drawX(point &p){
 	double r = p.x*10;
@@ -508,6 +507,11 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 	}
 	return result;
 }
+
+/*double minDistance(vector<vector<lineSegment> > &polygons, lineSegment l){
+	double result = FLT_MAX;
+
+}*/
 
 vector<double> getXYOfOtherSide(double X, double Y, int signedValue, double centerX, double centerY, int WIDTH){
 	double xOtherSide, yOtherSide;
