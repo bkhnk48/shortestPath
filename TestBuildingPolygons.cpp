@@ -107,6 +107,8 @@ void testFullAVsInStacks(){
 		default:
 			break;
 	}
+
+	setMinMax(generator->polygons);
 	
 	printStacks(stacks, numOfStacks, rowsInStack, columnsInStack);
 
