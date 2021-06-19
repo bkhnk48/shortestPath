@@ -101,12 +101,10 @@ class Homotopy{
 
             return sideSteps;
         }
-    
 
-    private:
 
-        void determineClockwise(vector<point> route){
-            clockwises.push_back(NA);
+        void checkDirectionOfMovement(vector<point> route, vector< vector<lineSegment > > polygons){
+            clockwises.push_back(Unknown);
 
             double prevX, prevY, currX, currY, nextX, nextY;
             prevX = route.at(0).x;
@@ -114,32 +112,137 @@ class Homotopy{
             currX = route.at(1).x;
             currY = route.at(1).y;
             double uX, uY, vX, vY;
-            Clockwise prevClock = NA;
+            Clockwise prevClock = Unknown;
+            lineSegment normalIn, normalOut;
+            lineSegment temp1, temp2;
+            lineSegment rightMovement;
+            normalIn.p.x = 0; normalIn.p.y = 0; 
+            normalOut.p.x = 0; normalOut.p.y = 0; 
+            double deltaNormalInX, deltaNormalInY, deltaNormalOutX, deltaNormalOutY;
+            string s = "";
 
-            for(int i = 2; i < route.size() - 2; i++){
+            for(int i = 1; i < route.size(); i++){
+                #pragma region Calculate the normal vector
+                double deltaY = route.at(i).y - prevY;
+                //double deltaX = prev.x - p.x;
+                double deltaX = route.at(i).x - prevX;
+                getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y
+                                        , &normalOut.q.x, &normalOut.q.y);
+                temp1.p.x = prevX ;
+                temp1.p.y = prevY ;
+
+                temp2.p.x = prevX ;
+                temp2.p.y = prevY ;
+
+                deltaNormalInX = WIDTH*(normalIn.q.x - normalIn.p.x);
+                deltaNormalInY = WIDTH*(normalIn.q.y - normalIn.p.y);
+
+                deltaNormalOutX = WIDTH*(normalOut.q.x - normalOut.p.x);
+                deltaNormalOutY = WIDTH*(normalOut.q.y - normalOut.p.y);
+
+                temp1.p.x += deltaNormalInX;
+                temp1.p.y += deltaNormalInY;
+
+                temp2.p.x += deltaNormalOutX;
+                temp2.p.y += deltaNormalOutY;
+                
+                temp1.q.x = route.at(i).x + deltaNormalInX;
+                temp1.q.y = route.at(i).y + deltaNormalInY;
+
+                temp2.q.x = route.at(i).x + deltaNormalOutX;
+                temp2.q.y = route.at(i).y + deltaNormalOutY;
+
+                #pragma endregion
+
+                if(numberOfCuttingThrough(polygons, temp1) == 0){
+                    //temp1 means normalIn (+)
+                    sides.push_back(LeftSide);
+                    rightMovement.p.x = temp1.p.x + deltaNormalInX;   rightMovement.p.y = temp1.p.y + deltaNormalInY;
+                    rightMovement.q.x = temp1.q.x + deltaNormalOutX;   rightMovement.q.y = temp1.q.y + deltaNormalOutY;
+                    do{
+                        rightMovement.p.x += deltaNormalInX;   rightMovement.p.y += deltaNormalInY;
+                        rightMovement.q.x += deltaNormalOutX;   rightMovement.q.y += deltaNormalOutY;
+                    }while(numberOfCuttingThrough(polygons, rightMovement) == 0);
+
+                    s = "RightSide";
+                }
+                else if(numberOfCuttingThrough(polygons, temp2) == 0){
+                    //temp2 means normalOut (-)
+                    sides.push_back(RightSide);
+                    s = "LeftSide";
+                }
+                else{
+                    sides.push_back(NotAnswer);
+                    s = "NA";
+                }
+                cout<<sides.at(sides.size() - 1)<<" "<<s<<endl;
+                
+                prevX = route.at(i).x;
+                prevY = route.at(i).y;
+            }
+        
+            for(int i = 1; i < sides.size(); i++){
+            
+                if(sides.at(i) == LeftSide //&& clockwises.at(i-1) != NA
+                    ){
+                    cout<<"WRONG DIRECTION from ("<<route.at(i).x<<", "<<route.at(i).y<<") to ("<<route.at(i+1).x<<", "<<route.at(i+1).y<<") "<<endl;
+                }
+                else if(sides.at(i) == NotAnswer){
+                    cout<<"UNKNOWN from ("<<route.at(i).x<<", "<<route.at(i).y<<") to ("<<route.at(i+1).x<<", "<<route.at(i+1).y<<") "<<endl;
+                }
+                else{
+                    cout<<"CORRECT DIRECTION from ("<<route.at(i).x<<", "<<route.at(i).y<<") to ("<<route.at(i+1).x<<", "<<route.at(i+1).y<<") "<<endl;
+                }
+            }
+        }
+
+    
+
+    private:
+
+        void calculateClockwise(vector<point> &route){
+
+            double startX = route.at(0).x;
+            if(sides.at(0) == LeftSide)
+                startX -= WIDTH;
+            else
+                startX += WIDTH;
+            double startY = route.at(0).y;
+
+            double prevX = startX; 
+            double prevY = startY;
+            double currX = route.at(1).x;
+            double currY = route.at(1).y;
+            double nextX, nextY;
+
+            for(int i = 2; i < route.size(); i++){
                 nextX = route.at(i).x;
                 nextY = route.at(i).y;
-                uX = currX - prevX;
-                uY = currY - prevY;
-                vX = nextX - currX;
-                vY = nextY - currY;
+                double uX = (currX - prevX);
+                double uY = currY - prevY;
+                double vX = nextX - currX;
+                double vY = nextY - currY;
 
                 double uv = uX*vY - uY*vX;
-                if(uv < 0){
-                    if(prevClock != NO){
-                        clockwises.push_back(/*Clockwise*/YES);
-                    }
-                    else{
-                        clockwises.push_back(TurnToClockwise);
-                    }
-                }
-                else if(uv > 0){
-                    clockwises.push_back(/*Clockwise*/NO);
+                if(i == 2 && clockwises.size() == 1){
+                    clockwises.erase(clockwises.begin());
                 }
 
-                
+                if(uv < 0){
+                    if(clockwises.size() == 0)
+                        clockwises.push_back(YES);//Clockwise
+                    clockwises.push_back(YES);//Clockwise
+                }
+                else if(uv > 0){//the case uv == 0 never happens
+                    if(clockwises.size() == 0)
+                        clockwises.push_back(NO);//Counter clockwise
+                    clockwises.push_back(NO);//Counter clockwise
+                }
                 prevX = currX;
                 prevY = currY;
+
+                currX = nextX;
+                currY = nextY;
             }
         }
 
