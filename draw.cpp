@@ -200,20 +200,33 @@ class Range{
 
 double max_y,max_x,min_y,min_x;
 
-/*void setMinMax(double x, double y){
-	if(max_y<y){
-		max_y=y;
+void setMinMax(vector<vector<lineSegment>> &polygons
+				//, double *max_y, double *max_x, double *min_y, double *min_x
+							){
+	max_x = FLT_MIN;							
+	max_y = FLT_MIN;
+	min_x = FLT_MAX;
+	min_y = FLT_MAX;
+	
+	for(int i = 0; i < polygons.size(); i++){
+		for(int j = 0; j < polygons.at(i).size(); j++){
+			if(max_y < polygons.at(i).at(j).p.y){
+				max_y = polygons.at(i).at(j).p.y;
+			}
+			if(min_y > polygons.at(i).at(j).p.y){
+				min_y = polygons.at(i).at(j).p.y;
+			}
+
+			if(max_x < polygons.at(i).at(j).p.x){
+				max_x = polygons.at(i).at(j).p.x;
+			}
+			if(min_x > polygons.at(i).at(j).p.x){
+				min_x = polygons.at(i).at(j).p.x;
+			}
+		}
 	}
-	if(max_x<x){
-		max_x=x;
-	}
-	if(min_y>y){
-		min_y=y;
-	}
-	if(min_x>x){
-		min_x=x;
-	}
-}*/
+	
+}
 
 string drawX(point &p){
 	double r = p.x*10;
