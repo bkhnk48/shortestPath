@@ -88,6 +88,8 @@ class PlanningController{
                 
                 Homotopy* homotopy = new Homotopy(generator->getWIDTH());
                 vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
+                homotopy->checkDirectionOfMovement(shortestPath, polygons);
+                
                 string fileName = "test/test";
                 fileName += to_string(nmrMovement);
                 fileName += ".svg";
@@ -99,8 +101,8 @@ class PlanningController{
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
-                                                                    //shortestPath, 
-                                                                    sideSteps,
+                                                                    shortestPath, 
+                                                                    //sideSteps,
                                                                     paths,
                                                                     graph);
                 }
