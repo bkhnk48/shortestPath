@@ -103,7 +103,7 @@ class Homotopy{
         }
 
 
-        void checkDirectionOfMovement(vector<point> route, vector< vector<lineSegment > > polygons){
+        void checkDirectionOfMovement(vector<point> &route, vector< vector<lineSegment > > &polygons){
             clockwises.push_back(Unknown);
 
             double prevX, prevY, currX, currY, nextX, nextY;
@@ -157,12 +157,11 @@ class Homotopy{
                 if(numberOfCuttingThrough(polygons, temp1) == 0){
                     //temp1 means normalIn (+)
                     sides.push_back(LeftSide);
-                    rightMovement.p.x = temp1.p.x + deltaNormalInX;   rightMovement.p.y = temp1.p.y + deltaNormalInY;
-                    rightMovement.q.x = temp1.q.x + deltaNormalOutX;   rightMovement.q.y = temp1.q.y + deltaNormalOutY;
-                    do{
-                        rightMovement.p.x += deltaNormalInX;   rightMovement.p.y += deltaNormalInY;
-                        rightMovement.q.x += deltaNormalOutX;   rightMovement.q.y += deltaNormalOutY;
-                    }while(numberOfCuttingThrough(polygons, rightMovement) == 0);
+                    //rightMovement.p.x = temp1.p.x + deltaNormalInX;   rightMovement.p.y = temp1.p.y + deltaNormalInY;
+                    //rightMovement.q.x = temp1.q.x + deltaNormalInX;   rightMovement.q.y = temp1.q.y + deltaNormalInY;
+
+                    
+
 
                     s = "RightSide";
                 }
@@ -199,6 +198,41 @@ class Homotopy{
     
 
     private:
+
+        int getStepsAlongNormalVector(lineSegment temp1, lineSegment normalIn, vector< vector<lineSegment > > &polygons){
+            int result;
+            double lastY, lastX;
+            double deltaY;
+            point lastPoint;
+            double deltaNormalInX = (normalIn.q.x - normalIn.p.x);
+            double deltaNormalInY = (normalIn.q.y - normalIn.p.y);
+            if(deltaNormalInY != 0){
+                lastY = deltaNormalInY < 0 ? min_y - 1 : max_y + 1;
+                deltaY = lastY - temp1.p.y;
+                lastX = temp1.p.x + deltaNormalInX*deltaY/deltaNormalInY;
+            }
+            else{
+                lastX = deltaNormalInX < 0 ? min_x - 1 : max_x + 1;
+                lastY = temp1.p.y;
+            }
+
+            lastPoint.x = lastX; lastPoint.y = lastY; 
+            
+            lineSegment scaleNormal(temp1.p, lastPoint);
+
+            vector<int> collisions;
+            for(int i = 0; i < polygons.size(); i++)
+            {
+                for(int j = 0; j < polygons.at(i).size(); j++){
+                    if(cutThrough(polygons.at(i).at(j), scaleNormal)){
+                        int t = 0 | (i << 16) | j;
+                        collisions.push_back(t); 
+                    }
+                }
+            }
+
+            return result;
+        }
 
         void calculateClockwise(vector<point> &route){
 
