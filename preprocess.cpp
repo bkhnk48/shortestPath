@@ -41,7 +41,7 @@ int getTime(std::chrono::steady_clock::time_point start, std::chrono::steady_clo
 }
 
 vector<point> getTrajectory(int argc, const char* argv[]){
-	max_x=max_y=min_y=min_x=0;
+	//max_x=max_y=min_y=min_x=0;
 
 	//setConfig(argc,argv);
 
