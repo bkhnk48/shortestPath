@@ -103,8 +103,9 @@ class Homotopy{
         }
 
 
-        //vector<point> 
-        void checkDirectionOfMovement(vector<point> &route, vector< vector<lineSegment > > &polygons){
+        vector<point> 
+        //void 
+        checkDirectionOfMovement(vector<point> &route, vector< vector<lineSegment > > &polygons){
             //clockwises.push_back(Unknown);
             vector<point> rightDirectionRoute;
 
@@ -162,13 +163,14 @@ class Homotopy{
                     
                     if(i >= 2){
                         int step = getStepsAlongNormalVector(temp1, normalIn, polygons);
-                        point p(route.at(i).x + step*deltaNormalInX, route.at(i).y + step*deltaNormalInY);
+                        point p(route.at(i).x + (step + 1)*deltaNormalInX, route.at(i).y + (step + 1)*deltaNormalInY);
+                        rightDirectionRoute.push_back(p);
                         cout<<"Move "<<step<<" steps"<<endl;
                     }
                     else if(i == 1){
-                        point p(route.at(0).x + WIDTH/2, route.at(0).y);
-                        //rightDirectionRoute.push_back(p);
-                        //rightDirectionRoute.push_back(route.at(1));
+                        point p(route.at(0).x, route.at(0).y);
+                        rightDirectionRoute.push_back(p);
+                        rightDirectionRoute.push_back(route.at(1));
                     }
                     
                     s = "RightSide";
@@ -177,11 +179,13 @@ class Homotopy{
                     //temp2 means normalOut (-)
                     sides.push_back(RightSide);
                     s = "LeftSide";
+                    rightDirectionRoute.push_back(route.at(i));
                     
                 }
                 else{
                     sides.push_back(NotAnswer);
                     s = "NA";
+                    rightDirectionRoute.push_back(route.at(i));
                 }
 
                 //cout<<sides.at(sides.size() - 1)<<" "<<s<<endl;
@@ -204,6 +208,8 @@ class Homotopy{
                     cout<<"CORRECT DIRECTION from ("<<route.at(i).x<<", "<<route.at(i).y<<") to ("<<route.at(i+1).x<<", "<<route.at(i+1).y<<") "<<endl;
                 }
             }
+
+            return rightDirectionRoute;
         }
 
     
@@ -254,8 +260,9 @@ class Homotopy{
                         C = y1*x2 - x1*y2;
                         double M = sqrt(A*A + B*B);
                         d_P = std::abs(A*x_P + B*y_P + C);
-                        d_Q = std::abs(A*x_Q + B*y_Q + C);
-                        d = min(d_P, d_Q)/M;
+                        //d_Q = std::abs(A*x_Q + B*y_Q + C);
+                        //d = min(d_P, d_Q)/M;
+                        d = d_P/M;
                         if(d < minD){
                             minD = d;
                             polygonID = i;
