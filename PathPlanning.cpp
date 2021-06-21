@@ -85,10 +85,13 @@ class PlanningController{
                     cout<<route.at(i)<<" ";
                 }
                 vector<point> shortestPath = this->echo(rawRoute, polygons, route, points, generator);
-                
+                for(int i = 0; i < shortestPath.size(); i++){
+                    cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
+                }
                 Homotopy* homotopy = new Homotopy(generator->getWIDTH());
                 vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
-                vector<point> rightDirection = homotopy->checkDirectionOfMovement(shortestPath, polygons);
+                vector<point> rightDirection = homotopy->calculateClockwise(shortestPath, polygons
+                        );
                 
                 string fileName = "test/test";
                 fileName += to_string(nmrMovement);
@@ -199,14 +202,15 @@ class PlanningController{
 
         void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory){ 
 
-            dotProductRight = -(LENGTH/2)*(WIDTH/2);
+            //dotProductRight = -(LENGTH/2)*(WIDTH/2);
             
-            if(trajectory.at(1).x > trajectory.at(0).x){
+            //if(trajectory.at(1).x > trajectory.at(0).x)
+            {
                 trajectory.at(0).x += WIDTH/2;
             }
-            else if(trajectory.at(1).x < trajectory.at(0).x){
-                trajectory.at(0).x -= WIDTH/2;
-            }
+            //else if(trajectory.at(1).x < trajectory.at(0).x){
+            //    trajectory.at(0).x -= WIDTH/2;
+            //}
             trajectory.at(0).y -= LENGTH/2;
 
             int last = trajectory.size() - 1;
@@ -222,7 +226,7 @@ class PlanningController{
 
             if(uY == 0){
                 vX = 0;
-                vY = dotProductRight/uX;
+                vY = -uX*WIDTH/2;
             }
             else{
                 double tag = uX/uY;
