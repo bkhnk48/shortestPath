@@ -37,7 +37,7 @@ class Homotopy{
         vector<point> sideStepRouting(vector<point> route, vector< vector<lineSegment > > polygons, vector<point> points){
             vector<point> sideSteps;
             point start;
-            start.x = route.at(0).x - WIDTH;
+            start.x = route.at(0).x + WIDTH;
             start.y = route.at(0).y;
             
             sideSteps.push_back(start);
@@ -214,7 +214,7 @@ class Homotopy{
 
     
 
-    private:
+    //private:
 
         int getStepsAlongNormalVector(lineSegment temp1, lineSegment normalIn, vector< vector<lineSegment > > &polygons){
             int result = 0;
@@ -292,50 +292,154 @@ class Homotopy{
             return result;
         }
 
-        void calculateClockwise(vector<point> &route){
-
+        vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons){
+            vector<point> rightDirectionRoute;
             double startX = route.at(0).x;
-            if(sides.at(0) == LeftSide)
-                startX -= WIDTH/2;
-            else
-                startX += WIDTH/2;
+            //if(sides.at(0) == LeftSide)
+            //    startX -= WIDTH/2;
+            //else
+            //    startX += WIDTH/2;
             double startY = route.at(0).y;
 
             double prevX = startX; 
             double prevY = startY;
-            double currX = route.at(1).x;
-            double currY = route.at(1).y;
-            double nextX, nextY;
+
+            double currX = startX;
+            double currY = startY + 1;
+            double nextX = route.at(1).x, nextY = route.at(1).y;
+            double uX, uY, vX, vY;
+
+            //point p(route.at(0).x + WIDTH/2, route.at(0).y);
+            rightDirectionRoute.push_back(route.at(0));
+            lineSegment normalIn;
+            normalIn.p.x = 0; normalIn.p.y = 0;
+            lineSegment tempLine;
+
+            uX = (currX - prevX);
+            uY = currY - prevY; //startY is correct unless the first trajectory is AV's centeroid
+            vX = nextX - currX;
+            vY = nextY - currY;
+            double uv;
+            if(nextX == currX - WIDTH/2){//vi currX la quy dao cua trong tam
+                point p(nextX + WIDTH, nextY);
+                rightDirectionRoute.push_back(p);
+            }
+            else if(nextX == currX + WIDTH/2){
+                rightDirectionRoute.push_back(route.at(1));
+            }
+            else{
+                uv = uX*vY - uY*vX;
+                if(uv > 0){
+                    double deltaY = nextY - startY;
+                    double deltaX = nextX - (startX + WIDTH/2);
+                    getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);
+                    point temp1;
+                    temp1.x = nextX;
+                    temp1.y = nextY;
+                        
+                    temp1.x += WIDTH*(normalIn.q.x - normalIn.p.x);
+                    temp1.y += WIDTH*(normalIn.q.y - normalIn.p.y);
+                    rightDirectionRoute.push_back(temp1);
+                }
+                else{
+                    rightDirectionRoute.push_back(route.at(1));
+                }
+            }
+
+            currX = nextX; currY = nextY;
+            
 
             for(int i = 2; i < route.size(); i++){
                 nextX = route.at(i).x;
                 nextY = route.at(i).y;
-                double uX = (currX - prevX);
-                double uY = currY - prevY;
-                double vX = nextX - currX;
-                double vY = nextY - currY;
+                uX = (currX - prevX);
+                uY = currY - prevY;
+                vX = nextX - currX;
+                vY = nextY - currY;
 
-                double uv = uX*vY - uY*vX;
-                if(i == 2 && clockwises.size() == 1){
-                    clockwises.erase(clockwises.begin());
-                }
-
+                uv = uX*vY - uY*vX;
+                
                 if(uv < 0){
-                    if(clockwises.size() == 0)
-                        clockwises.push_back(YES);//Clockwise
                     clockwises.push_back(YES);//Clockwise
+                    rightDirectionRoute.push_back(route.at(i));
+                    //if(i < route.size() - 1)
+                    //    rightDirectionRoute.push_back(route.at(i+1));
                 }
-                else if(uv > 0){//the case uv == 0 never happens
-                    if(clockwises.size() == 0)
+                else if(uv >= 0){
+                    if(uv > 0)
                         clockwises.push_back(NO);//Counter clockwise
-                    clockwises.push_back(NO);//Counter clockwise
+                    else{
+                        Clockwise previous = clockwises.back();
+                        clockwises.push_back(previous);//Unknown
+                    }
+                    //Assuming that the AV never moves straight backward (Không đi giật lùi)
+                    point temp1, temp2;
+                    
+                    #pragma region Calculate the normal vector
+                    double deltaY = nextY - currY;
+                    //double deltaX = prev.x - p.x;
+                    double deltaX = nextX - currX;
+                    getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);
+                    #pragma endregion
+                        
+                    temp2.x = nextX;
+                    temp2.y = nextY;
+                    
+                    temp1.x = currX + WIDTH*(normalIn.q.x - normalIn.p.x);
+                    temp1.y = currY + WIDTH*(normalIn.q.y - normalIn.p.y);
+
+                    temp2.x = nextX; 
+                    temp2.y = nextY;
+                    
+                    if(i < route.size() - 1){
+                        temp2.x += WIDTH*(normalIn.q.x - normalIn.p.x);
+                        temp2.y += WIDTH*(normalIn.q.y - normalIn.p.y);
+                    }
+                    tempLine.p = temp1;  tempLine.q = temp2;
+                    if(numberOfCuttingThrough(polygons, tempLine) == 0){
+                        rightDirectionRoute.push_back(temp1);
+                        rightDirectionRoute.push_back(temp2);    
+                    }
+                    else{
+                        bool OyDirection = true;
+                        if(tempLine.p.x == tempLine.q.x){
+                            OyDirection = false;
+                        }
+                        bool pIsInside = false, qIsInside = false;
+                        int cP, cQ;
+                        for(int i = 0; i < polygons.size(); i++){
+                            if(!pIsInside){
+                                cP = pnpoly(polygons[i], temp1.x, temp1.y, OyDirection);
+                                if(cP % 2 == 1)
+                                    pIsInside = true;
+                            }
+                            if(!qIsInside){
+                                cQ = pnpoly(polygons[i], temp2.x, temp2.y, OyDirection);
+                                if(cQ % 2 == 1)
+                                    qIsInside = true;
+                            }
+                            if(pIsInside && qIsInside)
+                                break;
+                        }
+                        if(!pIsInside)
+                            rightDirectionRoute.push_back(temp1);
+                        
+                        if(!qIsInside)
+                            rightDirectionRoute.push_back(temp2);
+                        else
+                            rightDirectionRoute.push_back(route.at(i));
+                    }
+                    
                 }
+                
                 prevX = currX;
                 prevY = currY;
 
                 currX = nextX;
                 currY = nextY;
             }
+
+            return rightDirectionRoute;
         }
 
         void addNewPoints(lineSegment line, int indexOfPoint, int size, vector<point> &route, lineSegment normal
