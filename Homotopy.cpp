@@ -369,7 +369,7 @@ class Homotopy{
             currX = nextX; currY = nextY;
             
 
-            for(int i = 2; i < route.size(); i++){
+            for(int i = 2; i < route.size() - 1; i++){
                 nextX = route.at(i).x;
                 nextY = route.at(i).y;
                 uX = (currX - prevX);
@@ -413,10 +413,10 @@ class Homotopy{
                     temp2.x = nextX; 
                     temp2.y = nextY;
                     
-                    if(i < route.size() - 1){
-                        temp2.x += WIDTH*(normalIn.q.x - normalIn.p.x);
-                        temp2.y += WIDTH*(normalIn.q.y - normalIn.p.y);
-                    }
+                    
+                    temp2.x += WIDTH*(normalIn.q.x - normalIn.p.x);
+                    temp2.y += WIDTH*(normalIn.q.y - normalIn.p.y);
+                    
                     tempLine.p = temp1;  tempLine.q = temp2;
                     if(numberOfCuttingThrough(polygons, tempLine) == 0){
                         rightDirectionRoute.push_back(temp1);
@@ -460,6 +460,8 @@ class Homotopy{
                 currX = nextX;
                 currY = nextY;
             }
+
+            rightDirectionRoute.push_back(route.at(route.size() - 1));
 
             return rightDirectionRoute;
         }
