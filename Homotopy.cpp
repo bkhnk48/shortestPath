@@ -391,6 +391,8 @@ class Homotopy{
                     else{
                         Clockwise previous = clockwises.back();
                         clockwises.push_back(previous);
+                        rightDirectionRoute.push_back(route.at(i));
+                        continue;
                     }
                     //Assuming that the AV never moves straight backward (Không đi giật lùi)
                     point temp1, temp2;
