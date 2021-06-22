@@ -245,7 +245,7 @@ class Homotopy{
             //B = x1 - x2;
             //C = -x1*y2 + y1*x2
             double minD_P = FLT_MAX, minD_Q = FLT_MAX;
-            double d_P = 0, d_Q = 0, d = 0;
+            double d_P = 0, d_Q = 0;
             int polygonID_P = -1, polygonID_Q = -1, segmentID_P = -1, segmentID_Q = -1;
             for(int i = 0; i < polygons.size(); i++)
             {
@@ -265,12 +265,12 @@ class Homotopy{
                         d_P /= M;
                         d_Q /= M;
                         if(d_P < minD_P){
-                            minD_P = d;
+                            minD_P = d_P;
                             polygonID_P = i;
                             segmentID_P = j;
                         }
                         if(d_Q < minD_Q){
-                            minD_Q = d;
+                            minD_Q = d_Q;
                             polygonID_Q = i;
                             segmentID_Q = j;
                         }
@@ -293,7 +293,7 @@ class Homotopy{
                 result2 = getSingleStep(line, scaleX, scaleY, minD_Q);
             }
 
-            result = (result2 << 16) || result1;
+            result = (result2 << 16) | result1;
             return result;
         }
 
@@ -419,6 +419,19 @@ class Homotopy{
                     
                     tempLine.p = temp1;  tempLine.q = temp2;
                     if(numberOfCuttingThrough(polygons, tempLine) == 0){
+                        //rightDirectionRoute.push_back(temp1);
+                        //rightDirectionRoute.push_back(temp2);    
+                        int steps = getStepsAlongNormalVector(tempLine, normalIn, polygons);
+                        int stepP = steps & 65535;
+                        stepP = (stepP > 1) ? stepP - 1 : 0;
+                        int stepQ = steps >> 16;
+                        stepQ = (stepQ > 1) ? stepQ - 1 : 0;
+                        temp1.x += stepP*WIDTH*(normalIn.q.x - normalIn.p.x);
+                        temp1.y += stepP*WIDTH*(normalIn.q.y - normalIn.p.y);
+
+                        temp2.x += stepQ*WIDTH*(normalIn.q.x - normalIn.p.x);
+                        temp2.y += stepQ*WIDTH*(normalIn.q.y - normalIn.p.y);
+
                         rightDirectionRoute.push_back(temp1);
                         rightDirectionRoute.push_back(temp2);    
                     }
