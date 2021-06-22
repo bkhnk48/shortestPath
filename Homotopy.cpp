@@ -217,7 +217,7 @@ class Homotopy{
     //private:
 
         int getStepsAlongNormalVector(lineSegment temp1, lineSegment normalIn, vector< vector<lineSegment > > &polygons){
-            int result = 0;
+            int result = 0, result1 = 0, result2 = 0;
             double lastY, lastX;
             double deltaY;
             point lastPoint;
@@ -244,9 +244,9 @@ class Homotopy{
             //A = y2 - y1;
             //B = x1 - x2;
             //C = -x1*y2 + y1*x2
-            double minD = FLT_MAX;
+            double minD_P = FLT_MAX, minD_Q = FLT_MAX;
             double d_P = 0, d_Q = 0, d = 0;
-            int polygonID = -1, segmentID = -1;
+            int polygonID_P = -1, polygonID_Q = -1, segmentID_P = -1, segmentID_Q = -1;
             for(int i = 0; i < polygons.size(); i++)
             {
                 for(int j = 0; j < polygons.at(i).size(); j++){
@@ -260,35 +260,55 @@ class Homotopy{
                         C = y1*x2 - x1*y2;
                         double M = sqrt(A*A + B*B);
                         d_P = std::abs(A*x_P + B*y_P + C);
-                        //d_Q = std::abs(A*x_Q + B*y_Q + C);
+                        d_Q = std::abs(A*x_Q + B*y_Q + C);
                         //d = min(d_P, d_Q)/M;
-                        d = d_P/M;
-                        if(d < minD){
-                            minD = d;
-                            polygonID = i;
-                            segmentID = j;
+                        d_P /= M;
+                        d_Q /= M;
+                        if(d_P < minD_P){
+                            minD_P = d;
+                            polygonID_P = i;
+                            segmentID_P = j;
+                        }
+                        if(d_Q < minD_Q){
+                            minD_Q = d;
+                            polygonID_Q = i;
+                            segmentID_Q = j;
                         }
                     }
                 }
             }
 
-            if(polygonID != -1 && //minD > WIDTH &&
-                                 segmentID != -1){
-                lineSegment line = polygons.at(polygonID).at(segmentID);
-                double lineX = (line.q.x - line.p.x);
-                double lineY = (line.q.y - line.p.y);
-                double scaleX = (scaleNormal.q.x - scaleNormal.p.x);
-                double scaleY = (scaleNormal.q.y - scaleNormal.p.y);
-                double dotProduct = lineX*scaleX + lineY*scaleY;
-                double movement = minD;
-                if(dotProduct != 0){
-                    double cos = dotProduct/(sqrt(lineX*lineX + lineY*lineY)*sqrt(scaleX*scaleX + scaleY*scaleY));
-                    movement = minD/std::abs(cos);
-                }
-                result = floor(movement/WIDTH);
+            double scaleX = (scaleNormal.q.x - scaleNormal.p.x);
+            double scaleY = (scaleNormal.q.y - scaleNormal.p.y);
+
+            if(polygonID_P != -1 && //minD > WIDTH &&
+                                 segmentID_P != -1){
+                lineSegment line = polygons.at(polygonID_P).at(segmentID_P);
+                result1 = getSingleStep(line, scaleX, scaleY, minD_P);
             }
 
+            if(polygonID_Q != -1 && //minD > WIDTH &&
+                                 segmentID_Q != -1){
+                lineSegment line = polygons.at(polygonID_Q).at(segmentID_Q);
+                result2 = getSingleStep(line, scaleX, scaleY, minD_Q);
+            }
 
+            result = (result2 << 16) || result1;
+            return result;
+        }
+
+        int getSingleStep(lineSegment line, double scaleX, double scaleY, double min){
+            int result = 0;
+            double lineX = (line.q.x - line.p.x);
+            double lineY = (line.q.y - line.p.y);
+            
+            double dotProduct = lineX*scaleX + lineY*scaleY;
+            double movement = min;
+            if(dotProduct != 0){
+                double cos = dotProduct/(sqrt(lineX*lineX + lineY*lineY)*sqrt(scaleX*scaleX + scaleY*scaleY));
+                movement = min/std::abs(cos);
+            }
+            result = floor(movement/WIDTH);
             return result;
         }
 
@@ -370,7 +390,7 @@ class Homotopy{
                         clockwises.push_back(NO);//Counter clockwise
                     else{
                         Clockwise previous = clockwises.back();
-                        clockwises.push_back(previous);//Unknown
+                        clockwises.push_back(previous);
                     }
                     //Assuming that the AV never moves straight backward (Không đi giật lùi)
                     point temp1, temp2;
