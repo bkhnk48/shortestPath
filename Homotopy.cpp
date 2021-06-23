@@ -432,8 +432,31 @@ class Homotopy{
                         temp2.x += stepQ*WIDTH*(normalIn.q.x - normalIn.p.x);
                         temp2.y += stepQ*WIDTH*(normalIn.q.y - normalIn.p.y);
 
-                        rightDirectionRoute.push_back(temp1);
-                        rightDirectionRoute.push_back(temp2);    
+                        tempLine.p = temp1;  tempLine.q = temp2;
+                        bool isValid = true;
+                        while(numberOfCuttingThrough(polygons, tempLine) != 0)
+                        {
+                            isValid = false;
+                            temp1.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
+                            temp1.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
+
+                            temp2.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
+                            temp2.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
+
+                            stepQ--;
+                            stepP--;
+                            if(stepQ >= 0 && stepP >= 0)
+                            {
+                                isValid = true;
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                        if(isValid){
+                            rightDirectionRoute.push_back(temp1);
+                            rightDirectionRoute.push_back(temp2);    
+                        }
                     }
                     else{
                         bool OyDirection = true;
@@ -461,8 +484,17 @@ class Homotopy{
                         
                         if(!qIsInside)
                             rightDirectionRoute.push_back(temp2);
-                        else
+                        else{
                             rightDirectionRoute.push_back(route.at(i));
+                        }
+                        if(pIsInside ^ qIsInside){
+                            double anchorX = pIsInside ? currX : nextX;
+                            double anchorY = pIsInside ? currY : nextY;
+                            double moveX = pIsInside ? temp2.x : temp1.x;
+                            double moveY = pIsInside ? temp2.y : temp1.y;
+
+                        }
+                            
                     }
                     
                 }
