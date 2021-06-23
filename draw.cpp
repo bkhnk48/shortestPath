@@ -465,7 +465,7 @@ int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirec
 
 vector<point> middlePoints(point pA, point pB){
 	vector<point> allMiddlePoints;
-	int size = (int)round(abs(pA.x - pB.x));
+	int size = (int)round(std::abs(pA.x - pB.x));
 	if(size <= 1){
 		point p((pA.x + pB.x)/2, (pA.y + pB.y)/2);
 		allMiddlePoints.push_back(p);
