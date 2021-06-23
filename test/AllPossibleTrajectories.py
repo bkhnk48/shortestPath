@@ -51,7 +51,7 @@ def main():
     tesla.shapesize(1, 1)
 
     screen = turtle.Screen()
-    screen.screensize(1500, 4000)
+    screen.screensize(2500, 4000)
 
 
     # draw vectors representing points in PATH
