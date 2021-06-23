@@ -340,7 +340,7 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
     double y = p2Y - p1Y;
     double distance = sqrt(x*x + y*y)/2;
 
-    double R = distance/sin(abs(rotatedAngle)/2);
+    double R = distance/sin(std::abs(rotatedAngle)/2);
     cout<<"R = "<<R<<"as angle = "<<rotatedAngle<<" dis "<<distance<<endl;
 
     //angle velocity
