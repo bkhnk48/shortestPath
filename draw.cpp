@@ -548,7 +548,7 @@ the second one is the other path of the remaining AV's side
 */
 string drawCircleArc(Section *section, int WIDTH){
 	int signedValue = ((section->steering == 'R' && section->side == RightSide)
-						|| (section->side == LeftSide && section->steering == 'L')) ? 1 : -1;
+						|| (section->side == LeftSide && section->steering == 'L')) ? -1 : 1;
 	string str = "";  string strSub = ""; 	string strCenter = "";
 	str.append("<path d=\"M ");			strCenter.append("<path d=\"M ");			strSub.append("<path d=\"M ");
 
@@ -649,28 +649,28 @@ string drawLines(Section *section, int WIDTH){
 
 	#pragma region draw the center axes
 	str.append("\n<line x1='");
-	str.append(to_string((section->beganX*RATIO*(10) + xNormal/2)));
+	str.append(to_string((section->beganX*RATIO*(10) - xNormal/2)));
 	str.append("' y1='");
-	str.append(to_string((section->beganY*RATIO*(-10)  + yNormal/2)));
+	str.append(to_string((section->beganY*RATIO*(-10)  - yNormal/2)));
 	str.append("' x2='");
-	str.append(to_string((section->endedX*RATIO*(10) + xNormal/2)));
+	str.append(to_string((section->endedX*RATIO*(10) - xNormal/2)));
 	str.append("' y2='");
-	str.append(to_string((section->endedY*RATIO*(-10) + yNormal/2)));
+	str.append(to_string((section->endedY*RATIO*(-10) - yNormal/2)));
 	str.append("' style=\"stroke:violet; fill:transparent\" />\n");
 	#pragma endregion
 
 	#pragma region draw the remaining side
 	str.append("\n<line x1='");
-	str.append(to_string((section->beganX*RATIO*(10) + xNormal)));
+	str.append(to_string((section->beganX*RATIO*(10) - xNormal)));
 	//To be honest, it should be (section->beganX + xNormal)*RATIO*(10). 
 	// But I use the shortcut to reduce number of FP arithmetic calculation
 
 	str.append("' y1='");
-	str.append(to_string((section->beganY*RATIO*(-10) + yNormal)));
+	str.append(to_string((section->beganY*RATIO*(-10) - yNormal)));
 	str.append("' x2='");
-	str.append(to_string((section->endedX*RATIO*(10) + xNormal)));
+	str.append(to_string((section->endedX*RATIO*(10) - xNormal)));
 	str.append("' y2='");
-	str.append(to_string((section->endedY*RATIO*(-10) + yNormal)));
+	str.append(to_string((section->endedY*RATIO*(-10) - yNormal)));
 	str.append("' style=\"stroke:blue; fill:transparent\" />\n");
 	#pragma endregion
 
