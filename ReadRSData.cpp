@@ -39,7 +39,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double p2X = section->endedX;
     double p2Y = section->endedY;   
 
-    int n = abs((int)(section->param/SMALL_ANGLE));
+    int n = std::abs((int)(section->param/SMALL_ANGLE));
     //the rotatedAngle (section->param) sometime is negative and then lets n < 0 unless you call abs func
     if(n <= 1){
         point p(p2X, p2Y);
@@ -168,7 +168,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                         startX = section->endedX; startY = section->endedY; 
                         
                         segment->sections.push_back(section);
-                        segment->L += abs(section->param);
+                        segment->L += std::abs(section->param);
                     }
                     else{
                         *error = 1;
@@ -346,7 +346,7 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
     //angle velocity
     double omegaVelocity = MAX_VELOCITY/R;
     double t = rotatedAngle/omegaVelocity;
-    int n = (int)abs(t);
+    int n = (int)std::abs(t);
 
     if(n <= 1){
         return segment;//shortcut to prevent wasted floating-point calculation
@@ -365,7 +365,7 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
         yNormal = yIn;
     }
 
-    double h = distance/tan(abs(rotatedAngle)/2);
+    double h = distance/tan(std::abs(rotatedAngle)/2);
     double centerX = midPointX + h*xNormal;
     double centerY = midPointY + h*yNormal;
     
