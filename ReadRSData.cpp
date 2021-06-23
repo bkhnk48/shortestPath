@@ -105,6 +105,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
 
     //rotatedAngle > 0 <=> clockwise <=> omega reduces
     double sin_deltaOmega = (section->param > 0 ? -SMALL_ANGLE : SMALL_ANGLE);
+    if(LEFT == section->steering){
+        sin_deltaOmega = -sin_deltaOmega;
+    }
     double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
     double xT, yT;
     for(int i = 1; i < n; i++){
