@@ -690,16 +690,18 @@ string drawCurverMovement(vector<Path*> trajectory, int WIDTH){
         Path* path = trajectory.at(i);
         //cout<<"Path "<<i<<endl;
         vector<PathSegment*> segments = path->segments;
-		vector<Section*> sections = segments.at(0)->sections;
-		int numSections = sections.size();
-		for(int k = 0; k < numSections; k++)
-		{
-			
-			if(sections.at(k)->typeOfTrajectory == 'C'){
-				str.append(drawCircleArc(sections.at(k), WIDTH));
-			}
-			else if(sections.at(k)->typeOfTrajectory == 'F'){
-				str.append(drawLines(sections.at(k), WIDTH));
+		if(segments.size() == 1){
+			vector<Section*> sections = segments.at(0)->sections;
+			int numSections = sections.size();
+			for(int k = 0; k < numSections; k++)
+			{
+				
+				if(sections.at(k)->typeOfTrajectory == 'C'){
+					str.append(drawCircleArc(sections.at(k), WIDTH));
+				}
+				else if(sections.at(k)->typeOfTrajectory == 'F'){
+					str.append(drawLines(sections.at(k), WIDTH));
+				}
 			}
 		}
     }
@@ -736,9 +738,9 @@ void drawShortestPath(string file_name, point & start, point & end,
 	str1 = str1 + drawGraph(graph,points);
 	//if(distance!=-1 && config.drawRoute)
 	{ 
-		str1 = str1 + drawShortestRoute(route);
+		//str1 = str1 + drawShortestRoute(route);
 		//str1 = str1 + drawShortestRoute(sideSteps);
-		//str1 = str1 + drawCurverMovement(trajectory, WIDTH);
+		str1 = str1 + drawCurverMovement(trajectory, WIDTH);
 	}
 	str1 = str1 + "</svg>\n";
 	std::ofstream ofs(file_name.c_str());
