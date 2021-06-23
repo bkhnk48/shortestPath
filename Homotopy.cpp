@@ -479,20 +479,44 @@ class Homotopy{
                             if(pIsInside && qIsInside)
                                 break;
                         }
-                        if(!pIsInside)
+                        if(!pIsInside && !qIsInside){
                             rightDirectionRoute.push_back(temp1);
-                        
-                        if(!qIsInside)
                             rightDirectionRoute.push_back(temp2);
-                        else{
-                            rightDirectionRoute.push_back(route.at(i));
                         }
+                        
                         if(pIsInside ^ qIsInside){
                             double anchorX = pIsInside ? currX : nextX;
                             double anchorY = pIsInside ? currY : nextY;
                             double moveX = pIsInside ? temp2.x : temp1.x;
                             double moveY = pIsInside ? temp2.y : temp1.y;
+                            deltaX = pIsInside ? temp2.x - currX : nextX - temp1.x;
+                            deltaY = pIsInside ? temp2.y - currY : nextY - temp1.y;
+                            tempLine.p.x = anchorX;
+                            tempLine.p.y = anchorY;
+                            tempLine.q.x = moveX;
+                            tempLine.q.y = moveY;
 
+                            do{
+                                getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);
+                                moveX += WIDTH*normalIn.q.x;
+                                moveY += WIDTH*normalIn.q.y;
+                                tempLine.q.x = moveX;
+                                tempLine.q.y = moveY;
+                            }while(numberOfCuttingThrough(polygons, tempLine) == 0);
+
+                            moveX -= WIDTH*normalIn.q.x;
+                            moveY -= WIDTH*normalIn.q.y;
+                            if(qIsInside){
+                                temp1.x = moveX;
+                                temp1.y = moveY;
+                                rightDirectionRoute.push_back(temp1);
+                                rightDirectionRoute.push_back(route.at(i));
+                            }
+                            else{
+                                temp2.x = moveX;
+                                temp2.y = moveY;
+                                rightDirectionRoute.push_back(temp2);
+                            }
                         }
                             
                     }
