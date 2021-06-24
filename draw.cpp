@@ -295,7 +295,7 @@ string drawRoute(vector<int> & route, vector<point> & points){
 
 string drawShortestRoute(vector<point> & route//, vector<point> & sideSteps
 							){
-	string str = "<polyline stroke='red' stroke-width='2' fill='none' points='";
+	string str = "<polyline stroke='black' stroke-width='2' fill='none' points='";
 	int current = route.size()-1;
 	while(current != -1){
 		point p = //points[current%points.size()];
@@ -722,7 +722,7 @@ void drawShortestPath(string file_name, point & start, point & end,
 	str2.append(" ");
 	str2.append(std::to_string(/*-10*max_y-45*/-655));
 	str2.append(" ");
-	str2.append(std::to_string((abs(min_x)+abs(max_x))*10+10));
+	str2.append(std::to_string((std::abs(min_x)+std::abs(max_x))*10+10));
 	str2.append(" ");
 	str2.append(std::to_string((955/*abs(min_y)+abs(max_y))*10 + 80)*/)));
 	str2.append("' xmlns='http://www.w3.org/2000/svg' version='1.1'>\n");
@@ -738,7 +738,7 @@ void drawShortestPath(string file_name, point & start, point & end,
 	str1 = str1 + drawGraph(graph,points);
 	//if(distance!=-1 && config.drawRoute)
 	{ 
-		//str1 = str1 + drawShortestRoute(route);
+		str1 = str1 + drawShortestRoute(route);
 		//str1 = str1 + drawShortestRoute(sideSteps);
 		str1 = str1 + drawCurverMovement(trajectory, WIDTH);
 	}
