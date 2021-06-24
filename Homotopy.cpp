@@ -361,6 +361,45 @@ class Homotopy{
             }
         }
 
+        void moveBothPoints(lineSegment tempLine, lineSegment &normalIn, vector< vector<lineSegment > > &polygons, point temp1, point temp2, vector<point> &rightDirectionRoute){
+            int steps = getStepsAlongNormalVector(tempLine, normalIn, polygons);
+            int stepP = steps & 65535;
+            stepP = (stepP > 1) ? stepP - 1 : 0;
+            int stepQ = steps >> 16;
+            stepQ = (stepQ > 1) ? stepQ - 1 : 0;
+            temp1.x += stepP*WIDTH*(normalIn.q.x - normalIn.p.x);
+            temp1.y += stepP*WIDTH*(normalIn.q.y - normalIn.p.y);
+
+            temp2.x += stepQ*WIDTH*(normalIn.q.x - normalIn.p.x);
+            temp2.y += stepQ*WIDTH*(normalIn.q.y - normalIn.p.y);
+
+            tempLine.p = temp1;  tempLine.q = temp2;
+            bool isValid = true;
+            while(numberOfCuttingThrough(polygons, tempLine) != 0)
+            {
+                isValid = false;
+                temp1.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
+                temp1.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
+
+                temp2.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
+                temp2.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
+
+                stepQ--;
+                stepP--;
+                if(stepQ >= 0 && stepP >= 0)
+                {
+                    isValid = true;
+                }
+                else{
+                    break;
+                }
+            }
+            if(isValid){
+                rightDirectionRoute.push_back(temp1);
+                rightDirectionRoute.push_back(temp2);    
+            }
+        }
+
         vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons){
             vector<point> rightDirectionRoute;
             insertTwoFirstPoints(route, rightDirectionRoute);
@@ -427,42 +466,7 @@ class Homotopy{
                     if(numberOfCuttingThrough(polygons, tempLine) == 0){
                         //rightDirectionRoute.push_back(temp1);
                         //rightDirectionRoute.push_back(temp2);    
-                        int steps = getStepsAlongNormalVector(tempLine, normalIn, polygons);
-                        int stepP = steps & 65535;
-                        stepP = (stepP > 1) ? stepP - 1 : 0;
-                        int stepQ = steps >> 16;
-                        stepQ = (stepQ > 1) ? stepQ - 1 : 0;
-                        temp1.x += stepP*WIDTH*(normalIn.q.x - normalIn.p.x);
-                        temp1.y += stepP*WIDTH*(normalIn.q.y - normalIn.p.y);
-
-                        temp2.x += stepQ*WIDTH*(normalIn.q.x - normalIn.p.x);
-                        temp2.y += stepQ*WIDTH*(normalIn.q.y - normalIn.p.y);
-
-                        tempLine.p = temp1;  tempLine.q = temp2;
-                        bool isValid = true;
-                        while(numberOfCuttingThrough(polygons, tempLine) != 0)
-                        {
-                            isValid = false;
-                            temp1.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
-                            temp1.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
-
-                            temp2.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
-                            temp2.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
-
-                            stepQ--;
-                            stepP--;
-                            if(stepQ >= 0 && stepP >= 0)
-                            {
-                                isValid = true;
-                            }
-                            else{
-                                break;
-                            }
-                        }
-                        if(isValid){
-                            rightDirectionRoute.push_back(temp1);
-                            rightDirectionRoute.push_back(temp2);    
-                        }
+                        moveBothPoints(tempLine, normalIn, polygons, temp1, temp2, rightDirectionRoute);
                     }
                     else{
                         bool OyDirection = true;
