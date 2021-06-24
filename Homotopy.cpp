@@ -424,6 +424,55 @@ class Homotopy{
             }
         }
 
+        void rotateOnePoint(point currentPoint, bool pIsInside, bool qIsInside, point temp1, point temp2, 
+                            double arr[], vector<vector<lineSegment>> &polygons, vector<point> &rightDirectionRoute)
+        {
+            double nextX = arr[0];
+            double nextY = arr[1];
+            double currX = arr[2];
+            double currY = arr[3];
+
+            double anchorX = pIsInside ? currX : nextX;
+            double anchorY = pIsInside ? currY : nextY;
+            double moveX = pIsInside ? temp2.x : temp1.x;
+            double moveY = pIsInside ? temp2.y : temp1.y;
+            double deltaX = pIsInside ? temp2.x - currX : nextX - temp1.x;
+            double deltaY = pIsInside ? temp2.y - currY : nextY - temp1.y;
+            lineSegment tempLine;
+            tempLine.p.x = anchorX;
+            tempLine.p.y = anchorY;
+            tempLine.q.x = moveX;
+            tempLine.q.y = moveY;
+
+            lineSegment normalIn;
+            normalIn.p.x = 0; normalIn.p.y = 0;
+
+            getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);    
+
+            do{
+                moveX += WIDTH*normalIn.q.x;
+                moveY += WIDTH*normalIn.q.y;
+                tempLine.q.x = moveX;
+                tempLine.q.y = moveY;
+                //deltaX = pIsInside ? moveX - currX : nextX - moveX;
+                //deltaY = pIsInside ? moveY - currY : nextY - moveY;
+            }while(numberOfCuttingThrough(polygons, tempLine) == 0);
+
+            moveX -= WIDTH*normalIn.q.x;
+            moveY -= WIDTH*normalIn.q.y;
+            if(qIsInside){
+                temp1.x = moveX;
+                temp1.y = moveY;
+                rightDirectionRoute.push_back(temp1);
+                rightDirectionRoute.push_back(currentPoint);
+            }
+            else{
+                temp2.x = moveX;
+                temp2.y = moveY;
+                rightDirectionRoute.push_back(temp2);
+            }
+        }
+
         void getToRightSide(point currentPoint, lineSegment normalIn, vector<vector<lineSegment>> &polygons, double arr[], vector<point> &rightDirectionRoute){
             double nextX = arr[0];
             double nextY = arr[1];
@@ -458,41 +507,42 @@ class Homotopy{
                 }
                 
                 if(pIsInside ^ qIsInside){
-                    double anchorX = pIsInside ? currX : nextX;
-                    double anchorY = pIsInside ? currY : nextY;
-                    double moveX = pIsInside ? temp2.x : temp1.x;
-                    double moveY = pIsInside ? temp2.y : temp1.y;
-                    deltaX = pIsInside ? temp2.x - currX : nextX - temp1.x;
-                    deltaY = pIsInside ? temp2.y - currY : nextY - temp1.y;
-                    tempLine.p.x = anchorX;
-                    tempLine.p.y = anchorY;
-                    tempLine.q.x = moveX;
-                    tempLine.q.y = moveY;
-
-                    do{
-                        getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);
-                        moveX += WIDTH*normalIn.q.x;
-                        moveY += WIDTH*normalIn.q.y;
-                        tempLine.q.x = moveX;
-                        tempLine.q.y = moveY;
-                    }while(numberOfCuttingThrough(polygons, tempLine) == 0);
-
-                    moveX -= WIDTH*normalIn.q.x;
-                    moveY -= WIDTH*normalIn.q.y;
-                    if(qIsInside){
-                        temp1.x = moveX;
-                        temp1.y = moveY;
-                        rightDirectionRoute.push_back(temp1);
-                        rightDirectionRoute.push_back(currentPoint);
-                    }
-                    else{
-                        temp2.x = moveX;
-                        temp2.y = moveY;
-                        rightDirectionRoute.push_back(temp2);
-                    }
+                    rotateOnePoint(currentPoint, pIsInside, qIsInside, temp1, temp2, arr, polygons, rightDirectionRoute);
                 }
                     
             }
+        }
+
+        void rotateLastSegment(vector<point> route, vector<vector<lineSegment>> &polygons, vector<point> &rightDirectionRoute){
+            int preLast = route.size() - 2;
+            bool alreadyAddedLastPoint = false;
+            if(preLast > 0){
+                double currX = route.at(preLast).x;
+                double currY = route.at(preLast).y;
+                double nextX = route.at(preLast + 1).x;
+                double nextY = route.at(preLast + 1).y;
+                double biasX = 0, biasY = 0;
+                getNormalInAndOut(nextX - currX, nextY - currY, &biasX, &biasY);
+
+                lineSegment line;
+                line.p.x = currX + biasX*WIDTH;
+                line.p.y = currY + biasY*WIDTH;
+                line.q.x = nextX;
+                line.q.y = nextY;
+
+                if(numberOfCuttingThrough(polygons, line) == 0){
+                    double arr[4] = {nextX, nextY, currX, currY};
+                    rotateOnePoint(route.at(preLast + 1), false, true, route.at(preLast), route.at(preLast + 1), arr, polygons, rightDirectionRoute);
+                    alreadyAddedLastPoint = true;
+                }
+                
+            }
+
+            if(!alreadyAddedLastPoint){
+                rightDirectionRoute.push_back(route.at(preLast + 1));
+            }
+
+            
         }
 
         vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons){
@@ -511,15 +561,11 @@ class Homotopy{
                 nextX = route.at(i).x;             nextY = route.at(i).y;
                 uX = (currX - prevX);              uY = currY - prevY;
                 vX = nextX - currX;                vY = nextY - currY;
-
                 uv = uX*vY - uY*vX;
-                
                 if(uv < 0){
                     rightDirectionRoute.push_back(route.at(i));  //clockwises.push_back(YES);//Clockwise
                 }
                 else if(uv >= 0){
-                    /*if(uv > 0) clockwises.push_back(NO);//Counter clockwise
-                    else*/
                     if(uv == 0){
                         rightDirectionRoute.push_back(route.at(i)); //Clockwise previous = clockwises.back(); //clockwises.push_back(previous);
                         continue;
@@ -529,13 +575,14 @@ class Homotopy{
                     getToRightSide(route.at(i), normalIn, polygons, arr, rightDirectionRoute);
                     
                 }
-                
                 prevX = currX;             prevY = currY;
-
                 currX = nextX;             currY = nextY;
             }
 
-            rightDirectionRoute.push_back(route.at(route.size() - 1));
+            rotateLastSegment(route, polygons, rightDirectionRoute);
+            //{
+            //    rightDirectionRoute.push_back(route.at(route.size() - 1));
+            //}
 
             return rightDirectionRoute;
         }
