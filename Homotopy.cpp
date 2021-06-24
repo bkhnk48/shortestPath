@@ -568,7 +568,7 @@ class Homotopy{
                 else if(uv >= 0){
                     if(uv == 0){
                         rightDirectionRoute.push_back(route.at(i)); //Clockwise previous = clockwises.back(); //clockwises.push_back(previous);
-                        continue;
+                        //continue;
                     }
                     //Assuming that the AV never moves straight backward (Không đi giật lùi)
                     double arr[4] = {nextX, nextY, currX, currY};
