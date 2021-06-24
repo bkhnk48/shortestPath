@@ -312,13 +312,9 @@ class Homotopy{
             return result;
         }
 
-        vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons){
-            vector<point> rightDirectionRoute;
+
+        void insertTwoFirstPoints(vector<point> &route, vector<point> &rightDirectionRoute){
             double startX = route.at(0).x;
-            //if(sides.at(0) == LeftSide)
-            //    startX -= WIDTH/2;
-            //else
-            //    startX += WIDTH/2;
             double startY = route.at(0).y;
 
             double prevX = startX; 
@@ -329,14 +325,12 @@ class Homotopy{
             double nextX = route.at(1).x, nextY = route.at(1).y;
             double uX, uY, vX, vY;
 
-            //point p(route.at(0).x + WIDTH/2, route.at(0).y);
             rightDirectionRoute.push_back(route.at(0));
             lineSegment normalIn;
             normalIn.p.x = 0; normalIn.p.y = 0;
-            lineSegment tempLine;
-
+            
             uX = (currX - prevX);
-            uY = currY - prevY; //startY is correct unless the first trajectory is AV's centeroid
+            uY = currY - prevY; 
             vX = nextX - currX;
             vY = nextY - currY;
             double uv;
@@ -365,9 +359,21 @@ class Homotopy{
                     rightDirectionRoute.push_back(route.at(1));
                 }
             }
+        }
 
-            currX = nextX; currY = nextY;
-            
+        vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons){
+            vector<point> rightDirectionRoute;
+            insertTwoFirstPoints(route, rightDirectionRoute);
+            double prevX = route.at(0).x;
+            double prevY = route.at(0).y;
+
+            double currX = route.at(1).x;
+            double currY = route.at(1).y;
+            double nextX, nextY;
+            double uX, uY, vX, vY, uv;
+            lineSegment normalIn;
+            normalIn.p.x = 0; normalIn.p.y = 0;
+            lineSegment tempLine;
 
             for(int i = 2; i < route.size() - 1; i++){
                 nextX = route.at(i).x;
