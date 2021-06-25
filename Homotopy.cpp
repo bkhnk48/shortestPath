@@ -581,10 +581,6 @@ class Homotopy{
                     rightDirectionRoute.push_back(route.at(i));  //clockwises.push_back(YES);//Clockwise
                 }
                 else if(uv >= 0){
-                    if(uv == 0){
-                        //rightDirectionRoute.push_back(route.at(i)); //Clockwise previous = clockwises.back(); //clockwises.push_back(previous);
-                        //continue;
-                    }
                     //Assuming that the AV never moves straight backward (Không đi giật lùi)
                     double arr[4] = {nextX, nextY, currX, currY};
                     getToRightSide(route.at(i), normalIn, polygons, arr, rightDirectionRoute);
@@ -592,16 +588,10 @@ class Homotopy{
                 }
                 prevX = currX;             prevY = currY;
                 currX = nextX;             currY = nextY;
-                cout<<"\nas i = "<<i<<" \t";
-                for(int j = 0; j < rightDirectionRoute.size(); j++){
-                    cout<<"("<<rightDirectionRoute.at(j).x<<", "<<rightDirectionRoute.at(j).y<<") ";
-                }
+                
             }
 
             rotateLastSegment(route, polygons, rightDirectionRoute);
-            //{
-            //    rightDirectionRoute.push_back(route.at(route.size() - 1));
-            //}
 
             return rightDirectionRoute;
         }
