@@ -91,21 +91,21 @@ void testFullAVsInStacks(){
 	generator->NUMBER_STACKS = numOfStacks;
 	generator->getRawPolygons(0, stacks[0].slotsOfAV);
 
-	printf("Do you want wall? N/n/0 or Y/y/1:   ");
-	fflush(stdin);
-	input = scanf("%c", &scenario);
+	//printf("Which wall-map do you want? N/n/0 or Y/y/1:   ");
+	//fflush(stdin);
+	//input = scanf("%c", &scenario);
 	int*** walls;
-	switch (scenario)
+	//switch (scenario)
 	{
-		case 'Y':
-		case 'y':
-		case '1':
+		//case 'Y':
+		//case 'y':
+		//case '1':
 			walls = loadWall(rowsInStack, columnsInStack, 5, widthOfAV, lengthOfAV);
 			generator->loadWall(walls, 8);
-			break;
+			//break;
 	
-		default:
-			break;
+		//default:
+		//	break;
 	}
 
 	setMinMax(generator->polygons);
