@@ -509,7 +509,7 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 }
 
 
-//Take a line segment and returns 1 if the line cuts through any polygon
+//Take a line segment and returns number of edges which the line segment cuts through
 int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
 	int result = 0;
 	for(size_t i = 0; i < polygons.size();i++){
