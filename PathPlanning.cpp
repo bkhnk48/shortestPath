@@ -61,7 +61,8 @@ class PlanningController{
             auto time1 = std::chrono::steady_clock::now();
 
             //Call function that calculate the distance
-            calculateNumberOfCrossings(crossesNumber, polygons, points);
+            //calculateNumberOfCrossings(crossesNumber, polygons, points);
+            numberOfVirtualCrossing(crossesNumber, polygons, points);
 
             auto time2 = std::chrono::steady_clock::now();
 
