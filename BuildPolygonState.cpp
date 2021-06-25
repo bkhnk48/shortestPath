@@ -337,7 +337,7 @@ class BuildingPolygons{
                 }
                 if(col1 == this->COLUMNS - 1)
                     return (arrayOfAVs[row1][col1] != 0);
-                return ((abs(arrayOfAVs[row1][col1]) ^ abs(arrayOfAVs[row2][col2])) == 1);
+                return ((std::abs(arrayOfAVs[row1][col1]) ^ std::abs(arrayOfAVs[row2][col2])) == 1);
             }
 
             if(pA.y == pB.y){
@@ -351,7 +351,7 @@ class BuildingPolygons{
                 if(row1 == this->ROWS - 1)
                     return (arrayOfAVs[row1][col1] != 0);
                 
-                return ((abs(arrayOfAVs[row1][col1]) ^ abs(arrayOfAVs[row2][col2])) == 1);
+                return ((std::abs(arrayOfAVs[row1][col1]) ^ std::abs(arrayOfAVs[row2][col2])) == 1);
             }
             return false;
         }
