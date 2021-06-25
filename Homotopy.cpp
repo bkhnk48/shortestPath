@@ -312,6 +312,16 @@ class Homotopy{
             return result;
         }
 
+        bool checkAvailableAtLast(vector<point> rightDirectionRoute, point p){
+            if(rightDirectionRoute.size() == 0)
+                return false;
+            int last = rightDirectionRoute.size() - 1;
+            if(rightDirectionRoute.at(last).x == p.x && rightDirectionRoute.at(last).y == p.y)
+            {
+                return true;
+            }
+            return false;
+        }
 
         void insertTwoFirstPoints(vector<point> &route, vector<point> &rightDirectionRoute){
             double startX = route.at(0).x;
@@ -395,7 +405,8 @@ class Homotopy{
                 }
             }
             if(isValid){
-                rightDirectionRoute.push_back(tempLine.p);
+                if(!checkAvailableAtLast(rightDirectionRoute, tempLine.p))
+                    rightDirectionRoute.push_back(tempLine.p);
                 rightDirectionRoute.push_back(tempLine.q);    
             }
         }
@@ -423,6 +434,8 @@ class Homotopy{
                     break;
             }
         }
+
+        
 
         void rotateOnePoint(point currentPoint, bool pIsInside, bool qIsInside, point temp1, point temp2, 
                             double arr[], vector<vector<lineSegment>> &polygons, vector<point> &rightDirectionRoute)
@@ -463,7 +476,8 @@ class Homotopy{
             if(qIsInside){
                 temp1.x = moveX;
                 temp1.y = moveY;
-                rightDirectionRoute.push_back(temp1);
+                if(!checkAvailableAtLast(rightDirectionRoute, temp1))
+                    rightDirectionRoute.push_back(temp1);
                 rightDirectionRoute.push_back(currentPoint);
             }
             else{
@@ -502,7 +516,8 @@ class Homotopy{
                 checkInside(tempLine, polygons, &pIsInside, &qIsInside);
                 
                 if(!pIsInside && !qIsInside){
-                    rightDirectionRoute.push_back(temp1);
+                    if(!checkAvailableAtLast(rightDirectionRoute, temp1))
+                        rightDirectionRoute.push_back(temp1);
                     rightDirectionRoute.push_back(temp2);
                 }
                 
@@ -567,7 +582,7 @@ class Homotopy{
                 }
                 else if(uv >= 0){
                     if(uv == 0){
-                        rightDirectionRoute.push_back(route.at(i)); //Clockwise previous = clockwises.back(); //clockwises.push_back(previous);
+                        //rightDirectionRoute.push_back(route.at(i)); //Clockwise previous = clockwises.back(); //clockwises.push_back(previous);
                         //continue;
                     }
                     //Assuming that the AV never moves straight backward (Không đi giật lùi)
@@ -577,6 +592,10 @@ class Homotopy{
                 }
                 prevX = currX;             prevY = currY;
                 currX = nextX;             currY = nextY;
+                cout<<"\nas i = "<<i<<" \t";
+                for(int j = 0; j < rightDirectionRoute.size(); j++){
+                    cout<<"("<<rightDirectionRoute.at(j).x<<", "<<rightDirectionRoute.at(j).y<<") ";
+                }
             }
 
             rotateLastSegment(route, polygons, rightDirectionRoute);
