@@ -513,7 +513,7 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
 	int result = 0;
 	for(size_t i = 0; i < polygons.size();i++){
-		int numberOfvaolation=0;
+		//int numberOfvaolation=0;
 		for(size_t j=0;j<polygons[i].size();j++){
 			result += cutThrough(l,polygons[i][j]);
 		}
