@@ -71,7 +71,7 @@ class PlanningController{
 
 
             //The graph is constructed call dijksta to calculate the distance
-            double distance = dijkstra(graphDistance,graph,route);
+            double distance = dijkstra(graphDistance,graph, route);
 
             auto time4 = std::chrono::steady_clock::now();
 
@@ -89,9 +89,17 @@ class PlanningController{
                     cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
                 }
                 Homotopy* homotopy = new Homotopy(generator->getWIDTH());
-                vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
+                //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
+                //cout<<"After sideStepRouting=========="<<endl;
+                //for(int i = 0; i < shortestPath.size(); i++){
+                //    cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
+                //}
                 vector<point> rightDirection = homotopy->calculateClockwise(shortestPath, polygons
                         );
+                cout<<"After calculateClockwise=========="<<endl;
+                for(int i = 0; i < shortestPath.size(); i++){
+                    cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
+                }
                 
                 string fileName = "test/test";
                 fileName += to_string(nmrMovement);
@@ -104,8 +112,8 @@ class PlanningController{
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
-                                                                    //shortestPath, 
-                                                                    rightDirection,
+                                                                    shortestPath, 
+                                                                    //rightDirection,
                                                                     //sideSteps,
                                                                     paths,
                                                                     graph);
