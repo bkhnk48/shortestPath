@@ -435,6 +435,16 @@ class Homotopy{
             }
         }
 
+
+        void addMidPoint(point temp1, point temp2, vector<point> &rightDirectionRoute){
+            if(std::abs(temp1.x - temp2.x) >= WIDTH)
+            {
+                if(std::abs(temp1.y - temp2.y) >= 6*WIDTH){
+                    point temp3(temp1.x + WIDTH/2, (temp2.y + temp1.y)/2 - 6);
+                    rightDirectionRoute.push_back(temp3);
+                }
+            }
+        }
         
 
         void rotateOnePoint(point currentPoint, bool pIsInside, bool qIsInside, point temp1, point temp2, 
@@ -467,8 +477,6 @@ class Homotopy{
                 moveY += WIDTH*normalIn.q.y;
                 tempLine.q.x = moveX;
                 tempLine.q.y = moveY;
-                //deltaX = pIsInside ? moveX - currX : nextX - moveX;
-                //deltaY = pIsInside ? moveY - currY : nextY - moveY;
             }while(numberOfCuttingThrough(polygons, tempLine) == 0);
 
             moveX -= WIDTH*normalIn.q.x;
@@ -476,8 +484,10 @@ class Homotopy{
             if(qIsInside){
                 temp1.x = moveX;
                 temp1.y = moveY;
-                if(!checkAvailableAtLast(rightDirectionRoute, temp1))
+                if(!checkAvailableAtLast(rightDirectionRoute, temp1)){
                     rightDirectionRoute.push_back(temp1);
+                    addMidPoint(temp1, currentPoint, rightDirectionRoute);
+                }
                 rightDirectionRoute.push_back(currentPoint);
             }
             else{
