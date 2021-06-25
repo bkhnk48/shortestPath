@@ -136,8 +136,8 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
     #pragma endregion
 
     #pragma region virtual gate
-    walls[4][0][0] = walls[0][1][0];    walls[4][0][1] = walls[0][1][1];  walls[4][0][2] = GATE;
-    walls[4][1][0] = walls[4][0][0] + WIDTH_OF_GATE*WIDTH_SLOT;    walls[4][1][1] = walls[4][0][1]; walls[4][1][2] = GATE;
+    walls[4][0][0] = walls[0][1][0] - 1;    walls[4][0][1] = walls[0][1][1];  walls[4][0][2] = GATE;
+    walls[4][1][0] = walls[4][0][0] + WIDTH_OF_GATE*WIDTH_SLOT + 2;    walls[4][1][1] = walls[4][0][1]; walls[4][1][2] = GATE;
     walls[4][2][0] = walls[4][1][0];    walls[4][2][1] = walls[4][1][1] - 1;        walls[4][2][2] = GATE;
     walls[4][3][0] = walls[4][0][0];    walls[4][3][1] = walls[4][2][1];            walls[4][3][2] = GATE;
     walls[4][4][2] = NONE;      
@@ -150,8 +150,8 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
     #pragma endregion
 
     #pragma region virtual gate
-    walls[5][0][0] = walls[1][1][0];    walls[5][0][1] = walls[1][1][1];  walls[5][0][2] = GATE;
-    walls[5][1][0] = walls[5][0][0] + WIDTH_OF_GATE*WIDTH_SLOT;    walls[5][1][1] = walls[5][0][1]; walls[5][1][2] = GATE;
+    walls[5][0][0] = walls[1][1][0] - 1;    walls[5][0][1] = walls[1][1][1];  walls[5][0][2] = GATE;
+    walls[5][1][0] = walls[5][0][0] + WIDTH_OF_GATE*WIDTH_SLOT + 2;    walls[5][1][1] = walls[5][0][1]; walls[5][1][2] = GATE;
     walls[5][2][0] = walls[5][1][0];    walls[5][2][1] = walls[5][1][1] - 1;        walls[5][2][2] = GATE;
     walls[5][3][0] = walls[5][0][0];    walls[5][3][1] = walls[5][2][1];            walls[5][3][2] = GATE;
     walls[5][4][2] = NONE;      
@@ -164,9 +164,9 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
     #pragma endregion
 
     #pragma region virtual gate
-    walls[6][0][0] = walls[1][5][0];    walls[6][0][1] = walls[1][5][1];        walls[6][0][2] = GATE;
+    walls[6][0][0] = walls[1][5][0];    walls[6][0][1] = walls[1][5][1] + 1;        walls[6][0][2] = GATE;
     walls[6][1][0] = walls[6][0][0] + 1;    walls[6][1][1] = walls[6][0][1];    walls[6][1][2] = GATE;
-    walls[6][2][0] = walls[6][1][0] ;    walls[6][2][1] = walls[6][1][1] - WIDTH_OF_GATE*WIDTH_SLOT;    walls[6][2][2] = GATE;
+    walls[6][2][0] = walls[6][1][0] ;    walls[6][2][1] = walls[6][1][1] - WIDTH_OF_GATE*WIDTH_SLOT - 2;    walls[6][2][2] = GATE;
     walls[6][3][0] = walls[6][2][0] - 1;   walls[6][3][1] = walls[6][2][1];     walls[6][3][2] = GATE;
     walls[6][4][2] = NONE;  
     walls[6][5][2] = NONE;  
@@ -186,9 +186,9 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
     #pragma endregion
 
     #pragma region virtual gate
-    walls[7][0][0] = walls[2][3][0];    walls[7][0][1] = walls[2][3][1];        walls[7][0][2] = GATE;
+    walls[7][0][0] = walls[2][3][0];    walls[7][0][1] = walls[2][3][1] + 1;        walls[7][0][2] = GATE;
     walls[7][1][0] = walls[7][0][0] + 1;    walls[7][1][1] = walls[7][0][1];    walls[7][1][2] = GATE;
-    walls[7][2][0] = walls[7][1][0] ;    walls[7][2][1] = walls[7][1][1] - WIDTH_OF_GATE*WIDTH_SLOT;    walls[7][2][2] = GATE;
+    walls[7][2][0] = walls[7][1][0] ;    walls[7][2][1] = walls[7][1][1] - WIDTH_OF_GATE*WIDTH_SLOT - 2;    walls[7][2][2] = GATE;
     walls[7][3][0] = walls[7][2][0] - 1;   walls[7][3][1] = walls[7][2][1];     walls[7][3][2] = GATE;
     walls[7][4][2] = NONE;  
     walls[7][5][2] = NONE;  
