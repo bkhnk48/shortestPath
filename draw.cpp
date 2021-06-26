@@ -418,6 +418,48 @@ int cutThrough(lineSegment l1, lineSegment l2){
 
 }
 
+int touch(lineSegment l1, lineSegment l2){
+	point AC; 
+	AC.x = l2.p.x - l1.p.x; 
+	AC.y = l2.p.y - l1.p.y;
+	point AB;
+	AB.x = l1.q.x - l1.p.x; 
+	AB.y = l1.q.y - l1.p.y;
+	point AD;
+	AD.x = l2.q.x - l1.p.x; 
+	AD.y = l2.q.y - l1.p.y;
+	double AC_AB = AC.x*AB.y - AC.y*AB.x;
+	double AD_AB = AD.x*AB.y - AD.y*AB.x;
+	double product = AC_AB*AD_AB;
+	bool isNegative = product < 0;
+	bool isZero = product == 0;
+	if(product <= 0){
+		//point A = l2.p; point B = l2.q;
+		//point C = l1.p; point D = l1.q;
+		AC.x = l1.p.x - l2.p.x; 
+		AC.y = l1.p.y - l2.p.y;
+		
+		AB.x = l2.q.x - l2.p.x; 
+		AB.y = l2.q.y - l2.p.y;
+		
+		AD.x = l1.q.x - l2.p.x; 
+		AD.y = l1.q.y - l2.p.y;
+		AC_AB = AC.x*AB.y - AC.y*AB.x;
+		AD_AB = AD.x*AB.y - AD.y*AB.x;
+		product = AC_AB*AD_AB;
+		if(isNegative && product <= 0){
+			return 1; //cut through
+		}
+
+		if(isZero && product < 0)
+		{
+			return 1;
+		}
+	}
+	return 0;
+
+}
+
 //If the return value is an odd, the point definitely is inside polygon
 int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
 {
@@ -513,6 +555,17 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 	return false;
 }
 
+//Take a line segment and returns number of edges which the line segment cuts through
+int numberOfTouchingPoints(vector<vector<lineSegment> > &polygons, lineSegment l){
+	int result = 0;
+	for(size_t i = 0; i < polygons.size();i++){
+		//int numberOfvaolation=0;
+		for(size_t j=0;j<polygons[i].size();j++){
+			result += touch(l,polygons[i][j]);
+		}
+	}
+	return result;
+}
 
 //Take a line segment and returns number of edges which the line segment cuts through
 int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
