@@ -386,8 +386,6 @@ string drawGraph(vector< vector< int> > &graph, vector<point>& points){
 
 
 int cutThrough(lineSegment l1, lineSegment l2){
-	//point A = l1.p; point B = l1.q;
-	//point C = l2.p; point D = l2.q;
 	point AC; 
 	AC.x = l2.p.x - l1.p.x; 
 	AC.y = l2.p.y - l1.p.y;
@@ -471,11 +469,18 @@ vector<point> middlePoints(point pA, point pB){
 		allMiddlePoints.push_back(p);
 	}
 	else{
+		
+		double unitX = (pB.x - pA.x)/size;
+		double unitY = (pB.y - pA.y)/size;
 		size--;
-		double x = min(pA.x + 1, pB.x + 1); 
-		double y = ((x - pA.x)*(pB.y - pA.y)/(pB.x - pA.x)) + pA.y;
+		double x = pA.x;
+		double y = pA.y;
+		//double x = min(pA.x + 1, pB.x + 1); 
+		//double y = ((x - pA.x)*(pB.y - pA.y)/(pB.x - pA.x)) + pA.y;
 		for(int i = 0; i < size; i++){
-			point p(x + i, y + i);
+			x += unitX;
+			y += unitY;
+			point p(x, y);
 			allMiddlePoints.push_back(p);
 		}
 	}
