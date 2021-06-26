@@ -518,7 +518,7 @@ class Homotopy{
             temp2.y = nextY + WIDTH*(normalIn.q.y - normalIn.p.y);
             
             tempLine.p = temp1;  tempLine.q = temp2;
-            if(numberOfCuttingThrough(polygons, tempLine) == 0){
+            if(numberOfTouchingPoints(polygons, tempLine) == 0){
                 moveBothPoints(tempLine, normalIn, polygons, rightDirectionRoute);
             }
             else{
@@ -533,6 +533,10 @@ class Homotopy{
                 
                 if(pIsInside ^ qIsInside){
                     rotateOnePoint(currentPoint, pIsInside, qIsInside, temp1, temp2, arr, polygons, rightDirectionRoute);
+                }
+
+                if(pIsInside && qIsInside){
+                    rightDirectionRoute.push_back(currentPoint);
                 }
                     
             }
@@ -595,6 +599,10 @@ class Homotopy{
                     double arr[4] = {nextX, nextY, currX, currY};
                     getToRightSide(route.at(i), normalIn, polygons, arr, rightDirectionRoute);
                     
+                }
+                cout<<endl;
+                for(int j = 0; j < rightDirectionRoute.size(); j++){
+                    cout<<"("<<rightDirectionRoute.at(j).x<<", "<<rightDirectionRoute.at(j).y<<") ";
                 }
                 prevX = currX;             prevY = currY;
                 currX = nextX;             currY = nextY;
