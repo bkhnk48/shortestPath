@@ -258,7 +258,7 @@ int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double
 			//if(crossesNumber[from][to]==0){
 				//Call dist function to calculate the distance
 				double distance = dist(points[from_point_index],points[to_point_index]);
-				cout<<"Dist from "<<from_point_index<<" ("<<points[from_point_index].x<<", "<<points[from_point_index].y<<") to ("<<points[to_point_index].x<<", "<<points[to_point_index].y<<") = "<<distance<<endl;
+				//cout<<"Dist from "<<from_point_index<<" ("<<points[from_point_index].x<<", "<<points[from_point_index].y<<") to ("<<points[to_point_index].x<<", "<<points[to_point_index].y<<") = "<<distance<<endl;
 
 				graphDistance[from].push_back(distance);
 				graph[from].push_back(to);
@@ -270,31 +270,36 @@ int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double
 }
 
 bool samePolygonButNotNeighbor(lineSegment l, vector<vector<lineSegment> > polygons){
-	bool found_P = false, found_Q = false;
+	bool found_P = false, found_Q = false, found_both = false;
 	for(int i = 0; i < polygons.size(); i++){
-		found_P = false; found_Q = false;
+		found_P = false; found_Q = false; found_both = false;
 		for(int j = 0; j < polygons.at(i).size(); j++)
 		{
-			if(!found_P){
+			if(!found_P && !found_both)
+			{
 				if(l.p == polygons.at(i).at(j).p || l.p == polygons.at(i).at(j).q)
 				{
-					if(!(l.q == polygons.at(i).at(j).q) && !(l.q == polygons.at(i).at(j).p))
+					found_P = true;
+					if((l.q == polygons.at(i).at(j).q) || (l.q == polygons.at(i).at(j).p))
 					{
-						found_P = true;
+						found_both = true;
+						return false;
 					}
 				}
 			}
 			
-			if(!found_Q){
+			if(!found_Q && !found_both){
 				if(l.q == polygons.at(i).at(j).p || l.q == polygons.at(i).at(j).q)
 				{
-					if(!(l.p == polygons.at(i).at(j).q) && !(l.p == polygons.at(i).at(j).p))
+					found_Q = true;
+					if((l.p == polygons.at(i).at(j).q) || (l.p == polygons.at(i).at(j).p))
 					{
-						found_Q = true;
+						found_both = true;
+						return false;
 					}
 				}
 			}
-			if(found_P && found_Q)
+			if(found_P && found_Q && !found_both)
 				return true;
 		}
 	}
@@ -316,7 +321,7 @@ int numberOfVirtualCrossing(vector < vector < int > > &crossesNumber,vector<vect
 					l.p = points[i];
 					l.q = points[j];
 					c = numberOfCuttingThrough(polygons, l);
-					
+
 					if(c == 0){
 						if(samePolygonButNotNeighbor(l, polygons)){
 							c = 1;
@@ -331,7 +336,7 @@ int numberOfVirtualCrossing(vector < vector < int > > &crossesNumber,vector<vect
 				
 				//c = numberOfCuttingThrough(polygons, l);
 				//if(d != c){
-				cout<<"("<<points[i].x<<", "<<points[i].y<<") => ("<<points[j].x<<", "<<points[j].y<<") c = "<<crossesNumber[i][j]<<endl;
+				//cout<<"("<<points[i].x<<", "<<points[i].y<<") => ("<<points[j].x<<", "<<points[j].y<<") c = "<<crossesNumber[i][j]<<endl;
 				//}
 		}
 	}
