@@ -199,7 +199,50 @@ class RefinePolygons : public BuildingPolygons{
             }
 
             if(cnt == 4){
-                return; 
+                double dis_1 = euclid_distance(s_point, p_o1);
+                double dis_2 = euclid_distance(s_point, p_o2);
+                double dis_3 = euclid_distance(s_point, p_o3);
+                double dis_4 = euclid_distance(s_point, p_o4);
+
+                if(dis_1 > dis_2){
+                	swap_point(p_o1, p_o2);
+                	swap_double(dis_1, dis_2);
+                }
+
+                if(dis_1 > dis_3){
+                	swap_point(p_o1, p_o3);
+                	swap_double(dis_1, dis_3);
+                }
+
+                if(dis_1 > dis_4){
+                	swap_point(p_o1, p_o4);
+                	swap_double(dis_1, dis_4);
+                } // after step, p_o1 is point nearest start point
+                // next step, we need swap p_o4 is nearest end point
+
+                dis_2 = euclid_distance(e_point, p_o2);
+                dis_3 = euclid_distance(e_point, p_o3);
+                dis_4 = euclid_distance(e_point, p_o4);
+
+                if(dis_4 > dis_2){
+                	swap_point(p_o4, p_o2);
+                	swap_double(dis_4, dis_2);
+                }
+
+                if(dis_4 > dis_3){
+                	swap_point(p_o4, p_o2);
+                	swap_double(dis_4, dis_4);
+                } // after step p_o4 is nearest end point
+
+                // next step, we must sort p_o2, p_o3 such as: p_o2 near p_o1 than p_o3 and p_o3 near p_o4 than p_o2
+                dis_2 = euclid_distance(p_o1, p_o2);
+                dis_3 = euclid_distance(p_o1, p_o3);
+
+                if(dis_2 > dis_3){
+                	swap_point(p_o2, p_o3);
+                	swap_double(dis_2, dis_3);
+                }
+
             }
         }
 
@@ -262,6 +305,12 @@ class RefinePolygons : public BuildingPolygons{
             int first = -1, last = -1, polygonIndex = -1;
             point p_o1, p_o2, p_o3, p_o4; // init 4 vertices of AV
             int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+//            int nmrSameVertices = 0;
+//            polygonIndex = 0;
+//            pA = point(2,10);
+//            pB = point(3,10);
+//            pC = point(2,9);
+//            pA = point(3,9);
             
             #pragma region
             if(nmrSameVertices == 4){
@@ -350,6 +399,8 @@ class RefinePolygons : public BuildingPolygons{
 
 
                 }
+
+                points.push_back(p_o1);
             } else if(nmrSameVertices == 2){
                 getVerticesAV(p_o1, p_o2, p_o3, p_o4);
 
@@ -397,6 +448,8 @@ class RefinePolygons : public BuildingPolygons{
 
                 }
 
+                points.push_back(p_o1);
+                points.push_back(p_o2);
             } else if(nmrSameVertices == 1){
                 getVerticesAV(p_o1, p_o2, p_o3, p_o4);
 
@@ -445,6 +498,10 @@ class RefinePolygons : public BuildingPolygons{
 
 
                 }
+
+                points.push_back(p_o1);
+                points.push_back(p_o2);
+                points.push_back(p_o3);
             } else if(nmrSameVertices == 0){
                 int breakIndex = 0;
                 // find lineSegment contain point of AV
@@ -457,13 +514,80 @@ class RefinePolygons : public BuildingPolygons{
                             break;
                         }
                 }
-
                 
+                lineSegment lineCommon = polygons.at(polygonIndex).at(breakIndex);
+                point p_common = lineCommon.p;
+
+                removePoint(p_common);
+                removeLineSegment(p_common, polygonIndex);
+
+                // reconnect 1 line when delete
+                if(!this->polygons.at(polygonIndex).empty()){
+					bool foundBreak = false;
+					int breakIndex = 0;
+					double x1, x2, y1, y2;
+					findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
+
+					lineSegment line;
+					line.p = p_common;
+					line.q.x = x1;
+					line.q.y = y1;
+
+					this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line);
+					points.push_back(p_common);
+                }
+
+                // ...
+                if(!this->polygons.at(polygonIndex).empty()){
+					bool foundBreak = false;
+					int breakIndex = 0;
+					double x1, x2, y1, y2;
+					findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
+
+					point s_point, e_point;
+					s_point.x = x1;
+					s_point.y = y1;
+					e_point.x = x2;
+					e_point.y = y2;
+
+					// sort p_o1, p_o2, p_o3, p_o4
+					sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 2);
+
+					if(foundBreak){
+						lineSegment line1;
+						lineSegment line2;
+						lineSegment line3;
+						lineSegment line4;
+						lineSegment line5;
+
+						line1.p = s_point;
+						line1.q = p_o1;
+
+						line2.p = p_o1; // line2.p == line1.q
+						line2.q = p_o2;
+
+						line3.p = p_o2; // line3.p == line2.q
+						line3.q = p_o3;
+
+						line4.p = p_o3; // line4.p == line3.q
+						line4.q = p_o4;
+
+						line5.p = p_o4; // line5.p = line4.q
+						line4.q = e_point;
+
+						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
+						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
+						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line3);
+						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line4);
+						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 5), line5);
+					}
+				}
+                points.push_back(p_o1);
+				points.push_back(p_o2);
+				points.push_back(p_o3);
+				points.push_back(p_o4);
             }
             #pragma endregion 
-        
-            
-
         }
 };
 #endif
