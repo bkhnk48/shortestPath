@@ -545,14 +545,29 @@ vector<point> middlePoints(point pA, point pB){
 }
 
 
-bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
-	double x;
-	double y;
-	bool OyDirection = true;
-	if(line.p.x == line.q.x){
-		OyDirection = false;
+bool isEdge(lineSegment l, vector<lineSegment> polygon){
+	bool found_P = false, found_Q = false, found_both = false;
+	for(int i = 0; i < polygon.size(); i++){
+		//found_P = false; found_Q = false; found_both = false;
+		//for(int j = 0; j < polygons.at(i).size(); j++)
+		{
+			if((l.p == polygon.at(i).p && l.q == polygon.at(i).q)
+				|| (l.p == polygon.at(i).q && l.q == polygon.at(i).p)
+				)
+			{
+				return true;
+			}	
+		}
 	}
 
+	return false;
+	
+}
+
+bool cutThroughPolygons(lineSegment line, vector<vector<lineSegment> > &polygons){
+	double x;
+	double y;
+	
 	vector<point> allMiddlePoints = middlePoints(line.p, line.q);
 
 	for(int i = 0; i < polygons.size(); i++){
@@ -560,7 +575,9 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 		for(int j = 0; j < allMiddlePoints.size(); j++){
 			x = allMiddlePoints.at(j).x; 
 			y = allMiddlePoints.at(j).y;
-			if(x != FLT_MAX && y != FLT_MAX){
+			//if(x != FLT_MAX && y != FLT_MAX)
+			if(!isEdge(line, polygons[i]))
+			{
 				//int c = pnpoly(polygons[i], x, y, OyDirection);
 				int c = wn_PnPoly(allMiddlePoints.at(j), polygons[i]);
 				if(c != 0)
