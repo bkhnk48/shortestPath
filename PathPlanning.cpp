@@ -61,8 +61,8 @@ class PlanningController{
             auto time1 = std::chrono::steady_clock::now();
 
             //Call function that calculate the distance
-            //calculateNumberOfCrossings(crossesNumber, polygons, points);
-            numberOfVirtualCrossing(crossesNumber, polygons, points);
+            calculateNumberOfCrossings(crossesNumber, polygons, points);
+            //numberOfVirtualCrossing(crossesNumber, polygons, points);
 
             auto time2 = std::chrono::steady_clock::now();
 
@@ -82,6 +82,7 @@ class PlanningController{
             //if(config.printGraph)
             {
                 getRawRoute(rawRoute, route, points);
+                cout<<"Raw route"<<endl;
                 for(int i = 0; i < route.size(); i++){
                     cout<<route.at(i)<<" ";
                 }
@@ -92,8 +93,8 @@ class PlanningController{
                 Homotopy* homotopy = new Homotopy(generator->getWIDTH());
                 //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 //cout<<"After sideStepRouting=========="<<endl;
-                //for(int i = 0; i < shortestPath.size(); i++){
-                //    cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
+                //for(int i = 0; i < sideSteps.size(); i++){
+                //    cout<<"\t"<<i<<") Point("<<sideSteps.at(i).x<<", "<<sideSteps.at(i).y<<") "<<endl;
                 //}
                 vector<point> rightDirection = homotopy->calculateClockwise(shortestPath, polygons
                         );
@@ -113,8 +114,8 @@ class PlanningController{
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
-                                                                    shortestPath, 
-                                                                    //rightDirection,
+                                                                    //shortestPath, 
+                                                                    rightDirection,
                                                                     //sideSteps,
                                                                     paths,
                                                                     graph);
@@ -173,9 +174,11 @@ class PlanningController{
                     l.p = p1;
                     l.q = p2;
                     
-                    int crossing = numberOfCuttingThrough(polygons,l);
-                    if(crossing == 0){
-                        if(!insidePolygon(l, polygons)){
+                    //int crossing = numberOfCuttingThrough(polygons,l);
+                    bool crossing = cutThroughPolygons(l, polygons);
+                    if(!crossing){
+                        //if(!insidePolygon(l, polygons))
+                        {
                             group.push_back(l);
                         }
                     }
@@ -185,10 +188,10 @@ class PlanningController{
                     }
                 }
             }
-            //cout<<"\nsize of group "<<group.size()<<endl;
-            //for(int  i = 0; i < group.size();  i++){
-            //    cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
-            //}
+            cout<<"\nsize of group "<<group.size()<<endl;
+            for(int  i = 0; i < group.size();  i++){
+                cout<<"Line ("<<group.at(i).p.x<<", "<<group.at(i).p.y<<")=>("<<group.at(i).q.x<<", "<<group.at(i).q.y<<")\n";
+            }
             
             double  **PATHS     = (double**)  NULL;  //edgelerin uzunluklari
             int **ROUTE2     = (int**) NULL;   //ROUTE mizi belirleriz
