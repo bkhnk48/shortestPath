@@ -421,13 +421,15 @@ class Homotopy{
             int cP, cQ;
             for(int i = 0; i < polygons.size(); i++){
                 if(!(*pIsInside)){
-                    cP = pnpoly(polygons[i], tempLine.p.x, tempLine.p.y, OyDirection);
-                    if(cP % 2 == 1)
+                    //cP = pnpoly(polygons[i], tempLine.p.x, tempLine.p.y, OyDirection);
+                    cP = wn_PnPoly(tempLine.p, polygons[i]);
+                    if(cP != 0)
                         *pIsInside = true;
                 }
                 if(!(*qIsInside)){
-                    cQ = pnpoly(polygons[i], tempLine.q.x, tempLine.q.y, OyDirection);
-                    if(cQ % 2 == 1)
+                    //cQ = pnpoly(polygons[i], tempLine.q.x, tempLine.q.y, OyDirection);
+                    cQ = wn_PnPoly(tempLine.q, polygons[i]);
+                    if(cQ != 0)
                         *qIsInside = true;
                 }
                 if((*pIsInside) && (*qIsInside))
