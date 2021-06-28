@@ -110,22 +110,26 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     }
     double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
     double xT, yT;
+    point pT;
     for(int i = 1; i < n; i++){
         sin_omega_T = sin_omega_T*cos_deltaOmega + cos_omega_T*sin_deltaOmega;
         cos_omega_T = cos_omega_T*cos_deltaOmega - sin_omega_T*sin_deltaOmega;
         xT = centerX + R*cos_omega_T;
         yT = centerY + R*sin_omega_T;
+        pT.x = xT; pT.y = yT;
         for(int j = 0; j < polygons.size(); j++){
             if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
                 yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
             {
-                int check = pnpoly(polygons.at(j), xT, yT, true);
-                if(check % 2 == 1){
+                int check = wn_PnPoly(pT, polygons.at(j));//, xT, yT, true);
+                if(check != 0)
+                    return -1;//collide with one of the polygons
+                /*if(check % 2 == 1){
                     return -1;//collide with one of the polygons
                 }
                 check = pnpoly(polygons.at(j), xT, yT, false);
                 if(check % 2 == 1)
-                    return -1;//collide with one of the polygons
+                    return -1;//collide with one of the polygons*/
             }
         }
         point p(xT, yT);
