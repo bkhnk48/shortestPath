@@ -246,10 +246,6 @@ int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double
 
 			size_t to_point_index = j;
 
-			if(from_point_index == 2 && j == 9){
-				cout<<"DEBUG "<<crossesNumber[from_point_index][j]<<endl;
-			}
-
 			size_t to = (i/numberOfPoints)*numberOfPoints+crossesNumber[from_point_index][j]*numberOfPoints+j;
 
 
@@ -258,7 +254,7 @@ int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double
 			//if(crossesNumber[from][to]==0){
 				//Call dist function to calculate the distance
 				double distance = dist(points[from_point_index],points[to_point_index]);
-				//cout<<"Dist from "<<from_point_index<<" ("<<points[from_point_index].x<<", "<<points[from_point_index].y<<") to ("<<points[to_point_index].x<<", "<<points[to_point_index].y<<") = "<<distance<<endl;
+				cout<<"Dist from "<<from_point_index<<" ("<<points[from_point_index].x<<", "<<points[from_point_index].y<<") to ("<<points[to_point_index].x<<", "<<points[to_point_index].y<<") = "<<distance<<endl;
 
 				graphDistance[from].push_back(distance);
 				graph[from].push_back(to);
@@ -269,106 +265,19 @@ int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double
 	return 0;
 }
 
-bool samePolygonButNotNeighbor(lineSegment l, vector<vector<lineSegment> > polygons){
-	bool found_P = false, found_Q = false, found_both = false;
-	for(int i = 0; i < polygons.size(); i++){
-		found_P = false; found_Q = false; found_both = false;
-		for(int j = 0; j < polygons.at(i).size(); j++)
-		{
-			if(!found_P && !found_both)
-			{
-				if(l.p == polygons.at(i).at(j).p || l.p == polygons.at(i).at(j).q)
-				{
-					found_P = true;
-					if((l.q == polygons.at(i).at(j).q) || (l.q == polygons.at(i).at(j).p))
-					{
-						found_both = true;
-						return false;
-					}
-				}
-			}
-			
-			if(!found_Q && !found_both){
-				if(l.q == polygons.at(i).at(j).p || l.q == polygons.at(i).at(j).q)
-				{
-					found_Q = true;
-					if((l.p == polygons.at(i).at(j).q) || (l.p == polygons.at(i).at(j).p))
-					{
-						found_both = true;
-						return false;
-					}
-				}
-			}
-			if(found_P && found_Q && !found_both)
-				return true;
-		}
-	}
-
-	return false;
-	
-}
-
-int numberOfVirtualCrossing(vector < vector < int > > &crossesNumber,vector<vector<lineSegment> > &polygons, vector<point> &points){
-	crossesNumber.resize(points.size(),vector<int>(points.size()));
-	int c, d;
-	for(size_t i=0;i<points.size();i++){
-		for(size_t j=0;j<points.size();j++){
-				if(i == j){
-					crossesNumber[i][j] = (i == 0) ? 0 : 2;
-				}
-				else{
-					lineSegment l;
-					l.p = points[i];
-					l.q = points[j];
-					c = numberOfCuttingThrough(polygons, l);
-
-					if(c == 0){
-						if(samePolygonButNotNeighbor(l, polygons)){
-							c = 1;
-						}
-					}	
-					crossesNumber[i][j] = c;
-				}
-
-				//Call numberOfCrossings, which 
-				//suprise suprise counts the number of crossings
-				//d = numberOfCrossings(polygons,l);
-				
-				//c = numberOfCuttingThrough(polygons, l);
-				//if(d != c){
-				//cout<<"("<<points[i].x<<", "<<points[i].y<<") => ("<<points[j].x<<", "<<points[j].y<<") c = "<<crossesNumber[i][j]<<endl;
-				//}
-		}
-	}
-	return 0;	
-
-}
 
 int calculateNumberOfCrossings(vector < vector < int > > &crossesNumber,vector<vector<lineSegment> > &polygons, vector<point> &points){
 	crossesNumber.resize(points.size(),vector<int>(points.size()));
-	int c, d;
+	//int c, d;
 	for(size_t i=0;i<points.size();i++){
 		for(size_t j=0;j<points.size();j++){
 				lineSegment l;
 				l.p = points[i];
 				l.q = points[j];
-
-				if(i == 2 && j == 9)
-				{
-					cout<<"DEBUG 282"<<endl;	
-				}
-
-				//Call numberOfCrossings, which 
-				//suprise suprise counts the number of crossings
-				d = numberOfCrossings(polygons,l);
-				crossesNumber[i][j] = d;
-				c = numberOfCuttingThrough(polygons, l);
-				//if(d != c)
-				{
-					cout<<"("<<l.p.x<<", "<<l.p.y<<") => ("<<l.q.x<<", "<<l.q.y<<") d = "<<d<<", c = "<<c<<endl;
-				}
+				crossesNumber[i][j] = (i == j) ?  numberOfCrossings(polygons,l) : ( cutThroughPolygons(l, polygons) ? 1 : 0);
 		}
 	}
+	crossesNumber[0][0] = 0;
 	return 0;	
 }
 
