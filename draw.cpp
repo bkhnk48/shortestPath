@@ -448,59 +448,74 @@ int touch(lineSegment l1, lineSegment l2){
 		AD_AB = AD.x*AB.y - AD.y*AB.x;
 		product = AC_AB*AD_AB;
 		if(isNegative && product <= 0){
-			return 1; //cut through
+			return 1; //touch through
 		}
 
 		if(isZero && product < 0)
 		{
-			return 1;
+			return 1;//touch
 		}
 	}
 	return 0;
 
 }
 
+// isLeft(): tests if a point is Left|On|Right of an infinite line.
+//    Input:  three points P0, P1, and P2
+//    Return: >0 for P2 left of the line through P0 and P1
+//            =0 for P2  on the line
+//            <0 for P2  right of the line
+inline int isLeft( point P0, point P1, point P2 )
+{
+    return ( (P1.x - P0.x) * (P2.y - P0.y)
+            - (P2.x -  P0.x) * (P1.y - P0.y) );
+}
+//===================================================================
+
+//===================================================================
+
+// wn_PnPoly(): winding number test for a point in a polygon
+//      Input:   P = a point,
+//               V[] = vertex points of a polygon V[n+1] with V[n]=V[0]
+//      Return:  wn = the winding number (=0 only when P is outside)
+int wn_PnPoly(point P, vector<lineSegment> polygon)
+{
+    int    wn = 0;    // the  winding number counter
+	int n = polygon.size();
+    // loop through all edges of the polygon
+    for (int i = 0; i < n; i++) {   // edge from V[i] to  V[i+1]
+        if (polygon[i].p.y <= P.y) {          // start y <= P.y
+            if (polygon[i].q.y  > P.y)      // an upward crossing
+                 if (isLeft( polygon[i].p, polygon[i].q, P) > 0)  // P left of  edge
+                     ++wn;            // have  a valid up intersect
+        }
+        else {                        // start y > P.y (no test needed)
+            if (polygon[i].q.y  <= P.y)     // a downward crossing
+                 if (isLeft( polygon[i].p, polygon[i].q, P) < 0)  // P right of  edge
+                     --wn;            // have  a valid down intersect
+        }
+    }
+    return wn;
+}
+//===================================================================
+
 //If the return value is an odd, the point definitely is inside polygon
-int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
+/*int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
 {
 	int i, j, c = 0;
 	int nEdges = polygon.size();
-	double min = INT64_MAX;
-	for(int i = 0; i < nEdges; i++){
-		if(OyDirection){
-			if(polygon[i].p.y < min){
-					min = polygon[i].p.y;
-			}
-		}
-		else{
-			if(polygon[i].p.x < min){
-					min = polygon[i].p.x;
-			}
-		}
-	}
-	min--;
+	
 
 	point pA(testx, testy);
-	point pB(min, min);
-	if(OyDirection){
-		pB.x = testx;
-	}
-	else{
-		pB.y = testy;
-	}
-
-	lineSegment line;
-	line.p = pA;
-	line.q = pB;
-
 	int result = 0;
 
 	for(size_t j = 0; j < polygon.size();j++){
-		result += cutThrough(line,polygon[j]);
+		
+		//result += touch(line,polygon[j]);
 	}
 
 	return result;
-}
+}*/
 
 
 vector<point> middlePoints(point pA, point pB){
@@ -546,8 +561,9 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 			x = allMiddlePoints.at(j).x; 
 			y = allMiddlePoints.at(j).y;
 			if(x != FLT_MAX && y != FLT_MAX){
-				int c = pnpoly(polygons[i], x, y, OyDirection);
-				if(c % 2 == 1)
+				//int c = pnpoly(polygons[i], x, y, OyDirection);
+				int c = wn_PnPoly(allMiddlePoints.at(j), polygons[i]);
+				if(c != 0)
 					return true;
 			}
 		}
@@ -555,7 +571,7 @@ bool insidePolygon(lineSegment line, vector<vector<lineSegment> > &polygons){
 	return false;
 }
 
-//Take a line segment and returns number of edges which the line segment cuts through
+//Take a line segment and returns number of edges which the line segment touches
 int numberOfTouchingPoints(vector<vector<lineSegment> > &polygons, lineSegment l){
 	int result = 0;
 	for(size_t i = 0; i < polygons.size();i++){
