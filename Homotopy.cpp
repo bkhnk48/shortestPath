@@ -87,11 +87,13 @@ class Homotopy{
                 }
 
                 //if(!insidePolygon(temp1, polygons)){
-                if(numberOfCuttingThrough(polygons, temp1) == 0){
+                //if(numberOfCuttingThrough(polygons, temp1) == 0){
+                if(!cutThroughPolygons(temp1, polygons)){
                     addNewPoints(temp1, i, route.size(), sideSteps, normalIn);
                 }
                 //else if(!insidePolygon(temp2, polygons)){
-                else if(numberOfCuttingThrough(polygons, temp2) == 0){
+                //else if(numberOfCuttingThrough(polygons, temp2) == 0){
+                else if(!cutThroughPolygons(temp2, polygons)){
                     addNewPoints(temp2, i, route.size(), sideSteps, normalOut);
                 }
 
@@ -157,7 +159,8 @@ class Homotopy{
 
                 #pragma endregion
 
-                if(numberOfCuttingThrough(polygons, temp1) == 0){
+                //if(numberOfCuttingThrough(polygons, temp1) == 0){
+                if(!cutThroughPolygons(temp1, polygons)){
                     //temp1 means normalIn (+)
                     sides.push_back(LeftSide);
                     
@@ -175,7 +178,8 @@ class Homotopy{
                     
                     s = "RightSide";
                 }
-                else if(numberOfCuttingThrough(polygons, temp2) == 0){
+                //else if(numberOfCuttingThrough(polygons, temp2) == 0){
+                else if(!cutThroughPolygons(temp2, polygons)){
                     //temp2 means normalOut (-)
                     sides.push_back(RightSide);
                     s = "LeftSide";
@@ -385,7 +389,8 @@ class Homotopy{
 
             //tempLine.p = temp1;  tempLine.q = temp2;
             bool isValid = true;
-            while(numberOfCuttingThrough(polygons, tempLine) != 0)
+            //while(numberOfCuttingThrough(polygons, tempLine) != 0)
+            while(cutThroughPolygons(tempLine, polygons))
             {
                 isValid = false;
                 tempLine.p.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
@@ -480,6 +485,7 @@ class Homotopy{
                 tempLine.q.x = moveX;
                 tempLine.q.y = moveY;
             }while(numberOfCuttingThrough(polygons, tempLine) == 0);
+            //}while(!cutThroughPolygons(tempLine, polygons));
 
             moveX -= WIDTH*normalIn.q.x;
             moveY -= WIDTH*normalIn.q.y;
