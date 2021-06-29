@@ -465,10 +465,10 @@ int touch(lineSegment l1, lineSegment l2){
 //    Return: >0 for P2 left of the line through P0 and P1
 //            =0 for P2  on the line
 //            <0 for P2  right of the line
-inline int isLeft( point P0, point P1, point P2 )
+inline int isLeft( point P0, point P1, point P2, double scale = 1)
 {
-    return ( (P1.x - P0.x) * (P2.y - P0.y)
-            - (P2.x -  P0.x) * (P1.y - P0.y) );
+    return ( (P1.x*scale - P0.x*scale) * (P2.y*scale - P0.y*scale)
+            - (P2.x*scale -  P0.x*scale) * (P1.y*scale - P0.y*scale) );
 }
 //===================================================================
 
@@ -478,20 +478,20 @@ inline int isLeft( point P0, point P1, point P2 )
 //      Input:   P = a point,
 //               V[] = vertex points of a polygon V[n+1] with V[n]=V[0]
 //      Return:  wn = the winding number (=0 only when P is outside)
-int wn_PnPoly(point P, vector<lineSegment> polygon)
+int wn_PnPoly(point P, vector<lineSegment> polygon, double scale = 1)
 {
     int    wn = 0;    // the  winding number counter
 	int n = polygon.size();
     // loop through all edges of the polygon
     for (int i = 0; i < n; i++) {   // edge from V[i] to  V[i+1]
-        if (polygon[i].p.y <= P.y) {          // start y <= P.y
-            if (polygon[i].q.y  > P.y)      // an upward crossing
-                 if (isLeft( polygon[i].p, polygon[i].q, P) > 0)  // P left of  edge
+        if (polygon[i].p.y*scale <= P.y*scale) {          // start y <= P.y
+            if (polygon[i].q.y*scale  > P.y*scale)      // an upward crossing
+                 if (isLeft( polygon[i].p, polygon[i].q, P, scale) > 0)  // P left of  edge
                      ++wn;            // have  a valid up intersect
         }
         else {                        // start y > P.y (no test needed)
-            if (polygon[i].q.y  <= P.y)     // a downward crossing
-                 if (isLeft( polygon[i].p, polygon[i].q, P) < 0)  // P right of  edge
+            if (polygon[i].q.y*scale  <= P.y*scale)     // a downward crossing
+                 if (isLeft( polygon[i].p, polygon[i].q, P, scale) < 0)  // P right of  edge
                      --wn;            // have  a valid down intersect
         }
     }
