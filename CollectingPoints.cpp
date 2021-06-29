@@ -49,10 +49,6 @@ class CollectingPoints{
                 current = route[current];
             }
 
-            /*for(int  i = 0; i < trajectory.size();  i++){
-                cout<<"\n*("<<trajectory.at(i).x<<", "<<trajectory.at(i).y<<")";
-            }*/
-
             int vertexNum = trajectory.size();
             
             SHORTEST_PATH = MALLOC( double , vertexNum );
@@ -75,7 +71,6 @@ class CollectingPoints{
                 double x2 = trajectory.at(j).x;
                 double y2 = trajectory.at(j).y;
                 PATHS[i][j] = sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
-                //cout<<PATHS[i][j]<<" ";
             }
 
             for(int i = 0; i < group.size(); i++){
@@ -93,10 +88,8 @@ class CollectingPoints{
             {
                 for(int j = 0; j < vertexNum; j++)
                 {
-                    //cout<<PATHS[i][j]<<" ";
                     ROUTE2[i][j] = -1;
                 }
-                //cout<<"\n";
             }
 
             vector<point> shortestPath;
@@ -106,17 +99,13 @@ class CollectingPoints{
             {
                 for(int j=0; j<vertexNum; j++)
                 {
-                    //cout<<" "<<ROUTE2[i][j]<<",";
                     if(ROUTE2[i][j] != -1){
                         shortestPath.push_back(trajectory.at(ROUTE2[i][j]));
                         double x = trajectory.at(ROUTE2[i][j]).x;
                         double y = trajectory.at(ROUTE2[i][j]).y;
-                        //cout<<"("<<x<<", "<<y<<") ";
                     }
                 }
-                //cout<<"\n";
             }
-            //cout<<"\n\n";
             return shortestPath;
         }
 
