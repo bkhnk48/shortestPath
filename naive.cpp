@@ -265,16 +265,48 @@ int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double
 	return 0;
 }
 
+bool hasPointInside(lineSegment line, vector<point> &points, int i, int j){
+	double product, P2_P0_X, P2_P0_Y, P2_P1_X, P2_P1_Y;
+	for(size_t k = 0; k < points.size(); k++){
+		if(k != i && k != j){
+			if(isLeft(line.p, line.q, points[k]) == 0){
+				//Assume P0 is line.p; P1 is line.q, P2 is points[k]
+				//we need to check whether P2 is between P0 and P1 or not?
+				P2_P0_X = line.p.x - points[k].x;
+				P2_P0_Y = line.p.y - points[k].y;
+
+				P2_P1_X = line.q.x - points[k].x;
+				P2_P1_Y = line.q.y - points[k].y;
+
+				product = P2_P0_X*P2_P1_X + P2_P0_Y*P2_P1_Y;
+				if(product < 0)
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
 
 int calculateNumberOfCrossings(vector < vector < int > > &crossesNumber,vector<vector<lineSegment> > &polygons, vector<point> &points){
 	crossesNumber.resize(points.size(),vector<int>(points.size()));
-	//int c, d;
+	int c;
 	for(size_t i=0;i<points.size();i++){
 		for(size_t j=0;j<points.size();j++){
 				lineSegment l;
 				l.p = points[i];
 				l.q = points[j];
-				crossesNumber[i][j] = (i == j) ?  numberOfCrossings(polygons,l) : ( cutThroughPolygons(l, polygons) ? 1 : 0);
+				if(i == j){
+					crossesNumber[i][j] = numberOfCrossings(polygons,l);	
+				}
+				else{
+					c = cutThroughPolygons(l, polygons);
+					if(c == 0){
+						c = hasPointInside(l, points, i, j) ? 1 : 0;
+					}
+					crossesNumber[i][j] = c;
+				}
+				//crossesNumber[i][j] = (i == j) ?  numberOfCrossings(polygons,l) : ( cutThroughPolygons(l, polygons) ? 1 : 0);
 		}
 	}
 	crossesNumber[0][0] = 0;
