@@ -254,7 +254,8 @@ int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double
 			//if(crossesNumber[from][to]==0){
 				//Call dist function to calculate the distance
 				double distance = dist(points[from_point_index],points[to_point_index]);
-				cout<<"Dist from "<<from_point_index<<" ("<<points[from_point_index].x<<", "<<points[from_point_index].y<<") to ("<<points[to_point_index].x<<", "<<points[to_point_index].y<<") = "<<distance<<endl;
+				//cout<<"Dist from "<<from_point_index<<" ("<<points[from_point_index].x<<", "
+				//<<points[from_point_index].y<<") to ("<<points[to_point_index].x<<", "<<points[to_point_index].y<<") = "<<distance<<endl;
 
 				graphDistance[from].push_back(distance);
 				graph[from].push_back(to);
