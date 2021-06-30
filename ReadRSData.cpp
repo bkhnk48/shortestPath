@@ -111,18 +111,35 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
     double xT, yT;
     point pT;
+    double rangesX_MIN[polygons.size()], rangesX_MAX[polygons.size()];;
+    double rangesY_MIN[polygons.size()], rangesY_MAX[polygons.size()];
+    for(int j = 0; j < polygons.size(); j++){
+        rangesX_MIN[j] = ranges.at(j)->xMin*RATIO;
+        rangesX_MAX[j] = ranges.at(j)->xMax*RATIO;
+        rangesY_MIN[j] = ranges.at(j)->yMin*RATIO;
+        rangesY_MAX[j] = ranges.at(j)->yMax*RATIO;
+    }
+    double xT_RATIO, yT_RATIO;
     for(int i = 1; i < n; i++){
         sin_omega_T = sin_omega_T*cos_deltaOmega + cos_omega_T*sin_deltaOmega;
         cos_omega_T = cos_omega_T*cos_deltaOmega - sin_omega_T*sin_deltaOmega;
         xT = centerX + R*cos_omega_T;
         yT = centerY + R*sin_omega_T;
         pT.x = xT; pT.y = yT;
+        xT_RATIO = xT*RATIO;
+        yT_RATIO = yT*RATIO;
         for(int j = 0; j < polygons.size(); j++){
-            if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
-                yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
+            //if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
+            //    yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
+            if(xT_RATIO >= rangesX_MIN[j] && xT_RATIO <= rangesX_MAX[j] &&
+                yT_RATIO >= rangesY_MIN[j] && yT_RATIO <= rangesY_MIN[j])
             {
                 int check = wn_PnPoly(pT, polygons.at(j), RATIO);//, xT, yT, true);
                 if(check != 0){
+                    /*delete [] rangesX_MAX;
+                    delete [] rangesX_MIN;
+                    delete [] rangesY_MAX;
+                    delete [] rangesY_MIN;*/
                     return -1;//collide with one of the polygons
                 }
                 /*if(check % 2 == 1){
@@ -136,6 +153,10 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         point p(xT, yT);
         section->possiblePoints.push_back(p);
     }
+    /*delete [] rangesX_MAX;
+    delete [] rangesX_MIN;
+    delete [] rangesY_MAX;
+    delete [] rangesY_MIN;*/
     return 1;
 }
 
@@ -237,6 +258,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
     bool firstSetSide = true; enum SIDE side = LeftSide;
     while(numPaths > 0){
         Path *path = new Path();
+        
         getline(infile, line);      istringstream segment(line);
         if(segment >> strTemp1 >> i >> strTemp2 >> x >> y >> strTemp3 >> nextX >> nextY)
         {
@@ -250,7 +272,8 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                     int error = 0;
                     PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
 
-                    if(error == 0){
+                    if(error == 0)
+                    {
                         if(firstSetSide){
                             if(segment->sections.at(0)->steering == 'R')
                                 side = RightSide;
@@ -275,6 +298,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
             }
         }
         numPaths--;
+        //cout<<"Num paths: "<<numPaths<<endl;
         result.push_back(path);
     }
 
