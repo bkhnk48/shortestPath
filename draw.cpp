@@ -602,7 +602,7 @@ int numberOfTouchingPoints(vector<vector<lineSegment> > &polygons, lineSegment l
 }
 
 //Take a line segment and returns number of edges which the line segment cuts through
-int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
+int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l, int* edge = NULL){
 	int result = 0;
 	for(size_t i = 0; i < polygons.size();i++){
 		//int numberOfvaolation=0;
