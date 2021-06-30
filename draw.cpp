@@ -482,15 +482,16 @@ int wn_PnPoly(point P, vector<lineSegment> polygon, double scale = 1)
 {
     int    wn = 0;    // the  winding number counter
 	int n = polygon.size();
+	double P_y_Scale = P.y*scale;
     // loop through all edges of the polygon
     for (int i = 0; i < n; i++) {   // edge from V[i] to  V[i+1]
-        if (polygon[i].p.y*scale <= P.y*scale) {          // start y <= P.y
-            if (polygon[i].q.y*scale  > P.y*scale)      // an upward crossing
+        if (polygon[i].p.y*scale <= P_y_Scale) {          // start y <= P.y
+            if (polygon[i].q.y*scale  > P_y_Scale)      // an upward crossing
                  if (isLeft( polygon[i].p, polygon[i].q, P, scale) > 0)  // P left of  edge
                      ++wn;            // have  a valid up intersect
         }
         else {                        // start y > P.y (no test needed)
-            if (polygon[i].q.y*scale  <= P.y*scale)     // a downward crossing
+            if (polygon[i].q.y*scale  <= P_y_Scale)     // a downward crossing
                  if (isLeft( polygon[i].p, polygon[i].q, P, scale) < 0)  // P right of  edge
                      --wn;            // have  a valid down intersect
         }
