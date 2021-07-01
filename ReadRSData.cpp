@@ -132,7 +132,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
             //if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
             //    yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
             if(xT_RATIO >= rangesX_MIN[j] && xT_RATIO <= rangesX_MAX[j] &&
-                yT_RATIO >= rangesY_MIN[j] && yT_RATIO <= rangesY_MIN[j])
+                yT_RATIO >= rangesY_MIN[j] && yT_RATIO <= rangesY_MAX[j])
             {
                 int check = wn_PnPoly(pT, polygons.at(j), RATIO);//, xT, yT, true);
                 if(check != 0){
