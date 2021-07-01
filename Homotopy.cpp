@@ -216,9 +216,6 @@ class Homotopy{
             return rightDirectionRoute;
         }
 
-    
-
-    //private:
         double getMABCOfLine(lineSegment line, double *A, double *B, double *C){
             double x1 = line.p.x;
             double x2 = line.q.x;
@@ -230,11 +227,28 @@ class Homotopy{
             double M = sqrt((*A)*(*A) + (*B)*(*B));
             return M;
         }
+
+        double minDistanceFromPointToPolygon(point &p, vector<lineSegment> &polygon){
+            double M = 0, A = 0, B = 0, C = 0;
+            double minD = FLT_MAX, D = 0;
+            for(int i = 0; i < polygon.size(); i++){
+                lineSegment line = polygon.at(i);
+                M = getMABCOfLine(line, &A, &B, &C);
+                D = std::abs(A*p.x + B*p.y + C)/M;
+                minD = minD > D ? D : minD;
+            }
+            return minD;
+        }
+
+        bool shortestDistanceRequirement(point &p, vector< vector<lineSegment>> &polygons, double minD){
+            for(int i = 0; i < polygons.size(); i++){
+                if(minDistanceFromPointToPolygon(p, polygons.at(i)) < minD){
+                    return false;
+                }
+            }
+            return true;
+        }
         
-        /*double distanceFrom(point p, double M, double A, double B, double C){
-            double d_P = std::abs(A*p.x + B*p.y + C);
-            return d_P;
-        }*/
 
         int getStepsAlongNormalVector(lineSegment temp1, lineSegment normalIn, vector< vector<lineSegment > > &polygons){
             int result = 0, result1 = 0, result2 = 0;
@@ -490,16 +504,30 @@ class Homotopy{
 
             getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);    
 
+            int step = 0;
+
+            double changedX = WIDTH*normalIn.q.x;
+            double changedY = WIDTH*normalIn.q.y;
+
             do{
-                moveX += WIDTH*normalIn.q.x;
-                moveY += WIDTH*normalIn.q.y;
+                moveX += changedX;
+                moveY += changedY;
                 tempLine.q.x = moveX;
                 tempLine.q.y = moveY;
+                step++;
             }while(numberOfCuttingThrough(polygons, tempLine) == 0);
             //}while(!cutThroughPolygons(tempLine, polygons));
 
-            moveX -= WIDTH*normalIn.q.x;
-            moveY -= WIDTH*normalIn.q.y;
+            
+            do{
+                moveX -= changedX;
+                moveY -= changedY;
+                //tempLine.q.x -= backwardX;
+                //tempLine.q.y -= backwardY;
+                tempLine.q.x = moveX;
+                tempLine.q.y = moveY;
+            }while(!shortestDistanceRequirement(tempLine.q, polygons, WIDTH));
+        
             if(qIsInside){
                 temp1.x = moveX;
                 temp1.y = moveY;
