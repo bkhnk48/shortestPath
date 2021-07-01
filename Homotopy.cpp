@@ -219,6 +219,22 @@ class Homotopy{
     
 
     //private:
+        double getMABCOfLine(lineSegment line, double *A, double *B, double *C){
+            double x1 = line.p.x;
+            double x2 = line.q.x;
+            double y1 = line.p.y;
+            double y2 = line.q.y;
+            *A = y2 - y1;
+            *B = x1 - x2;
+            *C = y1*x2 - x1*y2;
+            double M = sqrt((*A)*(*A) + (*B)*(*B));
+            return M;
+        }
+        
+        /*double distanceFrom(point p, double M, double A, double B, double C){
+            double d_P = std::abs(A*p.x + B*p.y + C);
+            return d_P;
+        }*/
 
         int getStepsAlongNormalVector(lineSegment temp1, lineSegment normalIn, vector< vector<lineSegment > > &polygons){
             int result = 0, result1 = 0, result2 = 0;
@@ -242,7 +258,8 @@ class Homotopy{
             lineSegment scaleNormal(temp1.p, lastPoint);
 
             //vector<int> collisions;
-            double x1, x2, y1, y2, A, B, C;
+            double //x1, x2, y1, y2, 
+                        A, B, C;
             double x_P = temp1.p.x, y_P = temp1.p.y;
             double x_Q = temp1.q.x, y_Q = temp1.q.y;
             //A = y2 - y1;
@@ -255,14 +272,8 @@ class Homotopy{
             {
                 for(int j = 0; j < polygons.at(i).size(); j++){
                     if(cutThrough(polygons.at(i).at(j), scaleNormal)){
-                        x1 = polygons.at(i).at(j).p.x;
-                        x2 = polygons.at(i).at(j).q.x;
-                        y1 = polygons.at(i).at(j).p.y;
-                        y2 = polygons.at(i).at(j).q.y;
-                        A = y2 - y1;
-                        B = x1 - x2;
-                        C = y1*x2 - x1*y2;
-                        double M = sqrt(A*A + B*B);
+                        double M = //sqrt(A*A + B*B);
+                                    getMABCOfLine(polygons.at(i).at(j), &A, &B, &C);
                         d_P = std::abs(A*x_P + B*y_P + C);
                         d_Q = std::abs(A*x_Q + B*y_Q + C);
                         //d = min(d_P, d_Q)/M;
