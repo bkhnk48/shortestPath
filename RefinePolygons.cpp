@@ -447,7 +447,7 @@ class RefinePolygons : public BuildingPolygons{
 
 
                 }
-
+                // push new point to points pool
                 points.push_back(p_o1);
                 points.push_back(p_o2);
             } else if(nmrSameVertices == 1){
@@ -498,23 +498,29 @@ class RefinePolygons : public BuildingPolygons{
 
 
                 }
-
+                // push new point to points pool
                 points.push_back(p_o1);
                 points.push_back(p_o2);
                 points.push_back(p_o3);
             } else if(nmrSameVertices == 0){
-                int breakIndex = 0;
-                // find lineSegment contain point of AV
-                for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
-                    if(isPointInsideLineSegment(polygons.at(polygonIndex).at(i), this->pA)
-                        || isPointInsideLineSegment(polygons.at(polygonIndex).at(i), this->pB)
-                        || isPointInsideLineSegment(polygons.at(polygonIndex).at(i), this->pC)
-                        || isPointInsideLineSegment(polygons.at(polygonIndex).at(i), this->pD)){
-                            breakIndex = i;
-                            break;
-                        }
+            	int check_A = isPointInsidePolygon(polygons, polygonIndex, this->pA); // find index line segment include point pA
+            	int check_B = isPointInsidePolygon(polygons, polygonIndex, this->pB); // find index line segment include point pB
+            	int check_C = isPointInsidePolygon(polygons, polygonIndex, this->pC); // find index line segment include point pC
+            	int check_D = isPointInsidePolygon(polygons, polygonIndex, this->pD); // find index line segment include point pD
+
+                // find lineSegment contain point of AV, only find one
+            	int breakIndex = 0;
+                if(check_A != -1){
+                	breakIndex = check_A;
+                } else if(check_B != -1){
+                	breakIndex = check_B;
+                } else if(check_C != -1){
+                	breakIndex = check_C;
+                } else if(check_D != -1){
+                	breakIndex = check_D;
                 }
                 
+
                 lineSegment lineCommon = polygons.at(polygonIndex).at(breakIndex);
                 point p_common = lineCommon.p;
 
@@ -537,7 +543,7 @@ class RefinePolygons : public BuildingPolygons{
 					points.push_back(p_common);
                 }
 
-                // ...
+                // connect polygons again
                 if(!this->polygons.at(polygonIndex).empty()){
 					bool foundBreak = false;
 					int breakIndex = 0;
@@ -582,6 +588,7 @@ class RefinePolygons : public BuildingPolygons{
 						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 5), line5);
 					}
 				}
+                // push new point to points pool
                 points.push_back(p_o1);
 				points.push_back(p_o2);
 				points.push_back(p_o3);

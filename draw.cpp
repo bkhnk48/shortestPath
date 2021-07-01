@@ -325,6 +325,18 @@ bool isPointInsideLineSegment(lineSegment line, point p){
 	return false;
 }
 
+// check point p inside polygon
+int isPointInsidePolygon(vector< vector<lineSegment> > polygons ,int polygonIndex, point p){
+	for(int i=0; i<polygons.at(polygonIndex).size(); i++){
+		lineSegment line = polygons.at(polygonIndex).at(i);
+		if(isPointInsideLineSegment(line, p)){
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 int pnpoly(vector<lineSegment> polygon, double testx, double testy, bool OyDirection)
 {
 	int i, j, c = 0;
