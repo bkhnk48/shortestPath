@@ -465,7 +465,7 @@ int touch(lineSegment l1, lineSegment l2){
 //    Return: >0 for P2 left of the line through P0 and P1
 //            =0 for P2  on the line
 //            <0 for P2  right of the line
-inline int isLeft( point P0, point P1, point P2, double scale = 1)
+inline double isLeft( point P0, point P1, point P2, double scale = 1)
 {
     return ( (P1.x*scale - P0.x*scale) * (P2.y*scale - P0.y*scale)
             - (P2.x*scale -  P0.x*scale) * (P1.y*scale - P0.y*scale) );
