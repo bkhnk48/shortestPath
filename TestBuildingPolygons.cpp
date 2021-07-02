@@ -226,8 +226,33 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 	cout<<"Finish choosing path of AVs"<<endl;
 }
 
+void testInsidePolygon(){
+	point p(5.936, 12.02);
+	point p0(0, 36);
+	point p1(16, 36);
+	point p2(16, 18);
+	point p3(12, 18);
+	point p4(12, 12);
+	point p5(6, 12);
+	point p6(6, 18);
+	point p7(0, 18);
+	point arr[] = {p0, p1, p2, p3, p4, p5, p6, p7};
+	int N = 8;
+	vector<lineSegment> polygon;
+	for(int i = 0; i < N; i++){
+		lineSegment line;
+		line.p = arr[i];
+		line.q = arr[(i + 1) % N];
+		polygon.push_back(line);
+	}
+
+	int check = wn_PnPoly(p, polygon);
+	cout<<"Check = "<<check<<endl;
+}
+
 
 int main(int argc, const char* argv[]){
+	//testInsidePolygon();
 	testFullAVsInStacks();
 	return 0;
 }
