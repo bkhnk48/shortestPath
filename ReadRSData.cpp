@@ -138,6 +138,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                 if(check != 0){
                     return -1;//collide with one of the polygons
                 }
+                int signedValue = getSignedValue(section);
                 /*if(check % 2 == 1){
                     return -1;//collide with one of the polygons
                 }
