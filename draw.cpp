@@ -633,14 +633,20 @@ vector<double> getXYOfOtherSide(double X, double Y, int signedValue, double cent
 	return result;
 }
 
+int getSignedValue(Section *section){
+	int signedValue = ((section->steering == 'R' && section->side == RightSide)
+						|| (section->side == LeftSide && section->steering == 'L')) ? -1 : 1;
+	return signedValue;
+}
+
 /*
 * this function return a string which is combination of two substrings
 the first one is drew path trajectory of one AV's side 
 the second one is the other path of the remaining AV's side 
 */
 string drawCircleArc(Section *section, int WIDTH){
-	int signedValue = ((section->steering == 'R' && section->side == RightSide)
-						|| (section->side == LeftSide && section->steering == 'L')) ? -1 : 1;
+	int signedValue = getSignedValue(section);
+	
 	string str = "";  string strSub = ""; 	string strCenter = "";
 	str.append("<path d=\"M ");			strCenter.append("<path d=\"M ");			strSub.append("<path d=\"M ");
 
