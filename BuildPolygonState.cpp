@@ -209,7 +209,7 @@ class BuildingPolygons{
                             case 0: type = AV_EDGE; break;
                             case 1: type = HENCE; break;
                             case 2: type = GATE; break;
-                            case 3: type = NONE; break;
+                            //case 3: type = NONE; break;//never reach
                         }
                         lineSegment line(p, next, type);
                         edges.push_back(line);
