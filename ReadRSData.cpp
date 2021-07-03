@@ -33,8 +33,10 @@ bool isVirtualGate(vector<lineSegment> polygon){
     return false;
 }
 
-bool collisionOfTrajectoryAndPolygon(point pT, double X_MIN, double X_MAX, double Y_MIN, 
-                                        double Y_MAX, vector<lineSegment> polygon){
+bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, double X_MIN = FLT_MIN, 
+                                        double X_MAX = FLT_MAX, 
+                                        double Y_MIN = FLT_MIN, 
+                                        double Y_MAX = FLT_MAX){
     double xT_RATIO = pT.x*RATIO;
     double yT_RATIO = pT.y*RATIO;
     if(xT_RATIO >= X_MIN && xT_RATIO <= X_MAX &&
@@ -200,8 +202,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                 for(int k = 0; k < 4; k++){
                     if(collisionOfTrajectoryAndPolygon(arr[k]
                                                         //pC
+                                                        , polygons.at(j)
                                                         , rangesX_MIN[j], 
-                                rangesX_MAX[j], rangesY_MIN[j], rangesY_MAX[j], polygons.at(j))){
+                                rangesX_MAX[j], rangesY_MIN[j], rangesY_MAX[j])){
                         return -1;//collide with one of the polygons
                     }
                 }
