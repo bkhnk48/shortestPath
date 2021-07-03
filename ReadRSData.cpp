@@ -25,12 +25,22 @@ using namespace std;
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
+bool isVirtualGate(vector<lineSegment> polygon){
+    for(int i = 0; i < polygon.size(); i++){
+        if(polygon.at(i).type == NONE)
+            return true;
+    }
+    return false;
+}
+
 bool collisionOfTrajectoryAndPolygon(point pT, double X_MIN, double X_MAX, double Y_MIN, 
                                         double Y_MAX, vector<lineSegment> polygon){
     double xT_RATIO = pT.x*RATIO;
     double yT_RATIO = pT.y*RATIO;
     if(xT_RATIO >= X_MIN && xT_RATIO <= X_MAX &&
-                yT_RATIO >= Y_MIN && yT_RATIO <= Y_MAX)
+                yT_RATIO >= Y_MIN && yT_RATIO <= Y_MAX
+        && polygon.at(0).type != GATE
+                )
     {
         int check = wn_PnPoly(pT, polygon, RATIO);//, xT, yT, true);
         if(check != 0){
@@ -44,6 +54,10 @@ bool collisionOfTrajectoryAndPolygon(point pT, double X_MIN, double X_MAX, doubl
         if(check % 2 == 1)
             return -1;//collide with one of the polygons*/
     }
+    if(polygon.at(0).type == GATE)
+        cout<<"\nGATE\n"<<endl;
+    //else
+    //    cout<<"\nTYPE OF EDGE: "<<polygon.at(0).type<<endl;
     return false;
 }
 
@@ -147,11 +161,12 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     R1 = signedValue*WIDTH/RATIO + R;
     //cout<<"R1 = "<<R1<<endl;
     //point pA, pB, pC, pD;
-    point p0, p1;
+    point p0, p1, p2, p3;
     point arr[] = {//pA, pB, 
                     //pC, pD
-                    p0, p1
+                    p0, p1, p2, p3
                     };
+    double LENGTH = 6;
     
     for(int i = 1; i < n; i++){
         sin_omega_T = sin_omega_T*cos_deltaOmega + cos_omega_T*sin_deltaOmega;
@@ -164,6 +179,12 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                     centerX + R1*cos_omega_T;
         arr[1].y = //v.at(1);
                     centerY + R1*sin_omega_T;
+        getNormalInAndOut(signedValue*WIDTH*cos_omega_T/RATIO, signedValue*WIDTH*sin_omega_T/RATIO, &xIn, &yIn);
+        
+        arr[2].x = arr[0].x + LENGTH*xIn;
+        arr[2].y = arr[0].y + LENGTH*yIn;
+        arr[3].x = arr[1].x + LENGTH*xIn;
+        arr[3].y = arr[1].y + LENGTH*yIn;
 
         xT_RATIO = xT*RATIO;
         yT_RATIO = yT*RATIO;
@@ -175,24 +196,29 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         for(int j = 0; j < polygons.size(); j++){
             //if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
             //    yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
-            for(int k = 0; k < 2; k++){
-                if(collisionOfTrajectoryAndPolygon(arr[k]
-                                                    //pC
-                                                    , rangesX_MIN[j], 
-                            rangesX_MAX[j], rangesY_MIN[j], rangesY_MAX[j], polygons.at(j))){
-                    return -1;//collide with one of the polygons
+            if(!isVirtualGate(polygons.at(j))){
+                for(int k = 0; k < 4; k++){
+                    if(collisionOfTrajectoryAndPolygon(arr[k]
+                                                        //pC
+                                                        , rangesX_MIN[j], 
+                                rangesX_MAX[j], rangesY_MIN[j], rangesY_MAX[j], polygons.at(j))){
+                        return -1;//collide with one of the polygons
+                    }
                 }
+                /*if(xT_RATIO >= rangesX_MIN[j] && xT_RATIO <= rangesX_MAX[j] &&
+                    yT_RATIO >= rangesY_MIN[j] && yT_RATIO <= rangesY_MAX[j])
+                {
+                    int check = wn_PnPoly(pC, polygons.at(j), RATIO);//, xT, yT, true);
+                    if(check != 0){
+                        return -1;//collide with one of the polygons
+                    }
+                    int signedValue = getSignedValue(section);
+                    
+                }*/
             }
-            /*if(xT_RATIO >= rangesX_MIN[j] && xT_RATIO <= rangesX_MAX[j] &&
-                yT_RATIO >= rangesY_MIN[j] && yT_RATIO <= rangesY_MAX[j])
-            {
-                int check = wn_PnPoly(pC, polygons.at(j), RATIO);//, xT, yT, true);
-                if(check != 0){
-                    return -1;//collide with one of the polygons
-                }
-                int signedValue = getSignedValue(section);
-                
-            }*/
+            else{
+                cout<<"That didnt count"<<endl;
+            }
         }
         point p(xT, yT);
         section->possiblePoints.push_back(p);
@@ -321,7 +347,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                                 side = RightSide;
                             firstSetSide = false;
                         }
-                        segment->setSide(side);
+                        segment->setSide(side);//It seems no need to use side
 
                         if(path->segments.size() == 0){
                             path->segments.push_back(segment);
