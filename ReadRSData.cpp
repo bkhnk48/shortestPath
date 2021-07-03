@@ -25,6 +25,25 @@ using namespace std;
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
+int checkCollisionRegardVirtualGate(lineSegment &line, vector<vector<lineSegment>> &polygons)
+{
+    int collision = 0;
+    int c = 0;
+    for(int i = 0; i < polygons.size(); i++){
+        if(!isVirtualGate(polygons.at(i))){
+            for(size_t j=0;j<polygons[i].size();j++){
+                c = cutThrough(line,polygons[i][j]);
+                if(c != 0){
+                    cout<<"Collision at "<<i <<" "<<j<<". More specifically, with ("; 
+                    cout<<polygons[i][j].p.x<<", "<<polygons[i][j].p.y<<") ("<<polygons[i][j].q.x <<", "<<polygons[i][j].q.y<<") ";
+                    cout<<" This polygon has "<<polygons.at(i).size()<<" edges"<<endl;
+                }
+                collision += c;
+            }
+        }
+    }
+    return collision;
+}
 bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, double X_MIN = FLT_MIN, 
                                         double X_MAX = FLT_MAX, 
                                         double Y_MIN = FLT_MIN, 
