@@ -311,9 +311,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
             if(possiblePathSegment >> strTemp1 >> numOfSegmentsInPath){
                 while(numOfSegmentsInPath > 0){
                     int error = 0;
-                    if(numPaths == 1){
-                        cout<<"DEBUG"<<endl;
-                    }
+                    
                     PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error, WIDTH);
 
                     if(error == 0)
