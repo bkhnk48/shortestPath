@@ -204,7 +204,14 @@ class BuildingPolygons{
                         point p(walls[i][j][0], walls[i][j][1]);
                         checkedPoints.push_back(p);
                         point next(walls[i][(j + 1) % countVertices][0], walls[i][(j + 1) % countVertices][1]);
-                        lineSegment line(p, next, walls[i][j][2] == 2 ? GATE : HENCE);
+                        TypeOfLineSegment type = NONE;
+                        switch(walls[i][j][2]){
+                            case 0: type = AV_EDGE; break;
+                            case 1: type = HENCE; break;
+                            case 2: type = GATE; break;
+                            case 3: type = NONE; break;
+                        }
+                        lineSegment line(p, next, type);
                         edges.push_back(line);
                     }
                 }
