@@ -108,6 +108,8 @@ struct lineSegment {
 		this->p = p;
 		this->q = q;
 		this->type = type;
+		if(type == NONE)
+			cout<<"NONE"<<endl;
 	};
 
 	lineSegment(){
