@@ -77,7 +77,6 @@ int*** loadWall(int ROWS, int COLS, int WIDTH_OF_GATE, int WIDTH_SLOT, int LENGT
     walls[1][3][0] = -WIDTH_LINE;   walls[1][3][1] = walls[1][2][1];
     walls[1][4][0] = -WIDTH_LINE;   walls[1][4][1] = walls[0][5][1] + WIDTH_OF_GATE*WIDTH_SLOT;
     walls[1][5][0] = walls[1][4][0] - 1;   walls[1][5][1] = walls[1][4][1] ;
-    
     /*
         Clockwise
        (1, 0)
