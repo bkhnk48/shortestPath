@@ -25,11 +25,32 @@ using namespace std;
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
+bool collisionOfTrajectoryAndPolygon(point pT, double X_MIN, double X_MAX, double Y_MIN, 
+                                        double Y_MAX, vector<lineSegment> polygon){
+    double xT_RATIO = pT.x*RATIO;
+    double yT_RATIO = pT.y*RATIO;
+    if(xT_RATIO >= X_MIN && xT_RATIO <= X_MAX &&
+                yT_RATIO >= Y_MIN && yT_RATIO <= Y_MAX)
+    {
+        int check = wn_PnPoly(pT, polygon, RATIO);//, xT, yT, true);
+        if(check != 0){
+            return true;//collide with one of the polygons
+        }
+        
+        /*if(check % 2 == 1){
+            return -1;//collide with one of the polygons
+        }
+        check = pnpoly(polygons.at(j), xT, yT, false);
+        if(check % 2 == 1)
+            return -1;//collide with one of the polygons*/
+    }
+    return false;
+}
 
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges)
+int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, int WIDTH)
 {
     double p1X = section->beganX;
     double p1Y = section->beganY;
@@ -54,7 +75,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double x = p2X - p1X;
     double y = p2Y - p1Y;
 
-    double R = 1;
+    double R = 1; double R1 = 1;
 
     double xIn = 0, yIn = 0, xOut = 0, yOut = 0;
     if(section->param < 0){
@@ -105,13 +126,15 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
 
     //rotatedAngle > 0 <=> clockwise <=> omega reduces
     double sin_deltaOmega = (section->param > 0 ? -SMALL_ANGLE : SMALL_ANGLE);
+    int signedValue = section->steering == 'R' ? 1 : -1;
     if(LEFT == section->steering){
         sin_deltaOmega = -sin_deltaOmega;
+        //signedValue = -signedValue;
     }
     double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
     double xT, yT;
-    point pT;
-    double rangesX_MIN[polygons.size()], rangesX_MAX[polygons.size()];;
+    //point pT;
+    double rangesX_MIN[polygons.size()], rangesX_MAX[polygons.size()];
     double rangesY_MIN[polygons.size()], rangesY_MAX[polygons.size()];
     for(int j = 0; j < polygons.size(); j++){
         rangesX_MIN[j] = ranges.at(j)->xMin*RATIO;
@@ -120,32 +143,56 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         rangesY_MAX[j] = ranges.at(j)->yMax*RATIO;
     }
     double xT_RATIO, yT_RATIO;
+    
+    R1 = signedValue*WIDTH/RATIO + R;
+    //cout<<"R1 = "<<R1<<endl;
+    //point pA, pB, pC, pD;
+    point p0, p1;
+    point arr[] = {//pA, pB, 
+                    //pC, pD
+                    p0, p1
+                    };
+    
     for(int i = 1; i < n; i++){
         sin_omega_T = sin_omega_T*cos_deltaOmega + cos_omega_T*sin_deltaOmega;
         cos_omega_T = cos_omega_T*cos_deltaOmega - sin_omega_T*sin_deltaOmega;
         xT = centerX + R*cos_omega_T;
         yT = centerY + R*sin_omega_T;
-        pT.x = xT; pT.y = yT;
+        arr[0].x = xT; arr[0].y = yT;
+        //v = getXYOfOtherSide(xT, yT, signedValue, centerX, centerY, WIDTH);
+        arr[1].x = //v.at(0);
+                    centerX + R1*cos_omega_T;
+        arr[1].y = //v.at(1);
+                    centerY + R1*sin_omega_T;
+
         xT_RATIO = xT*RATIO;
         yT_RATIO = yT*RATIO;
+        //if(xT_RATIO >= 0 && yT_RATIO <= 30 && yT_RATIO >= 24){
+        if(i >= 50){
+            //cout<<"DEBUG"<<endl;
+        }
+        
         for(int j = 0; j < polygons.size(); j++){
             //if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
             //    yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
-            if(xT_RATIO >= rangesX_MIN[j] && xT_RATIO <= rangesX_MAX[j] &&
+            for(int k = 0; k < 2; k++){
+                if(collisionOfTrajectoryAndPolygon(arr[k]
+                                                    //pC
+                                                    , rangesX_MIN[j], 
+                            rangesX_MAX[j], rangesY_MIN[j], rangesY_MAX[j], polygons.at(j))){
+                    return -1;//collide with one of the polygons
+                }
+            }
+            /*if(xT_RATIO >= rangesX_MIN[j] && xT_RATIO <= rangesX_MAX[j] &&
                 yT_RATIO >= rangesY_MIN[j] && yT_RATIO <= rangesY_MAX[j])
             {
-                int check = wn_PnPoly(pT, polygons.at(j), RATIO);//, xT, yT, true);
+                int check = wn_PnPoly(pC, polygons.at(j), RATIO);//, xT, yT, true);
                 if(check != 0){
                     return -1;//collide with one of the polygons
                 }
                 int signedValue = getSignedValue(section);
-                /*if(check % 2 == 1){
-                    return -1;//collide with one of the polygons
-                }
-                check = pnpoly(polygons.at(j), xT, yT, false);
-                if(check % 2 == 1)
-                    return -1;//collide with one of the polygons*/
-            }
+                
+            }*/
         }
         point p(xT, yT);
         section->possiblePoints.push_back(p);
@@ -155,7 +202,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
 }
 
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
-                            vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error
+                            vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error, int WIDTH
                             ){
     PathSegment *segment = new PathSegment();
     segment->beganX = x;       segment->beganY = y;
@@ -185,7 +232,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     int check = 1;
                     section->beganX = startX; section->beganY = startY; 
                     if(section->steering != 'S'){
-                        check = getPointsOfCircle(section, scaledPolygons, ranges);
+                        check = getPointsOfCircle(section, scaledPolygons, ranges, WIDTH);
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
@@ -238,7 +285,7 @@ void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &
     }
 }
 
-vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons){
+vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons, int WIDTH){
     string line;
     string strTemp, strTemp1, strTemp2, strTemp3;
 
@@ -264,7 +311,10 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
             if(possiblePathSegment >> strTemp1 >> numOfSegmentsInPath){
                 while(numOfSegmentsInPath > 0){
                     int error = 0;
-                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error);
+                    if(numPaths == 1){
+                        cout<<"DEBUG"<<endl;
+                    }
+                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error, WIDTH);
 
                     if(error == 0)
                     {
@@ -311,18 +361,19 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
             vector<Section*> sections = segments.at(j)->sections;
             int numSections = sections.size();
             for(int k = 0; k < numSections; k++){
+                int signedValue = getSignedValue(sections.at(k));
                 cout<<"\t\t("<<RATIO*(sections.at(k)->beganX)<<", "<<RATIO*(sections.at(k)->beganY)
                     <<") to ("<<RATIO*(sections.at(k)->endedX)<<", "<<RATIO*(sections.at(k)->endedY)<<") param = "
                     <<sections.at(k)->param<<" traj = "<<sections.at(k)->typeOfTrajectory
                     <<" steering "<<sections.at(k)->steering
                     <<" along with "<<sections.at(k)->possiblePoints.size()
-                    <<" pts."<<endl;
+                    <<" pts. Signed value = "<<signedValue<<endl;
             }
         }
     }
 }
 
-vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons){
+vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons, int WIDTH){
 
     //vector<point> discreteTrajectory;
     vector<Path*> result; 
@@ -340,7 +391,7 @@ vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons)
     { 
         cout<<"number of paths: "<<numPaths<<endl;
         
-        result = readPath(infile, numPaths, polygons);
+        result = readPath(infile, numPaths, polygons, WIDTH);
         printReedSheppTrajectories(result);
     }
     cout<<"Close file"<<endl;
