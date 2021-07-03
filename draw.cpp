@@ -386,6 +386,13 @@ string drawGraph(vector< vector< int> > &graph, vector<point>& points){
 	return str;
 }
 
+bool isVirtualGate(vector<lineSegment> polygon){
+    for(int i = 0; i < polygon.size(); i++){
+        if(polygon.at(i).type == GATE)
+            return true;
+    }
+    return false;
+}
 
 int cutThrough(lineSegment l1, lineSegment l2){
 	point AC; 
