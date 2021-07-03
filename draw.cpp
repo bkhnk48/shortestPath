@@ -634,8 +634,10 @@ vector<double> getXYOfOtherSide(double X, double Y, int signedValue, double cent
 }
 
 int getSignedValue(Section *section){
-	int signedValue = ((section->steering == 'R' && section->side == RightSide)
-						|| (section->side == LeftSide && section->steering == 'L')) ? -1 : 1;
+	int signedValue = 
+	//					((section->steering == 'R' && section->side == RightSide)
+	//					|| (section->side == LeftSide && section->steering == 'L')) ? -1 : 1;
+	(section->steering == 'R') ? 1 : -1;
 	return signedValue;
 }
 
@@ -715,20 +717,21 @@ string drawLines(Section *section, int WIDTH){
 	double xNormal, yNormal;
 	//double xIn, yIn, xOut, yOut;
 	string str = "";
-	if(section->param > 0 && section->side == RightSide
-		|| (section->param < 0 && section->side == LeftSide)
-		 ){
+	//if(section->param > 0 && section->side == RightSide
+	//	|| (section->param < 0 && section->side == LeftSide)
+	//	 )
+		 {
 		getNormalInAndOut(section->endedX - section->beganX, 
 								section->endedY - section->beganY, NULL, NULL, 
 								&xNormal, &yNormal);
 		//xNormal = xOut;
 		//yNormal = yOut;
 	}
-	else{
-		getNormalInAndOut(section->endedX - section->beganX, 
-								section->endedY - section->beganY, 
-								&xNormal, &yNormal);
-	}
+	//else{
+	//	getNormalInAndOut(section->endedX - section->beganX, 
+	//							section->endedY - section->beganY, 
+	//							&xNormal, &yNormal);
+	//}
 
 	xNormal *= WIDTH*10;//To be honest, it should be xNormal *= WIDTH/RATIO
 	yNormal *= WIDTH*(-10);
@@ -747,28 +750,28 @@ string drawLines(Section *section, int WIDTH){
 
 	#pragma region draw the center axes
 	str.append("\n<line x1='");
-	str.append(to_string((section->beganX*RATIO*(10) - xNormal/2)));
+	str.append(to_string((section->beganX*RATIO*(10) + xNormal/2)));
 	str.append("' y1='");
-	str.append(to_string((section->beganY*RATIO*(-10)  - yNormal/2)));
+	str.append(to_string((section->beganY*RATIO*(-10)  + yNormal/2)));
 	str.append("' x2='");
-	str.append(to_string((section->endedX*RATIO*(10) - xNormal/2)));
+	str.append(to_string((section->endedX*RATIO*(10) + xNormal/2)));
 	str.append("' y2='");
-	str.append(to_string((section->endedY*RATIO*(-10) - yNormal/2)));
+	str.append(to_string((section->endedY*RATIO*(-10) + yNormal/2)));
 	str.append("' style=\"stroke:violet; fill:transparent\" />\n");
 	#pragma endregion
 
 	#pragma region draw the remaining side
 	str.append("\n<line x1='");
-	str.append(to_string((section->beganX*RATIO*(10) - xNormal)));
+	str.append(to_string((section->beganX*RATIO*(10) + xNormal)));
 	//To be honest, it should be (section->beganX + xNormal)*RATIO*(10). 
 	// But I use the shortcut to reduce number of FP arithmetic calculation
 
 	str.append("' y1='");
-	str.append(to_string((section->beganY*RATIO*(-10) - yNormal)));
+	str.append(to_string((section->beganY*RATIO*(-10) + yNormal)));
 	str.append("' x2='");
-	str.append(to_string((section->endedX*RATIO*(10) - xNormal)));
+	str.append(to_string((section->endedX*RATIO*(10) + xNormal)));
 	str.append("' y2='");
-	str.append(to_string((section->endedY*RATIO*(-10) - yNormal)));
+	str.append(to_string((section->endedY*RATIO*(-10) + yNormal)));
 	str.append("' style=\"stroke:blue; fill:transparent\" />\n");
 	#pragma endregion
 
