@@ -110,7 +110,7 @@ class PlanningController{
                 if(distance != -1){
                     
                     runPythonCode("test\\AllPossibleTrajectories.py", rightDirection, directionAtTheEnd);
-                    vector<Path*> paths = readRSFile("trajectory.txt", polygons);
+                    vector<Path*> paths = readRSFile("trajectory.txt", polygons, generator->getWIDTH());
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
