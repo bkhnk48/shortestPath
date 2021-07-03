@@ -515,8 +515,10 @@ class Homotopy{
                 tempLine.q.x = moveX;
                 tempLine.q.y = moveY;
                 step++;
-            }while(numberOfCuttingThrough(polygons, tempLine) == 0);
-            //}while(!cutThroughPolygons(tempLine, polygons));
+            }
+            //while(numberOfCuttingThrough(polygons, tempLine) == 0);
+            //while(!cutThroughPolygons(tempLine, polygons));
+            while(checkCollisionRegardVirtualGate(tempLine, polygons) == 0);
 
             //step = 0;
             int backward = 0;
@@ -530,6 +532,7 @@ class Homotopy{
                 tempLine.q.y = moveY;
                 backward++;
             }
+
             //while(!shortestDistanceRequirement(tempLine.q, polygons, WIDTH) 
                         //&& !cutThroughPolygons(tempLine, polygons) 
             //            && backward <= 1
@@ -613,7 +616,11 @@ class Homotopy{
                 line.q.x = nextX;
                 line.q.y = nextY;
 
-                if(numberOfCuttingThrough(polygons, line) == 0){
+                //if(numberOfCuttingThrough(polygons, line) == 0)
+                int collision = checkCollisionRegardVirtualGate(line, polygons);
+                    
+                if(collision == 0)                
+                {
                     double arr[4] = {nextX, nextY, currX, currY};
                     rotateOnePoint(route.at(preLast + 1), false, true, route.at(preLast), route.at(preLast + 1), arr, polygons, rightDirectionRoute);
                     alreadyAddedLastPoint = true;
