@@ -606,10 +606,15 @@ int numberOfTouchingPoints(vector<vector<lineSegment> > &polygons, lineSegment l
 //Take a line segment and returns number of edges which the line segment cuts through
 int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l){
 	int result = 0;
+	int c = 0;
 	for(size_t i = 0; i < polygons.size();i++){
 		//int numberOfvaolation=0;
 		for(size_t j=0;j<polygons[i].size();j++){
-			result += cutThrough(l,polygons[i][j]);
+			c = cutThrough(l,polygons[i][j]);
+			result += c;
+			//if(c != 0){
+			//	cout<<"Crossing at polygons: "<<i<<" "<<j<<endl;
+			//}
 		}
 	}
 	return result;
