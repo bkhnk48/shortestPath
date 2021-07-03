@@ -518,15 +518,22 @@ class Homotopy{
             }while(numberOfCuttingThrough(polygons, tempLine) == 0);
             //}while(!cutThroughPolygons(tempLine, polygons));
 
-            
-            do{
+            //step = 0;
+            int backward = 0;
+            //do
+            {
                 moveX -= changedX;
                 moveY -= changedY;
                 //tempLine.q.x -= backwardX;
                 //tempLine.q.y -= backwardY;
                 tempLine.q.x = moveX;
                 tempLine.q.y = moveY;
-            }while(!shortestDistanceRequirement(tempLine.q, polygons, WIDTH));
+                backward++;
+            }
+            //while(!shortestDistanceRequirement(tempLine.q, polygons, WIDTH) 
+                        //&& !cutThroughPolygons(tempLine, polygons) 
+            //            && backward <= 1
+            //            );
         
             if(qIsInside){
                 temp1.x = moveX;
