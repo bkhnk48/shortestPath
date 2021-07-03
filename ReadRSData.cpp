@@ -25,14 +25,6 @@ using namespace std;
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
-bool isVirtualGate(vector<lineSegment> polygon){
-    for(int i = 0; i < polygon.size(); i++){
-        if(polygon.at(i).type == GATE)
-            return true;
-    }
-    return false;
-}
-
 bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, double X_MIN = FLT_MIN, 
                                         double X_MAX = FLT_MAX, 
                                         double Y_MIN = FLT_MIN, 
