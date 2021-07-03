@@ -27,7 +27,7 @@ vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y,
 
 bool isVirtualGate(vector<lineSegment> polygon){
     for(int i = 0; i < polygon.size(); i++){
-        if(polygon.at(i).type == NONE)
+        if(polygon.at(i).type == GATE)
             return true;
     }
     return false;
