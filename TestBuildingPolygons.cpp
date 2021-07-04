@@ -16,6 +16,11 @@
 #include "BuiltInMap.cpp"
 #include <cassert>  
 #include <stdio.h>
+#ifdef __linux__ 
+    //linux code goes here
+#include <stdio_ext.h> // __fpurge(stdin);
+#endif
+
 
 //So we don't need to write std:: everywhere
 using namespace std;
@@ -37,7 +42,15 @@ void testFullAVsInStacks(){
 
 	bool loadBuiltInMap = false;
 
+	#ifdef __linux__ 
+    //linux code goes here
+	__fpurge(stdin);
+	#elif _WIN32
+	// windows code goes here
 	fflush(stdin);
+	#else
+	#endif
+
 	printf("Do you want to load built-in map? (Y/y/1 or N/n/0) ");
 	char load;
 	char scenario;	
@@ -47,7 +60,14 @@ void testFullAVsInStacks(){
 
 	if(load == 'Y' || load == 'y' || load == '1'){
 		printf("Which scenario you want? 0-9:  ");
+		#ifdef __linux__ 
+		//linux code goes here
+		__fpurge(stdin);
+		#elif _WIN32
+		// windows code goes here
 		fflush(stdin);
+		#else
+		#endif
 		input = scanf("%c", &scenario);
 		switch (scenario)
 		{
@@ -143,16 +163,38 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 	PlanningController* plan = new PlanningController();
 	while(!stopInput && countAllStacks(stacks, numOfStacks, rowsInStack, columnsInStack) > 0){
 		stopInput = true;
-		fflush(stdin);
 		printf("Type the number of stack: ");
+		#ifdef __linux__ 
+		//linux code goes here
+		__fpurge(stdin);
+		#elif _WIN32
+		// windows code goes here
+		fflush(stdin);
+		#else
+		#endif
 		input = scanf("%d", &indexOfStack);
 		if(input != EOF && indexOfStack >= 0 && indexOfStack < numOfStacks){
+			#ifdef __linux__ 
+			//linux code goes here
+			__fpurge(stdin);
+			#elif _WIN32
+			// windows code goes here
 			fflush(stdin);
+			#else
+			#endif
 			printf("Type the row index of AV: ");
 			input = scanf("%d", &i);
 			if(input != EOF && i >= 0 && i < rowsInStack){
 				fflush(stdin);
 				printf("Type the column index of AV: ");
+				#ifdef __linux__ 
+				//linux code goes here
+				__fpurge(stdin);
+				#elif _WIN32
+				// windows code goes here
+				fflush(stdin);
+				#else
+				#endif
 				input = scanf("%d", &j);
 				if(input != EOF && j >= 0 && j < columnsInStack){
 					if(stacks[indexOfStack].slotsOfAV[i][j] == 1 ||
@@ -161,11 +203,27 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 						point slot = generator->getSlot(indexOfStack, i, j);
 						fflush(stdin);
 						printf("Type the gate number (zero - 0 - for pick up an arbitrary point): ");
+						#ifdef __linux__ 
+						//linux code goes here
+						__fpurge(stdin);
+						#elif _WIN32
+						// windows code goes here
+						fflush(stdin);
+						#else
+						#endif
 						input = scanf("%d", &gateNumber);
 						if(input != EOF && gateNumber >= 0 && gateNumber <= 4){
 							if(gateNumber == 0){
 								fflush(stdin);
 								printf("The direction from rear to center (4/8/6/2)?: ");
+								#ifdef __linux__ 
+								//linux code goes here
+								__fpurge(stdin);
+								#elif _WIN32
+								// windows code goes here
+								fflush(stdin);
+								#else
+								#endif
 								input = scanf("%d", &directionAtTheEnd);
 								if(input == EOF || 
 										(directionAtTheEnd != 4 && directionAtTheEnd != 8 && directionAtTheEnd != 6 && directionAtTheEnd != 2))
@@ -177,6 +235,14 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 							fflush(stdin);
 							printf("Do you want to get in (I/i/1/l) or get out (O/o/0)?");
 							char Mode;
+							#ifdef __linux__ 
+							//linux code goes here
+							__fpurge(stdin);
+							#elif _WIN32
+							// windows code goes here
+							fflush(stdin);
+							#else
+							#endif
 							input = scanf("%c", &Mode);
 							if(input != EOF && (Mode == 'I' || Mode == 'O' || Mode == '1' || Mode == 'l' 
 									|| Mode == 'i' || Mode == 'o' || Mode == '0')){
