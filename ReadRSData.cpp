@@ -25,7 +25,7 @@ using namespace std;
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
-int checkCollisionRegardVirtualGate(lineSegment &line, vector<vector<lineSegment>> &polygons)
+int checkCollisionRegardlessVirtualGate(lineSegment &line, vector<vector<lineSegment>> &polygons)
 {
     int collision = 0;
     int c = 0;
