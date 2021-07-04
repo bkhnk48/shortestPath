@@ -518,7 +518,7 @@ class Homotopy{
             }
             //while(numberOfCuttingThrough(polygons, tempLine) == 0);
             //while(!cutThroughPolygons(tempLine, polygons));
-            while(checkCollisionRegardVirtualGate(tempLine, polygons) == 0);
+            while(checkCollisionRegardlessVirtualGate(tempLine, polygons) == 0);
 
             //step = 0;
             int backward = 0;
@@ -617,7 +617,7 @@ class Homotopy{
                 line.q.y = nextY;
 
                 //if(numberOfCuttingThrough(polygons, line) == 0)
-                int collision = checkCollisionRegardVirtualGate(line, polygons);
+                int collision = checkCollisionRegardlessVirtualGate(line, polygons);
                     
                 if(collision == 0)                
                 {
@@ -696,6 +696,12 @@ class Homotopy{
                 route.push_back(p);
                 route.push_back(q);
             }
+        }
+
+        vector<point> collisionFreeOfAVHead(vector<point> &route, vector< vector<lineSegment > > &polygons){
+            vector<point> rightDirectionRoute;
+
+            return rightDirectionRoute;
         }
 };
 #endif
