@@ -194,10 +194,10 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                     centerY + R1*sin_omega_T;
         getNormalInAndOut(signedValue*WIDTH*cos_omega_T/RATIO, signedValue*WIDTH*sin_omega_T/RATIO, &xIn, &yIn);
         
-        arr[2].x = arr[0].x + LENGTH*xIn;
-        arr[2].y = arr[0].y + LENGTH*yIn;
-        arr[3].x = arr[1].x + LENGTH*xIn;
-        arr[3].y = arr[1].y + LENGTH*yIn;
+        arr[2].x = arr[0].x + LENGTH*xIn/RATIO;
+        arr[2].y = arr[0].y + LENGTH*yIn/RATIO;
+        arr[3].x = arr[1].x + LENGTH*xIn/RATIO;
+        arr[3].y = arr[1].y + LENGTH*yIn/RATIO;
 
         xT_RATIO = xT*RATIO;
         yT_RATIO = yT*RATIO;
