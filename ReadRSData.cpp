@@ -168,6 +168,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         rangesX_MAX[j] = ranges.at(j)->xMax*RATIO;
         rangesY_MIN[j] = ranges.at(j)->yMin*RATIO;
         rangesY_MAX[j] = ranges.at(j)->yMax*RATIO;
+        if(j == 6){
+            //cout<<"j = 6"<<rangesX_MIN[j]<<"->"<<rangesX_MAX[j]<<", "<<rangesY_MIN[j]<<"->"<<rangesY_MAX[j]<<endl;
+        }
     }
     double xT_RATIO, yT_RATIO;
     
@@ -231,7 +234,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                 }*/
             }
             else{
-                cout<<"That didnt count"<<endl;
+                //cout<<"That didnt count"<<endl;
             }
         }
         point p(xT, yT);
@@ -312,13 +315,13 @@ void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &
             if(rangeOfAPolygon->yMin > p.y)
                 rangeOfAPolygon->yMin = p.y;
 
-            lineSegment aLine(p, q);
+            lineSegment aLine(p, q, polygons.at(i).at(j).type);
             lines.push_back(aLine);
         }
-        /*cout<<"Polygon "<<j<<" Max X = "
+        /*cout<<"Polygon "<<i<<" Max X = "
             <<RATIO*rangeOfAPolygon->xMax<<" "
             <<" Min X = "<<RATIO*rangeOfAPolygon->xMin
-            <<" Max Y = "<<RATIO*rangeOfAPolygon->yMax
+            <<" Max Y = "<<rangeOfAPolygon->yMax
             <<" Min Y = "<<RATIO*rangeOfAPolygon->yMin<<endl;*/
         ranges.push_back(rangeOfAPolygon);
         scaledPolygons.push_back(lines);
