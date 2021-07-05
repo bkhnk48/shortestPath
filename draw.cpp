@@ -193,8 +193,8 @@ class Range{
         double yMin;
 
         Range(){
-            this->xMax = FLT_MIN;
-            this->yMax = FLT_MIN;
+            this->xMax = -FLT_MAX;
+            this->yMax = -FLT_MAX;
             this->xMin = FLT_MAX;
             this->yMin = FLT_MAX;
         }
@@ -205,8 +205,8 @@ double max_y,max_x,min_y,min_x;
 void setMinMax(vector<vector<lineSegment>> &polygons
 				//, double *max_y, double *max_x, double *min_y, double *min_x
 							){
-	max_x = FLT_MIN;							
-	max_y = FLT_MIN;
+	max_x = -FLT_MAX;							
+	max_y = -FLT_MAX;
 	min_x = FLT_MAX;
 	min_y = FLT_MAX;
 	
