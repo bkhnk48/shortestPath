@@ -33,11 +33,11 @@ int checkCollisionRegardlessVirtualGate(lineSegment &line, vector<vector<lineSeg
         if(!isVirtualGate(polygons.at(i))){
             for(size_t j=0;j<polygons[i].size();j++){
                 c = cutThrough(line,polygons[i][j]);
-                if(c != 0){
+                /*if(c != 0){
                     cout<<"Collision at "<<i <<" "<<j<<". More specifically, with ("; 
                     cout<<polygons[i][j].p.x<<", "<<polygons[i][j].p.y<<") ("<<polygons[i][j].q.x <<", "<<polygons[i][j].q.y<<") ";
                     cout<<" This polygon has "<<polygons.at(i).size()<<" edges"<<endl;
-                }
+                }*/
                 collision += c;
             }
         }
