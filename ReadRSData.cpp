@@ -168,9 +168,6 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         rangesX_MAX[j] = ranges.at(j)->xMax*RATIO;
         rangesY_MIN[j] = ranges.at(j)->yMin*RATIO;
         rangesY_MAX[j] = ranges.at(j)->yMax*RATIO;
-        if(j == 6){
-            //cout<<"j = 6"<<rangesX_MIN[j]<<"->"<<rangesX_MAX[j]<<", "<<rangesY_MIN[j]<<"->"<<rangesY_MAX[j]<<endl;
-        }
     }
     double xT_RATIO, yT_RATIO;
     
@@ -222,20 +219,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                         return -1;//collide with one of the polygons
                     }
                 }
-                /*if(xT_RATIO >= rangesX_MIN[j] && xT_RATIO <= rangesX_MAX[j] &&
-                    yT_RATIO >= rangesY_MIN[j] && yT_RATIO <= rangesY_MAX[j])
-                {
-                    int check = wn_PnPoly(pC, polygons.at(j), RATIO);//, xT, yT, true);
-                    if(check != 0){
-                        return -1;//collide with one of the polygons
-                    }
-                    int signedValue = getSignedValue(section);
-                    
-                }*/
+               
             }
-            else{
-                //cout<<"That didnt count"<<endl;
-            }
+            
         }
         point p(xT, yT);
         section->possiblePoints.push_back(p);
