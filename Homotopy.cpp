@@ -240,9 +240,17 @@ class Homotopy{
             return minD;
         }
 
-        bool shortestDistanceRequirement(point &p, vector< vector<lineSegment>> &polygons, double minD){
+        bool shortestDistanceRequirement(/*point &p*/ lineSegment line, vector< vector<lineSegment>> &polygons, double minD){
+            //point p = line.p;
+            double d1, d2, d;
             for(int i = 0; i < polygons.size(); i++){
-                if(minDistanceFromPointToPolygon(p, polygons.at(i)) < minD){
+                d1 = minDistanceFromPointToPolygon(line.p, polygons.at(i));
+                d2 = minDistanceFromPointToPolygon(line.q, polygons.at(i));
+                d = d1 + d2;
+                if(d < 2*minD){
+                    cout<<"The min = "<<d<<". The point: "<<line.p.x <<" "<<line.p.y;
+                    cout<<" as well as ("<<line.q.x <<", "<<line.q.y<<") ";
+                    cout<<" Polygon ("<<i<<") "<<endl;
                     return false;
                 }
             }
@@ -477,6 +485,66 @@ class Homotopy{
                 }
             }
         }
+
+
+        int findRightRoadSide(point p, point q, vector<vector<lineSegment>> &polygons){
+            int indexPolygon = -1;
+            int indexLine = -1;
+            int totalNumberCuttingThrough = 4;
+            double uX = q.x - p.x;
+            double uY = q.y - p.y;
+
+            lineSegment line1, line2, line3, line4;
+            lineSegment arr[4];
+            for(int i = 0; i < polygons.size(); i++){
+                for(int j = 0; j < polygons.at(i).size(); j++){
+                    double v1X = polygons.at(i).at(j).p.x - p.x ;
+                    double v1Y = polygons.at(i).at(j).p.y - p.y ;
+
+                    double v2X = polygons.at(i).at(j).q.x - p.x ;
+                    double v2Y = polygons.at(i).at(j).q.y - p.y ;
+
+                    double u_v1 = uX*v1Y - uY*v1X;
+                    double u_v2 = uX*v2Y - uY*v2X;
+                    if(!(u_v1 > 0 && u_v2 > 0)){
+                        line1.p = p;
+                        line1.q = polygons.at(i).at(j).p;
+
+                        line2.p = p;
+                        line2.q = polygons.at(i).at(j).q;
+
+                        line3.p = q;
+                        line3.q = polygons.at(i).at(j).p;
+
+                        line4.p = q;
+                        line4.q = polygons.at(i).at(j).q;
+
+                        arr[0] = line1;  arr[1] = line2;
+                        arr[2] = line2;  arr[3] = line3;
+                        int c = 0;
+                        for(int k = 0; k < 4; k++){
+                            for(int m = 0; m <j ; m++){
+                                c += cutThrough(arr[k],polygons[i][m]);
+                            }
+
+                            for(int m = j + 1; m < polygons.at(i).size() ; m++){
+                                c += cutThrough(arr[k],polygons[i][m]);
+                            }
+
+                        }
+
+                        if(c < totalNumberCuttingThrough){
+                            totalNumberCuttingThrough = c;
+                            indexPolygon = i;
+                            indexLine = j;
+                        }
+                    }
+                }
+            }
+
+            int result = (indexPolygon << 16) | indexLine;
+            return result;
+        }
         
 
         void rotateOnePoint(point currentPoint, bool pIsInside, bool qIsInside, point temp1, point temp2, 
@@ -532,11 +600,42 @@ class Homotopy{
                 tempLine.q.y = moveY;
                 backward++;
             }
+            //1 is the thickness of parking wall
+            while(!(tempLine.q.x > min_x + 1 && tempLine.q.x < max_x - 1
+                    && tempLine.q.y > min_y + 1 && tempLine.q.y < max_y - 1)
+                    );
 
-            //while(!shortestDistanceRequirement(tempLine.q, polygons, WIDTH) 
-                        //&& !cutThroughPolygons(tempLine, polygons) 
-            //            && backward <= 1
-            //            );
+            backward = 0;
+            int indexes = findRightRoadSide(temp1, temp2, polygons);
+            int poly = indexes >> 16;
+            int edge = (indexes & 0xFFFF);
+
+            if(poly != -1 && edge != -1){
+                lineSegment line = polygons.at(poly).at(edge);
+                double A = 0, B = 0, C = 0;
+                double M = getMABCOfLine(line, &A, &B, &C);
+                double D = std::abs(A*tempLine.q.x + B*tempLine.q.y + C)/M;
+
+                //bool enoughFar = shortestDistanceRequirement(tempLine, polygons, WIDTH);
+                //while(!enoughFar) 
+                while(D < WIDTH)
+                {
+                    moveX -= changedX;
+                    moveY -= changedY;
+                    //tempLine.q.x -= backwardX;
+                    //tempLine.q.y -= backwardY;
+                    tempLine.q.x = moveX;
+                    tempLine.q.y = moveY;
+                    backward++;
+                    //enoughFar = shortestDistanceRequirement(tempLine, polygons, WIDTH);
+                    D = std::abs(A*tempLine.q.x + B*tempLine.q.y + C)/M;
+                    cout<<"Backward "<<backward<<" D = "<<D<<endl;
+
+                }
+                            //&& !cutThroughPolygons(tempLine, polygons) 
+                //            && backward <= 1
+                //            );
+            }
         
             if(qIsInside){
                 temp1.x = moveX;
