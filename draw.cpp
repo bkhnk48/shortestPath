@@ -251,7 +251,8 @@ void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, d
 		}
 		
 		if(xOut && yOut){
-			*xOut = -(*xIn); *yOut = 0;
+			*xOut = (deltaY > 0 ? -1 : 1); //fix bug in case *xIn = NULL
+			*yOut = 0;
 		}
 	}
 	else if(deltaY == 0){
@@ -260,7 +261,7 @@ void getNormalInAndOut(double deltaX, double deltaY, double *xIn, double *yIn, d
 		}
 
 		if(xOut && yOut){
-			*xOut = 0; *yOut = -(*yIn);
+			*xOut = 0; *yOut = (deltaY > 0 ? 1 : -1);//fix bug in case *yIn = NULL
 		}
 	}
 	else{
