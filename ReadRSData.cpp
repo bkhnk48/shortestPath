@@ -67,8 +67,8 @@ bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, doub
         if(check % 2 == 1)
             return -1;//collide with one of the polygons*/
     }
-    if(polygon.at(0).type == GATE)
-        cout<<"\nGATE\n"<<endl;
+    //if(polygon.at(0).type == GATE)
+    //    cout<<"\nGATE\n"<<endl;
     //else
     //    cout<<"\nTYPE OF EDGE: "<<polygon.at(0).type<<endl;
     return false;
@@ -211,6 +211,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
             //    yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
             if(!isVirtualGate(polygons.at(j))){
                 for(int k = 0; k < 4; k++){
+                    //if(n == 18 && k == 3 && j == 2 && i == 2){
+                    //    cout<<"DEBUG"<<endl;
+                    //}
                     if(collisionOfTrajectoryAndPolygon(arr[k]
                                                         //pC
                                                         , polygons.at(j)
