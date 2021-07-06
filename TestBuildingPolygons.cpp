@@ -293,17 +293,28 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 }
 
 void testInsidePolygon(){
-	point p(5.936, 12.02);
-	point p0(0, 36);
-	point p1(16, 36);
-	point p2(16, 18);
-	point p3(12, 18);
-	point p4(12, 12);
-	point p5(6, 12);
-	point p6(6, 18);
-	point p7(0, 18);
-	point arr[] = {p0, p1, p2, p3, p4, p5, p6, p7};
-	int N = 8;
+	//point p(5.936, 12.02);
+	point p(-10.22115414, 12.9808);
+	//point p0(0, 36);
+	point p0(-11, -11);
+	//point p1(16, 36);
+	point p1(-11, 13);
+	//point p2(16, 18);
+	point p2(-10, 13);
+	//point p3(12, 18);
+	point p3(-10, -10);
+	//point p4(12, 12);
+	point p4(16, -10);
+	//point p5(6, 12);
+	point p5(16, -11);
+	//point p6(6, 18);
+	//point p6()
+	//point p7(0, 18);
+	point arr[] = {p0, p1, p2, p3, p4, p5
+							//, p6
+							//, p7
+						};
+	int N = 6; //8;
 	vector<lineSegment> polygon;
 	for(int i = 0; i < N; i++){
 		lineSegment line;
