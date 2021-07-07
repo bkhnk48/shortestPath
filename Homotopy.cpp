@@ -409,7 +409,7 @@ class Homotopy{
         }
 
         void moveBothPoints(lineSegment tempLine, lineSegment &normalIn, vector< vector<lineSegment > > &polygons, vector<point> &rightDirectionRoute){
-            int steps = getStepsAlongNormalVector(tempLine, normalIn, polygons);
+            /*int steps = getStepsAlongNormalVector(tempLine, normalIn, polygons);
             int stepP = steps & 65535;
             stepP = (stepP > 1) ? stepP - 1 : 0;
             int stepQ = steps >> 16;
@@ -446,7 +446,23 @@ class Homotopy{
                 if(!checkAvailableAtLast(rightDirectionRoute, tempLine.p))
                     rightDirectionRoute.push_back(tempLine.p);
                 rightDirectionRoute.push_back(tempLine.q);    
-            }
+            }*/
+           /*
+           To move both points, we need some steps:
+                (1): find out the right roadside of two points: P, Q
+                    A right roadside of two point P, Q: an edge E of a polygon which is in the right of AV
+                    such that the maximum lines 
+                        (generated from two points P, Q to two points of the edge E respectively) cut through no other edges
+                    If there are several right roadsides exist, we choose the nearest line to P, Q.
+                (2): pinpoint new coord of the first point: P (move the point along normal vector)
+                    the new coord has a smallest distance (>= WIDTH) from the chosen right roadside
+                (3): pinpoint new coord of the second point: Q (move the point along normal vector)
+                    At here, we have two cases:
+                        (a) the Q point is in the RIGHT side of the chosen roadside (an edge of a polygon by natural). 
+                            In this case we simply reuse the coord of Q
+                        (b) the Q point is in the LEFT side of the chosen roadside (an edge of a polygon by natural). 
+                            the new coord has a smallest distance (>= WIDTH) from the chosen right roadside
+           */
         }
 
 
@@ -490,7 +506,7 @@ class Homotopy{
         int findRightRoadSide(point p, point q, vector<vector<lineSegment>> &polygons){
             int indexPolygon = -1;
             int indexLine = -1;
-            int totalNumberCuttingThrough = 4;
+            int totalNumberCuttingThrough = 5;
             double uX = q.x - p.x;
             double uY = q.y - p.y;
 
