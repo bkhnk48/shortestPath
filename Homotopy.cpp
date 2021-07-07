@@ -71,11 +71,6 @@ class Homotopy{
                     temp2.p.y += (normalOut.q.y - normalOut.p.y);
                 }
                 
-                //temp1.q.x = p.x;
-                //temp1.q.y = p.y;
-
-                //temp2.q.x = p.x;
-                //temp2.q.y = p.y;
 
                 //if(i != route.size() - 1)
                 {
@@ -260,24 +255,11 @@ class Homotopy{
 
         int getStepsAlongNormalVector(lineSegment temp1, lineSegment normalIn, vector< vector<lineSegment > > &polygons){
             int result = 0, result1 = 0, result2 = 0;
-            double lastY, lastX;
-            double deltaY;
-            point lastPoint;
             double deltaNormalInX = (normalIn.q.x - normalIn.p.x);
             double deltaNormalInY = (normalIn.q.y - normalIn.p.y);
-            if(deltaNormalInY != 0){
-                lastY = deltaNormalInY < 0 ? min_y - 1 : max_y + 1;
-                deltaY = lastY - temp1.p.y;
-                lastX = temp1.p.x + deltaNormalInX*deltaY/deltaNormalInY;
-            }
-            else{
-                lastX = deltaNormalInX < 0 ? min_x - 1 : max_x + 1;
-                lastY = temp1.p.y;
-            }
-
-            lastPoint.x = lastX; lastPoint.y = lastY; 
             
-            lineSegment scaleNormal(temp1.p, lastPoint);
+            
+            lineSegment scaleNormal = getScaleVector(temp1.p, deltaNormalInX, deltaNormalInY);
 
             //vector<int> collisions;
             double //x1, x2, y1, y2, 
@@ -463,6 +445,25 @@ class Homotopy{
                         (b) the Q point is in the LEFT side of the chosen roadside (an edge of a polygon by natural). 
                             the new coord has a smallest distance (>= WIDTH) from the chosen right roadside
            */
+            int indexes = findRightRoadSide(tempLine.p, tempLine.q, polygons, normalIn);
+            int poly = indexes >> 16;
+            int edge = (indexes & 0xFFFF);
+            if(poly != -1 && edge != -1){
+                lineSegment line = polygons.at(poly).at(edge);
+                double xOut = 0, yOut = 0;
+                double deltaX = line.q.x - line.p.x;
+                double deltaY = line.q.y - line.p.y;
+                getNormalInAndOut(deltaX, deltaY, NULL, NULL, &xOut, &yOut);
+                lineSegment scaleVector = getScaleVector(tempLine.p, normalIn.q.x, normalIn.q.y);
+                //double A = 0, B = 0, C = 0;
+                //double M = getMABCOfLine(scaleVector, &A, &B, &C);
+                //double d1 = 
+                point temp1;
+                temp1.x = line.p.x + WIDTH*xOut;
+                temp1.y = line.p.y + WIDTH*yOut;
+
+                if(isLeft(tempLine.p, tempLine.q, ))
+            }
         }
 
 
@@ -502,16 +503,74 @@ class Homotopy{
             }
         }
 
+        lineSegment getScaleVector(point p, double deltaNormalInX, double deltaNormalInY ){
+            double lastY, lastX;
+            double deltaY;
+            point lastPoint;
+            if(deltaNormalInY != 0){
+                lastY = deltaNormalInY < 0 ? min_y - 1 : max_y + 1;
+                deltaY = lastY - p.y;
+                lastX = p.x + deltaNormalInX*deltaY/deltaNormalInY;
+            }
+            else{
+                lastX = deltaNormalInX < 0 ? min_x - 1 : max_x + 1;
+                lastY = p.y;
+            }
 
-        int findRightRoadSide(point p, point q, vector<vector<lineSegment>> &polygons){
+            lastPoint.x = lastX; lastPoint.y = lastY; 
+            
+            lineSegment scaleNormal(p, lastPoint);
+
+            return scaleNormal;
+        }
+
+        bool inRegionOfEachOther(point p, point q, lineSegment line, lineSegment &normalIn){
+            /*
+                Ham nay tinh toan xem vector line co nam trong vung keo dai cua vector pq hay khong?
+                vector pq, tim ra vector chi phuong N cua A sao cho tich huu huong (A, N) la 1 so am
+                Tu dinh p, q keo dai vector chi phuong N ra den duong bien cua bai do.
+                Ta se duoc hai vector khac nhau, tam goi la A va B
+                neu 2 vector A va B cat qua vector line thi ta noi vector line co nam trong vung keo dai cua vector pq
+
+                Neu hai vector A va B khong cat qua vector line thi ta chon ra 1 trong 2 dinh cua vector line
+                keo dai theo huong nguoc voi vector chi phuong N ra den duong bien cua bai do
+                Ta se duoc vector C
+                Neu vector C cat qua vector pq thi ta noi line co nam trong vung keo dai cua vector pq.
+            */
+            double deltaNormalInX = (normalIn.q.x - normalIn.p.x);
+            double deltaNormalInY = (normalIn.q.y - normalIn.p.y);
+            
+            
+            lineSegment scaleNormal = getScaleVector(p, deltaNormalInX, deltaNormalInY);
+
+            if(cutThrough(line, scaleNormal) == 0)
+            {
+                scaleNormal = getScaleVector(q, deltaNormalInX, deltaNormalInY);
+                if(cutThrough(line, scaleNormal) == 0){
+                    scaleNormal = getScaleVector(line.p, -deltaNormalInX, -deltaNormalInY);
+                    line.p = p; line.q = q;
+                    if(cutThrough(line, scaleNormal) == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+
+        int findRightRoadSide(point p, point q, vector<vector<lineSegment>> &polygons, lineSegment &normalIn){
             int indexPolygon = -1;
             int indexLine = -1;
-            int totalNumberCuttingThrough = 5;
+            int totalNumberCuttingThrough = 4;
             double uX = q.x - p.x;
             double uY = q.y - p.y;
-
+            double A = 0, B = 0, C = 0, M = 0, d_PQ;
+            
             lineSegment line1, line2, line3, line4;
             lineSegment arr[4];
+            double d = FLT_MAX;
             for(int i = 0; i < polygons.size(); i++){
                 for(int j = 0; j < polygons.at(i).size(); j++){
                     double v1X = polygons.at(i).at(j).p.x - p.x ;
@@ -522,37 +581,52 @@ class Homotopy{
 
                     double u_v1 = uX*v1Y - uY*v1X;
                     double u_v2 = uX*v2Y - uY*v2X;
-                    if(!(u_v1 > 0 && u_v2 > 0)){
-                        line1.p = p;
-                        line1.q = polygons.at(i).at(j).p;
 
-                        line2.p = p;
-                        line2.q = polygons.at(i).at(j).q;
+                    if(u_v1 <= 0 || u_v2 <= 0){
 
-                        line3.p = q;
-                        line3.q = polygons.at(i).at(j).p;
+                        if(inRegionOfEachOther(p, q, polygons.at(i).at(j), normalIn)){
 
-                        line4.p = q;
-                        line4.q = polygons.at(i).at(j).q;
+                            line1.p = p;
+                            line1.q = polygons.at(i).at(j).p;
 
-                        arr[0] = line1;  arr[1] = line2;
-                        arr[2] = line2;  arr[3] = line3;
-                        int c = 0;
-                        for(int k = 0; k < 4; k++){
-                            for(int m = 0; m <j ; m++){
-                                c += cutThrough(arr[k],polygons[i][m]);
+                            line2.p = p;
+                            line2.q = polygons.at(i).at(j).q;
+
+                            line3.p = q;
+                            line3.q = polygons.at(i).at(j).p;
+
+                            line4.p = q;
+                            line4.q = polygons.at(i).at(j).q;
+
+                            arr[0] = line1;  arr[1] = line2;
+                            arr[2] = line2;  arr[3] = line3;
+                            int c = 0;
+                            for(int k = 0; k < 4; k++){
+                                for(int m = 0; m <j ; m++){
+                                    c += cutThrough(arr[k],polygons[i][m]);
+                                }
+
+                                for(int m = j + 1; m < polygons.at(i).size() ; m++){
+                                    c += cutThrough(arr[k],polygons[i][m]);
+                                }
+
                             }
 
-                            for(int m = j + 1; m < polygons.at(i).size() ; m++){
-                                c += cutThrough(arr[k],polygons[i][m]);
+                            if(c <= totalNumberCuttingThrough){
+                                M = getMABCOfLine(polygons.at(i).at(j), &A, &B, &C);
+                                d_PQ = std::abs(A*p.x + B*p.y + C)/M;
+                                d_PQ += std::abs(A*q.x + B*q.y + C)/M;
+
+                                bool pickUp = (c < totalNumberCuttingThrough || d_PQ < d) ? true : false;
+                                
+                                if(pickUp)
+                                {
+                                    totalNumberCuttingThrough = c;
+                                    indexPolygon = i;
+                                    indexLine = j;
+                                    d = d_PQ;
+                                }
                             }
-
-                        }
-
-                        if(c < totalNumberCuttingThrough){
-                            totalNumberCuttingThrough = c;
-                            indexPolygon = i;
-                            indexLine = j;
                         }
                     }
                 }
@@ -622,7 +696,7 @@ class Homotopy{
                     );
 
             backward = 0;
-            int indexes = findRightRoadSide(temp1, temp2, polygons);
+            int indexes = findRightRoadSide(temp1, temp2, polygons, normalIn);
             int poly = indexes >> 16;
             int edge = (indexes & 0xFFFF);
 
