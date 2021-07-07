@@ -44,6 +44,39 @@ class RefinePolygons : public BuildingPolygons{
                 
         }
 
+        // check point p inside line
+        bool isPointInsideLineSegment(lineSegment line, point p){
+        	point p_1 = line.p;
+        	point p_2 = line.q;
+
+        	pair<int, int> intersec_1; // create vector (p, p_1)
+        	intersec_1.first = p_1.x - p.x;
+        	intersec_1.second = p_1.y - p.y;
+
+        	pair<int, int> intersec_2; // create vector (p, p_2)
+        	intersec_2.first = p_2.x - p.x;
+        	intersec_2.second = p_2.y - p.y;
+
+        	// check vector intersec_1 or intersec_2 is proportional to each other
+        	if(intersec_1.first / intersec_2.first - intersec_1.second / intersec_2.second < 0.0001){ // denta = 0.0001
+        		return true;
+        	}
+
+        	return false;
+        }
+
+        // check point p inside polygon
+        int isPointInsidePolygon(vector< vector<lineSegment> > polygons ,int polygonIndex, point p){
+        	for(int i=0; i<polygons.at(polygonIndex).size(); i++){
+        		lineSegment line = polygons.at(polygonIndex).at(i);
+        		if(isPointInsideLineSegment(line, p)){
+        			return i;
+        		}
+        	}
+
+        	return -1;
+        }
+
         void removeLineSegment(point p, int polygonIndex){
             //cout<<"Remove all line segments which have p("<<p.x<<", "<<p.y<<")"<<endl;
             int index1 = 0;
@@ -304,13 +337,13 @@ class RefinePolygons : public BuildingPolygons{
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             point p_o1, p_o2, p_o3, p_o4; // init 4 vertices of AV
-            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
-//            int nmrSameVertices = 0;
-//            polygonIndex = 0;
-//            pA = point(2,10);
-//            pB = point(3,10);
-//            pC = point(2,9);
-//            pA = point(3,9);
+//            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+            int nmrSameVertices = 0;
+            polygonIndex = 0;
+            pA = point(2,10);
+            pB = point(3,10);
+            pC = point(2,9);
+            pA = point(3,9);
             
             #pragma region
             if(nmrSameVertices == 4){
