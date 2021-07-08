@@ -18,6 +18,10 @@
 #ifndef _HOMOTOPY_
 #define _HOMOTOPY_
 
+// This pair is used to store the X and Y
+// coordinates of a point respectively
+#define pid pair<int, double>
+
 class Homotopy{
     public:
 
@@ -390,6 +394,127 @@ class Homotopy{
             }
         }
 
+        //Given points A and B corresponding to line AB
+        // and points C and D corresponding to line CD, 
+        // find the point of intersection of these lines. 
+        // The points are given in 2D Plane with their X and Y Coordinates.
+        // For more detail: https://www.geeksforgeeks.org/program-for-point-of-intersection-of-two-lines/
+        point lineLineIntersection(point A, point B, point C, point D)
+        {
+            // Line AB represented as a1x + b1y = c1
+            double a1 = B.y - A.y;
+            double b1 = A.x - B.x;
+            double c1 = a1*(A.x) + b1*(A.y);
+        
+            // Line CD represented as a2x + b2y = c2
+            double a2 = D.y - C.y;
+            double b2 = C.x - D.x;
+            double c2 = a2*(C.x)+ b2*(C.y);
+        
+            double determinant = a1*b2 - a2*b1;
+        
+            if (determinant == 0)
+            {
+                // The lines are parallel. This is simplified
+                // by returning a pair of FLT_MAX
+                point p(FLT_MAX, FLT_MAX);
+                return p;
+            }
+            else
+            {
+                double x = (b2*c1 - b1*c2)/determinant;
+                double y = (a1*c2 - a2*c1)/determinant;
+                point p(x, y);
+                return p;
+            }
+        }
+
+        vector<point> getIntermediatePoints(point p, point target, vector< vector<lineSegment > > &polygons){
+            vector<point> result;
+            vector<point> temp;
+            lineSegment line(p, target);
+            for(int i = 0; i < polygons.size(); i++){
+                for(int j = 0; j < polygons.at(i).size(); j++){
+                    if(cutThrough(line, polygons.at(i).at(j)) == 1){
+                        bool found_P = false, found_Q = false;
+                        point p(polygons.at(i).at(j).p.x, polygons.at(i).at(j).p.y);
+                        point q(polygons.at(i).at(j).q.x, polygons.at(i).at(j).q.y);
+                        for(int k = 0; k < temp.size(); k++){
+                            if(temp.at(k) == polygons.at(i).at(j).p){
+                                result.push_back(p);
+                                found_P = true;
+                                break;
+                            }
+                            else{
+                                
+                                if(temp.at(k) == polygons.at(i).at(j).q){
+                                    result.push_back(q);
+                                    found_Q = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!found_P)
+                            temp.push_back(p);
+                        if(!found_Q)
+                            temp.push_back(q);    
+                    }
+                }
+            }
+            int N = temp.size();
+            for(int i = 0; i < N; i++){
+                temp.pop_back();//free the memory
+            }
+
+            return result;
+        }
+
+        bool sortbysec(const pair<int, double> &a, const pair<int, double> &b)
+        {
+            return (a.second > b.second);
+        }
+
+        vector<point> arrangeByDistance(point target, vector<point> &group){
+            vector<point> result;
+            int N = group.size();
+            vector<pair<int, double>> pairs;
+            for(int i = 0; i < N; i++){
+                double x = group.at(i).x - target.x;
+                double y = group.at(i).y - target.y;
+                double distance = sqrt(x*x + y*y);
+                pid p = make_pair(i, distance);
+                pairs.push_back(p);
+            }
+
+            //sort(pairs.begin(), pairs.end(), sortbysec);
+            vector<int> indexes;
+            int index = 0;
+            double dist = 0;
+            for(int i = 0; i < N; i++){
+                dist = pairs.at(i).second;
+                for(int j = i + 1; j < N; j++){
+                    if(dist < pairs.at(j).second){
+                        dist = pairs.at(j).second;
+                        index = j;
+                    }
+                }
+                pairs.at(index).first = pairs.at(i).first;
+                pairs.at(index).second = pairs.at(i).second;
+                pairs.at(i).first = index;
+                pairs.at(i).second = dist;
+                //indexes.push_back(index);
+            }
+
+            
+            for(int i = 0; i < N; i++){
+                pid element = pairs.at(i);
+                index = element.first;
+                result.push_back(group.at(index));
+            }
+
+            return result;
+        }
+
         void moveBothPoints(lineSegment tempLine, lineSegment &normalIn, vector< vector<lineSegment > > &polygons, vector<point> &rightDirectionRoute){
             /*int steps = getStepsAlongNormalVector(tempLine, normalIn, polygons);
             int stepP = steps & 65535;
@@ -445,6 +570,7 @@ class Homotopy{
                         (b) the Q point is in the LEFT side of the chosen roadside (an edge of a polygon by natural). 
                             the new coord has a smallest distance (>= WIDTH) from the chosen right roadside
            */
+            //Xong buoc (1)
             int indexes = findRightRoadSide(tempLine.p, tempLine.q, polygons, normalIn);
             int poly = indexes >> 16;
             int edge = (indexes & 0xFFFF);
@@ -455,14 +581,46 @@ class Homotopy{
                 double deltaY = line.q.y - line.p.y;
                 getNormalInAndOut(deltaX, deltaY, NULL, NULL, &xOut, &yOut);
                 lineSegment scaleVector = getScaleVector(tempLine.p, normalIn.q.x, normalIn.q.y);
-                //double A = 0, B = 0, C = 0;
-                //double M = getMABCOfLine(scaleVector, &A, &B, &C);
-                //double d1 = 
-                point temp1;
-                temp1.x = line.p.x + WIDTH*xOut;
-                temp1.y = line.p.y + WIDTH*yOut;
 
-                if(isLeft(tempLine.p, tempLine.q, ))
+                point temp1 = lineLineIntersection(tempLine.p, scaleVector.q, line.p, line.q);
+                lineSegment movingLine1(temp1, tempLine.p);
+                lineSegment movingLine2(temp1, line.p);
+                lineSegment movingLine3(temp1, line.q);
+                do{
+                    temp1.x += WIDTH*xOut;
+                    temp1.y += WIDTH*yOut;
+                    movingLine1.p = temp1;
+                    movingLine2.p = temp1;
+                    movingLine3.p = temp1;
+                }
+                while(checkCollisionRegardlessVirtualGate(movingLine1, polygons) != 0
+                    || checkCollisionRegardlessVirtualGate(movingLine2, polygons) != 0
+                    || checkCollisionRegardlessVirtualGate(movingLine3, polygons) != 0
+                        );
+
+                rightDirectionRoute.push_back(temp1);//Them diem temp1 vao quy dao
+
+                point temp2(temp1.x + (tempLine.q.x - tempLine.p.x), temp1.y + (tempLine.q.y - tempLine.p.y));
+                //di chuyển điểm temp1 thành điểm temp2, chiều di chuyển là từ p đến q, độ dài di chuyển là chính vector pq
+
+                if(isLeft(temp1, temp2, tempLine.q) > 0) //it means q is in the left side of the new homotopy line: temp1 -> temp2
+                {
+                    //addMidPoint(temp1,  tempLine.q, rightDirectionRoute);//kiem tra de xem co them diem trung gian vao giua temp1 va q hay khong?
+                    //rightDirectionRoute.push_back(tempLine.q);//them diem q vao quy dao
+                    rightDirectionRoute.push_back(temp2);//them diem q vao quy dao
+                }
+                else {//ngược lại nếu q ở phía bên phải của đường temp1->temp2
+                    //thì điểm temp2 sẽ là một mốc di chuyển mới
+                    rightDirectionRoute.push_back(temp2);
+                    vector<point> notArrangement = getIntermediatePoints(temp2, tempLine.q, polygons);
+                    if(notArrangement.size() > 0){
+                        vector<point> arrangement = arrangeByDistance(tempLine.q, notArrangement);
+                        for(int i = 0; i < arrangement.size(); i++){
+                            rightDirectionRoute.push_back(arrangement.at(i));
+                        }
+                    }
+                    rightDirectionRoute.push_back(tempLine.q);
+                }
             }
         }
 
@@ -493,11 +651,12 @@ class Homotopy{
         }
 
 
-        void addMidPoint(point temp1, point temp2, vector<point> &rightDirectionRoute){
+        void addMidPoint(int x, point temp1, point temp2, vector<point> &rightDirectionRoute){
             if(std::abs(temp1.x - temp2.x) >= WIDTH)
             {
+                int signedValue = temp1.x < temp2.x ? 1 : -1;
                 if(std::abs(temp1.y - temp2.y) >= 6*WIDTH){
-                    point temp3(temp1.x + WIDTH/2, (temp2.y + temp1.y)/2 - 6);
+                    point temp3(temp1.x + signedValue*WIDTH/2, (temp2.y + temp1.y)/2 - 6);
                     rightDirectionRoute.push_back(temp3);
                 }
             }
@@ -693,7 +852,7 @@ class Homotopy{
             //1 is the thickness of parking wall
             while(!(tempLine.q.x > min_x + 1 && tempLine.q.x < max_x - 1
                     && tempLine.q.y > min_y + 1 && tempLine.q.y < max_y - 1)
-                    );
+                    );//this while makes no sense (has no loop)
 
             backward = 0;
             int indexes = findRightRoadSide(temp1, temp2, polygons, normalIn);
@@ -732,7 +891,7 @@ class Homotopy{
                 temp1.y = moveY;
                 if(!checkAvailableAtLast(rightDirectionRoute, temp1)){
                     rightDirectionRoute.push_back(temp1);
-                    addMidPoint(temp1, currentPoint, rightDirectionRoute);
+                    addMidPoint(1, temp1, currentPoint, rightDirectionRoute);
                 }
                 rightDirectionRoute.push_back(currentPoint);
             }
