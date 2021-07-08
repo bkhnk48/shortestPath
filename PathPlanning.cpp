@@ -87,6 +87,7 @@ class PlanningController{
                     cout<<route.at(i)<<" ";
                 }
                 vector<point> shortestPath = this->echo(rawRoute, polygons, route, points, generator);
+                //this->movementOfTheSide(generator->getWIDTH(), generator->getLENGTH(), rawRoute->points, polygons);
                 for(int i = 0; i < shortestPath.size(); i++){
                     cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
                 }
@@ -162,7 +163,44 @@ class PlanningController{
 
             this->clockWise = isClockwise(r->points.at(0), r->points.at(1));
             
+
             vector<lineSegment> group;
+
+            int last = r->points.size() - 1;
+            int preLast = last - 1;
+
+            double uX = r->points.at(last).x - r->points.at(preLast).x;
+            double uY = r->points.at(last).y - r->points.at(preLast).y;
+            double u = sqrt(uX*uX + uY*uY);
+            //double U = sqrt((WIDTH*WIDTH/4) + (LENGTH*LENGTH/4));
+            uX = (uX/u)*(generator->getWIDTH()/2);
+            uY = (uY/u)*(generator->getWIDTH()/2);
+
+            double vX, vY;
+
+            if(uY == 0){
+                vX = 0;
+                vY = -uX*generator->getWIDTH()/2;
+            }
+            else{
+                double tag = uX/uY;
+                double tag_1 = 1/sqrt(1 + tag*tag);
+                double sin = tag*tag_1;
+                double cos = tag_1*0.5;
+                vY = (generator->getWIDTH()/2)*sin;
+                vX = (generator->getWIDTH()/2)*cos;
+                double newDotProduct = uX*vY - uY*vX;
+                if(newDotProduct > 0){
+                    vX = -vX;
+                }
+            }
+            //point preLastPoint()
+            r->points.at(last).x += vX;
+            r->points.at(last).y += vY;
+
+            cout<<"Prelast x = "<<r->points.at(preLast).x<<" y = "<<r->points.at(preLast).y<<endl;
+            cout<<"Last x = "<<r->points.at(last).x<<" y = "<<r->points.at(last).y<<endl;
+
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
                 point p1 = r->points.at(i);
@@ -201,9 +239,20 @@ class PlanningController{
             CollectingPoints* collectionPoints = new CollectingPoints();
             
             vector<point> result = collectionPoints->assignValueToMatrix(PATHS, ROUTE2, SHORTEST_PATH, VISITED, route, points, group);
-            movementOfTheSide(generator->getWIDTH(), generator->getLENGTH(), result);
 
+            //result.at(0).x += generator->getWIDTH()/2;
+            //result.at(0).y -= generator->getLENGTH()/2;
+
+            /*for(int i = 0; i < r->points.size(); i++){
+                cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
+            }*/
+            movementOfTheSide(generator->getWIDTH(), generator->getLENGTH(),    
+                        result
+                        //r->points
+                        , polygons);
+            
             return result;
+            //return r->points;
         }
 
     private:
@@ -212,7 +261,7 @@ class PlanningController{
         double dotProductRight;
         
 
-        void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory){ 
+        void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory, vector< vector< lineSegment> > polygons){ 
 
             //dotProductRight = -(LENGTH/2)*(WIDTH/2);
             
@@ -225,8 +274,12 @@ class PlanningController{
             //}
             trajectory.at(0).y -= LENGTH/2;
 
+            return;
+
             int last = trajectory.size() - 1;
             int preLast = last - 1;
+            cout<<"Prelast x = "<<trajectory.at(preLast).x<<" y = "<<trajectory.at(preLast).y<<endl;
+            cout<<"Last x = "<<trajectory.at(last).x<<" y = "<<trajectory.at(last).y<<endl;
             double uX = trajectory.at(last).x - trajectory.at(preLast).x;
             double uY = trajectory.at(last).y - trajectory.at(preLast).y;
             double u = sqrt(uX*uX + uY*uY);
@@ -252,6 +305,7 @@ class PlanningController{
                     vX = -vX;
                 }
             }
+            //point preLastPoint()
             trajectory.at(last).x += vX;
             trajectory.at(last).y += vY;
         }
