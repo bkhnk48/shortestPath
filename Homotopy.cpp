@@ -651,7 +651,7 @@ class Homotopy{
         }
 
 
-        void addMidPoint(int x, point temp1, point temp2, vector<point> &rightDirectionRoute){
+        void addMidPoint(point temp1, point temp2, vector<point> &rightDirectionRoute){
             if(std::abs(temp1.x - temp2.x) >= WIDTH)
             {
                 int signedValue = temp1.x < temp2.x ? 1 : -1;
@@ -891,7 +891,7 @@ class Homotopy{
                 temp1.y = moveY;
                 if(!checkAvailableAtLast(rightDirectionRoute, temp1)){
                     rightDirectionRoute.push_back(temp1);
-                    addMidPoint(1, temp1, currentPoint, rightDirectionRoute);
+                    addMidPoint(temp1, currentPoint, rightDirectionRoute);
                 }
                 rightDirectionRoute.push_back(currentPoint);
             }
