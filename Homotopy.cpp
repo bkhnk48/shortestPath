@@ -548,6 +548,9 @@ class Homotopy{
                 lineSegment movingLine1(temp1, tempLine.p);
                 lineSegment movingLine2(temp1, line.p);
                 lineSegment movingLine3(temp1, line.q);
+
+                
+
                 do{
                     temp1.x += WIDTH*xOut;
                     temp1.y += WIDTH*yOut;
@@ -555,10 +558,12 @@ class Homotopy{
                     movingLine2.p = temp1;
                     movingLine3.p = temp1;
                 }
-                while(checkCollisionRegardlessVirtualGate(movingLine1, polygons) != 0
-                    || checkCollisionRegardlessVirtualGate(movingLine2, polygons) != 0
-                    || checkCollisionRegardlessVirtualGate(movingLine3, polygons) != 0
+                while(cutThroughRegardlessVirtualGate(movingLine1, polygons) != 0
+                    || cutThroughRegardlessVirtualGate(movingLine2, polygons) != 0
+                    || cutThroughRegardlessVirtualGate(movingLine3, polygons) != 0
                         );
+
+                
 
                 rightDirectionRoute.push_back(temp1);//Them diem temp1 vao quy dao
 
@@ -785,7 +790,8 @@ class Homotopy{
 
             double changedX = WIDTH*normalIn.q.x;
             double changedY = WIDTH*normalIn.q.y;
-
+            
+           
             do{
                 moveX += changedX;
                 moveY += changedY;
@@ -795,7 +801,9 @@ class Homotopy{
             }
             //while(numberOfCuttingThrough(polygons, tempLine) == 0);
             //while(!cutThroughPolygons(tempLine, polygons));
-            while(checkCollisionRegardlessVirtualGate(tempLine, polygons) == 0);
+            //while(checkCollisionRegardlessVirtualGate(tempLine, polygons) == 0);
+            while(cutThroughRegardlessVirtualGate(tempLine, polygons) == 0);
+            
 
             //step = 0;
             int backward = 0;
@@ -809,10 +817,11 @@ class Homotopy{
                 tempLine.q.y = moveY;
                 backward++;
             }
+            //cout<<"HEREER"<<endl;
             //1 is the thickness of parking wall
-            while(!(tempLine.q.x > min_x + 1 && tempLine.q.x < max_x - 1
-                    && tempLine.q.y > min_y + 1 && tempLine.q.y < max_y - 1)
-                    );//this while makes no sense (has no loop)
+            //while(!(tempLine.q.x > min_x + 1 && tempLine.q.x < max_x - 1
+            //        && tempLine.q.y > min_y + 1 && tempLine.q.y < max_y - 1)
+            //        );//this while makes no sense (has no loop)
 
             backward = 0;
             int indexes = findRightRoadSide(temp1, temp2, polygons, normalIn);
@@ -977,9 +986,9 @@ class Homotopy{
                 currX = nextX;             currY = nextY;
                 
             }
-
+            
             rotateLastSegment(route, polygons, rightDirectionRoute);
-
+            
             return rightDirectionRoute;
         }
 
