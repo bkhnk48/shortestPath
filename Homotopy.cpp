@@ -516,46 +516,8 @@ class Homotopy{
         }
 
         void moveBothPoints(lineSegment tempLine, lineSegment &normalIn, vector< vector<lineSegment > > &polygons, vector<point> &rightDirectionRoute){
-            /*int steps = getStepsAlongNormalVector(tempLine, normalIn, polygons);
-            int stepP = steps & 65535;
-            stepP = (stepP > 1) ? stepP - 1 : 0;
-            int stepQ = steps >> 16;
-            stepQ = (stepQ > 1) ? stepQ - 1 : 0;
-            tempLine.p.x += stepP*WIDTH*(normalIn.q.x - normalIn.p.x);
-            tempLine.p .y += stepP*WIDTH*(normalIn.q.y - normalIn.p.y);
-
-            tempLine.q.x += stepQ*WIDTH*(normalIn.q.x - normalIn.p.x);
-            tempLine.q.y += stepQ*WIDTH*(normalIn.q.y - normalIn.p.y);
-
-            //tempLine.p = temp1;  tempLine.q = temp2;
-            bool isValid = true;
-            //while(numberOfCuttingThrough(polygons, tempLine) != 0)
-            while(cutThroughPolygons(tempLine, polygons))
-            {
-                isValid = false;
-                tempLine.p.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
-                tempLine.p.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
-
-                tempLine.q.x -= WIDTH*(normalIn.q.x - normalIn.p.x);
-                tempLine.q.y -= WIDTH*(normalIn.q.y - normalIn.p.y);
-
-                stepQ--;
-                stepP--;
-                if(stepQ >= 0 && stepP >= 0)
-                {
-                    isValid = true;
-                }
-                else{
-                    break;
-                }
-            }
-            if(isValid){
-                if(!checkAvailableAtLast(rightDirectionRoute, tempLine.p))
-                    rightDirectionRoute.push_back(tempLine.p);
-                rightDirectionRoute.push_back(tempLine.q);    
-            }*/
-           /*
-           To move both points, we need some steps:
+            /*
+            To move both points, we need some steps:
                 (1): find out the right roadside of two points: P, Q
                     A right roadside of two point P, Q: an edge E of a polygon which is in the right of AV
                     such that the maximum lines 
@@ -569,7 +531,7 @@ class Homotopy{
                             In this case we simply reuse the coord of Q
                         (b) the Q point is in the LEFT side of the chosen roadside (an edge of a polygon by natural). 
                             the new coord has a smallest distance (>= WIDTH) from the chosen right roadside
-           */
+            */
             //Xong buoc (1)
             int indexes = findRightRoadSide(tempLine.p, tempLine.q, polygons, normalIn);
             int poly = indexes >> 16;
@@ -605,8 +567,6 @@ class Homotopy{
 
                 if(isLeft(temp1, temp2, tempLine.q) > 0) //it means q is in the left side of the new homotopy line: temp1 -> temp2
                 {
-                    //addMidPoint(temp1,  tempLine.q, rightDirectionRoute);//kiem tra de xem co them diem trung gian vao giua temp1 va q hay khong?
-                    //rightDirectionRoute.push_back(tempLine.q);//them diem q vao quy dao
                     rightDirectionRoute.push_back(temp2);//them diem q vao quy dao
                 }
                 else {//ngược lại nếu q ở phía bên phải của đường temp1->temp2
