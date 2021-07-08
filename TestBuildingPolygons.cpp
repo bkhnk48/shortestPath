@@ -327,9 +327,22 @@ void testInsidePolygon(){
 	cout<<"Check = "<<check<<endl;
 }
 
+void testTouching(){
+	point p1(40, 0); 
+	point q1(-48, 0);
+	point p2(38, 0);
+	point q2(38, 12);
+	lineSegment line1(p1, q1);
+	lineSegment line2(p2, q2);
+
+	int c = doIntersect(line1, line2);
+	cout<<"c = "<<c<<endl;
+}
+
 
 int main(int argc, const char* argv[]){
 	//testInsidePolygon();
+	testTouching();
 	testFullAVsInStacks();
 	return 0;
 }
