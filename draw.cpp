@@ -428,47 +428,67 @@ int cutThrough(lineSegment l1, lineSegment l2){
 
 }
 
-int touch(lineSegment l1, lineSegment l2){
-	point AC; 
-	AC.x = l2.p.x - l1.p.x; 
-	AC.y = l2.p.y - l1.p.y;
-	point AB;
-	AB.x = l1.q.x - l1.p.x; 
-	AB.y = l1.q.y - l1.p.y;
-	point AD;
-	AD.x = l2.q.x - l1.p.x; 
-	AD.y = l2.q.y - l1.p.y;
-	double AC_AB = AC.x*AB.y - AC.y*AB.x;
-	double AD_AB = AD.x*AB.y - AD.y*AB.x;
-	double product = AC_AB*AD_AB;
-	bool isNegative = product < 0;
-	bool isZero = product == 0;
-	if(product <= 0){
-		//point A = l2.p; point B = l2.q;
-		//point C = l1.p; point D = l1.q;
-		AC.x = l1.p.x - l2.p.x; 
-		AC.y = l1.p.y - l2.p.y;
-		
-		AB.x = l2.q.x - l2.p.x; 
-		AB.y = l2.q.y - l2.p.y;
-		
-		AD.x = l1.q.x - l2.p.x; 
-		AD.y = l1.q.y - l2.p.y;
-		AC_AB = AC.x*AB.y - AC.y*AB.x;
-		AD_AB = AD.x*AB.y - AD.y*AB.x;
-		product = AC_AB*AD_AB;
-		if(isNegative && product <= 0){
-			return 1; //touch through
-		}
-
-		if(isZero && product < 0)
-		{
-			return 1;//touch
-		}
-	}
-	return 0;
-
+bool onSegment(point p, point q, point r)
+{
+    if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) &&
+        q.y <= max(p.y, r.y) && q.y >= min(p.y, r.y))
+       return true;
+  
+    return false;
 }
+  
+// To find orientation of ordered triplet (p, q, r).
+// The function returns following values
+// 0 --> p, q and r are colinear
+// 1 --> Clockwise
+// 2 --> Counterclockwise
+int orientation(point p, point q, point r)
+{
+    // See https://www.geeksforgeeks.org/orientation-3-ordered-points/
+    // for details of below formula.
+    int val = (q.y - p.y) * (r.x - q.x) -
+              (q.x - p.x) * (r.y - q.y);
+  
+    if (val == 0) return 0;  // colinear
+  
+    return (val > 0)? 1: 2; // clock or counterclock wise
+}
+  
+// The main function that returns true if line segment 'p1q1'
+// and 'p2q2' intersect.
+int doIntersect(lineSegment line1, lineSegment line2)
+{
+	point p1 = line1.p;
+	point q1 = line1.q;
+	point p2 = line2.p;
+	point q2 = line2.q;
+    // Find the four orientations needed for general and
+    // special cases
+    int o1 = orientation(p1, q1, p2);
+    int o2 = orientation(p1, q1, q2);
+    int o3 = orientation(p2, q2, p1);
+    int o4 = orientation(p2, q2, q1);
+  
+    // General case
+    if (o1 != o2 && o3 != o4)
+        return 1;
+  
+    // Special Cases
+    // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+    if (o1 == 0 && onSegment(p1, p2, q1)) return 1;
+  
+    // p1, q1 and q2 are colinear and q2 lies on segment p1q1
+    if (o2 == 0 && onSegment(p1, q2, q1)) return 1;
+  
+    // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+    if (o3 == 0 && onSegment(p2, p1, q2)) return 1;
+  
+     // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+    if (o4 == 0 && onSegment(p2, q1, q2)) return 1;
+  
+    return 0; // Doesn't fall in any of the above cases
+}
+
 
 // isLeft(): tests if a point is Left|On|Right of an infinite line.
 //    Input:  three points P0, P1, and P2
@@ -605,7 +625,7 @@ int numberOfTouchingPoints(vector<vector<lineSegment> > &polygons, lineSegment l
 	for(size_t i = 0; i < polygons.size();i++){
 		//int numberOfvaolation=0;
 		for(size_t j=0;j<polygons[i].size();j++){
-			result += touch(l,polygons[i][j]);
+			result += doIntersect(l,polygons[i][j]);
 		}
 	}
 	return result;
@@ -623,6 +643,22 @@ int numberOfCuttingThrough(vector<vector<lineSegment> > &polygons, lineSegment l
 			//if(c != 0){
 			//	cout<<"Crossing at polygons: "<<i<<" "<<j<<endl;
 			//}
+		}
+	}
+	return result;
+}
+
+//Take a line segment and returns number of edges which the line segment cuts through
+int cutThroughRegardlessVirtualGate(lineSegment l, vector<vector<lineSegment> > &polygons){
+	int result = 0;
+	int c = 0;
+	for(size_t i = 0; i < polygons.size();i++){
+		//int numberOfvaolation=0;
+		if(!isVirtualGate(polygons.at(i))){
+			for(size_t j=0;j<polygons[i].size();j++){
+				c = cutThrough(l,polygons[i][j]);
+				result += c;
+			}
 		}
 	}
 	return result;
