@@ -10,6 +10,7 @@
 #include <queue>
 #include <bits/stdc++.h>
 #include <algorithm>
+#include <cstdlib>
 
 #include "BuildPolygonState.cpp"
 
@@ -49,16 +50,24 @@ class RefinePolygons : public BuildingPolygons{
         	point p_1 = line.p;
         	point p_2 = line.q;
 
-        	pair<int, int> intersec_1; // create vector (p, p_1)
-        	intersec_1.first = p_1.x - p.x;
-        	intersec_1.second = p_1.y - p.y;
+//        	pair<int, int> intersec_1; // create vector (p, p_1)
+//        	intersec_1.first = p_1.x - p.x;
+//        	intersec_1.second = p_1.y - p.y;
+//
+//        	pair<int, int> intersec_2; // create vector (p, p_2)
+//        	intersec_2.first = p_2.x - p.x;
+//        	intersec_2.second = p_2.y - p.y;
+//
+//        	// check vector intersect_1 or intersect_2 is proportional to each other
+//        	if(abs(intersec_1.first / intersec_1.second + intersec_2.first / intersec_2.second) < 0.0001){ // delta = 0.0001
+//        		return true;
+//        	}
 
-        	pair<int, int> intersec_2; // create vector (p, p_2)
-        	intersec_2.first = p_2.x - p.x;
-        	intersec_2.second = p_2.y - p.y;
+        	double dis_1 = sqrt((p_1.x - p.x) * (p_1.x - p.x) + (p_1.y - p.y) * (p_1.y - p.y));
+        	double dis_2 = sqrt((p_2.x - p.x) * (p_2.x - p.x) + (p_2.y - p.y) * (p_2.y - p.y));
+        	double dis = sqrt((p_1.x - p_2.x) * (p_1.x - p_2.x) + (p_1.y - p_2.y) * (p_1.y - p_2.y));
 
-        	// check vector intersec_1 or intersec_2 is proportional to each other
-        	if(intersec_1.first / intersec_2.first - intersec_1.second / intersec_2.second < 0.0001){ // denta = 0.0001
+        	if(abs(dis_1 + dis_2 - dis) < 0.0001){
         		return true;
         	}
 
@@ -77,8 +86,21 @@ class RefinePolygons : public BuildingPolygons{
         	return -1;
         }
 
+        // get line include point, isPointInsideLineSegment check point have inside line segment and
+        // the method return line segment include this point
+        lineSegment getLineSegmentIncludePoint(int polygonIndex, point p){
+        	for(int i=0; i<polygons.at(polygonIndex).size(); i++){
+				lineSegment line = polygons.at(polygonIndex).at(i);
+				if(isPointInsideLineSegment(line, p)){
+					return line;
+				}
+			}
+
+        	return polygons.at(polygonIndex).at(0);
+        }
+
         void removeLineSegment(point p, int polygonIndex){
-            //cout<<"Remove all line segments which have p("<<p.x<<", "<<p.y<<")"<<endl;
+            //cout <<"Remove all line segments which have p("<<p.x<<", "<<p.y<<")"<<endl;
             int index1 = 0;
             int index2 = 0;
             bool found1 = false;
@@ -162,7 +184,7 @@ class RefinePolygons : public BuildingPolygons{
             return count;
         }
 
-        // calc euclid distance between two point
+        // calc Euclid distance between two point
         // imporve : init class/interface distance and euclid_distance implement/extends distance class/interface
         double euclid_distance(point a, point b){
             return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
@@ -263,8 +285,8 @@ class RefinePolygons : public BuildingPolygons{
                 }
 
                 if(dis_4 > dis_3){
-                	swap_point(p_o4, p_o2);
-                	swap_double(dis_4, dis_4);
+                	swap_point(p_o4, p_o3);
+                	swap_double(dis_4, dis_3);
                 } // after step p_o4 is nearest end point
 
                 // next step, we must sort p_o2, p_o3 such as: p_o2 near p_o1 than p_o3 and p_o3 near p_o4 than p_o2
@@ -275,7 +297,6 @@ class RefinePolygons : public BuildingPolygons{
                 	swap_point(p_o2, p_o3);
                 	swap_double(dis_2, dis_3);
                 }
-
             }
         }
 
@@ -299,8 +320,8 @@ class RefinePolygons : public BuildingPolygons{
         }
         
         // get 4 vertices of AV assign to p_o1, p_o2, p_o3, p_o4
-        // if vertice in points push back to p_o4
-        // if vertice not in points push head to p_o1
+        // if vertices in points push back to p_o4
+        // if vertices not in points push head to p_o1
         void getVerticesAV(point &p_o1, point &p_o2, point &p_o3, point &p_o4){
             deque<point> queue;
             
@@ -308,30 +329,58 @@ class RefinePolygons : public BuildingPolygons{
                 queue.push_back(this->pA);
             } else {
                 queue.push_front(this->pA);
-            }
+            };
 
             if(find(points.begin(), points.end(), this->pB) != points.end()){
                 queue.push_back(this->pB);
             } else {
                 queue.push_front(this->pB);
-            }
+            };
 
             if(find(points.begin(), points.end(), this->pC) != points.end()){
                 queue.push_back(this->pC);
             } else {
                 queue.push_front(this->pC);
-            }
+            };
 
             if(find(points.begin(), points.end(), this->pD) != points.end()){
                 queue.push_back(this->pD);
             } else {
                 queue.push_front(this->pD);
-            }
+            };
 
             p_o1 = queue.at(0);
             p_o2 = queue.at(1);
             p_o3 = queue.at(2);
             p_o4 = queue.at(3);
+        }
+
+        // split polygon to two polygon
+        void splitPolygon(int polygonIndex){
+        	vector<lineSegment> subPolygon_1;
+        	vector<lineSegment> subPolygon_2;
+
+        	lineSegment lastLineSegment = polygons.at(polygonIndex).at(0);
+        	subPolygon_1.push_back(lastLineSegment); // add first element to sub polygon
+        	for(int i=1; i<polygons.at(polygonIndex).size(); i++){ // check each element line segment
+        		lineSegment line = polygons.at(polygonIndex).at(i);
+        		if(lastLineSegment.q == line.p){ // add to sub polygon 1
+        			subPolygon_1.push_back(line);
+        			lastLineSegment = line;
+        		}
+        	}
+
+        	// for each line again, if line not inside sub polygon 1, we add it to sub polygon 2
+        	for(int i=0; i<polygons.at(polygonIndex).size(); i++){
+        		lineSegment line = polygons.at(polygonIndex).at(i);
+        		if(find(subPolygon_1.begin(), subPolygon_1.end(), line) == subPolygon_1.end()){
+        			subPolygon_2.push_back(line);
+        		}
+        	}
+
+        	polygons.erase(polygons.begin() + polygonIndex);
+        	polygons.push_back(subPolygon_1);
+        	polygons.push_back(subPolygon_2);
         }
 
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
@@ -340,10 +389,10 @@ class RefinePolygons : public BuildingPolygons{
 //            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
             int nmrSameVertices = 0;
             polygonIndex = 0;
-            pA = point(2,10);
-            pB = point(3,10);
-            pC = point(2,9);
-            pA = point(3,9);
+            pA = point(2,6);
+            pB = point(2,7);
+            pC = point(1,6);
+            pD = point(1,7);
             
             #pragma region
             if(nmrSameVertices == 4){
@@ -415,7 +464,7 @@ class RefinePolygons : public BuildingPolygons{
                     e_point.y = y2;
 
                     // sort p_o1, p_o2, p_o3, p_o4
-                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 3);
+                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 1);
 
                     if(foundBreak){
                         lineSegment line1;
@@ -503,7 +552,7 @@ class RefinePolygons : public BuildingPolygons{
                     e_point.y = y2;
 
                     // sort p_o1, p_o2, p_o3, p_o4
-                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 2);
+                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 3);
 
                     if(foundBreak){
                         lineSegment line1;
@@ -529,32 +578,22 @@ class RefinePolygons : public BuildingPolygons{
                         this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line4);
                     }
 
-
                 }
                 // push new point to points pool
                 points.push_back(p_o1);
                 points.push_back(p_o2);
                 points.push_back(p_o3);
             } else if(nmrSameVertices == 0){
-            	int check_A = isPointInsidePolygon(polygons, polygonIndex, this->pA); // find index line segment include point pA
-            	int check_B = isPointInsidePolygon(polygons, polygonIndex, this->pB); // find index line segment include point pB
-            	int check_C = isPointInsidePolygon(polygons, polygonIndex, this->pC); // find index line segment include point pC
-            	int check_D = isPointInsidePolygon(polygons, polygonIndex, this->pD); // find index line segment include point pD
+            	getVerticesAV(p_o1, p_o2, p_o3, p_o4);
 
-                // find lineSegment contain point of AV, only find one
-            	int breakIndex = 0;
-                if(check_A != -1){
-                	breakIndex = check_A;
-                } else if(check_B != -1){
-                	breakIndex = check_B;
-                } else if(check_C != -1){
-                	breakIndex = check_C;
-                } else if(check_D != -1){
-                	breakIndex = check_D;
-                }
-                
+            	// find lineSegment contain point of AV, only find one
+            	int breakIndex = isPointInsidePolygon(polygons, polygonIndex, this->pA); // find index line segment include point pA
+            	int check_A = breakIndex;
+            	int check_B = isPointInsidePolygon(polygons, polygonIndex, this->pB);
+            	int check_C = isPointInsidePolygon(polygons, polygonIndex, this->pC);
+            	int check_D = isPointInsidePolygon(polygons, polygonIndex, this->pD);
 
-                lineSegment lineCommon = polygons.at(polygonIndex).at(breakIndex);
+            	lineSegment lineCommon = polygons.at(polygonIndex).at(breakIndex);
                 point p_common = lineCommon.p;
 
                 removePoint(p_common);
@@ -568,9 +607,9 @@ class RefinePolygons : public BuildingPolygons{
 					findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
 
 					lineSegment line;
-					line.p = p_common;
-					line.q.x = x1;
-					line.q.y = y1;
+					line.q = p_common;
+					line.p.x = x1;
+					line.p.y = y1;
 
 					this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line);
 					points.push_back(p_common);
@@ -590,35 +629,83 @@ class RefinePolygons : public BuildingPolygons{
 					e_point.y = y2;
 
 					// sort p_o1, p_o2, p_o3, p_o4
-					sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 2);
+					sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 4);
 
 					if(foundBreak){
-						lineSegment line1;
-						lineSegment line2;
-						lineSegment line3;
-						lineSegment line4;
-						lineSegment line5;
+						// This is a special case when the cars are on the same line, after the middle car is removed,
+						// it will split the original polygons into 2 polygons.
+						int con = (check_A != -1) && (check_B != -1) && (check_C != -1) && (check_D != -1);
+						if(con){
+//							cout << "P_O2 : " << p_o2.x << " " << p_o2.y << endl;
+							lineSegment line = getLineSegmentIncludePoint(polygonIndex, p_o2);
+							point s_point1 = line.p;
+							point e_point1 = line.q;
 
-						line1.p = s_point;
-						line1.q = p_o1;
+							for(int i=0; i<polygons.at(polygonIndex).size(); i++){
+								lineSegment tmpLine = polygons.at(polygonIndex).at(i);
+								if(tmpLine.p == s_point1 && tmpLine.q == e_point1){
+									polygons.at(polygonIndex).at(i).q = p_o3;
 
-						line2.p = p_o1; // line2.p == line1.q
-						line2.q = p_o2;
+									lineSegment line1;
+									line1.p = p_o2;
+									line1.q = e_point1;
 
-						line3.p = p_o2; // line3.p == line2.q
-						line3.q = p_o3;
+									this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (i + 1), line1);
+									break;
+								}
+							}
 
-						line4.p = p_o3; // line4.p == line3.q
-						line4.q = p_o4;
+							lineSegment line1;
+							lineSegment line2;
+							lineSegment line3;
+							lineSegment line4;
 
-						line5.p = p_o4; // line5.p = line4.q
-						line4.q = e_point;
+							line1.p = s_point;
+							line1.q = p_o1;
 
-						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
-						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
-						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line3);
-						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line4);
-						this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 5), line5);
+							line2.p = p_o1;
+							line2.q = p_o2;
+
+							line3.p = p_o3;
+							line3.q = p_o4;
+
+							line4.p = p_o4;
+							line4.q = e_point;
+
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line1);
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line2);
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line3);
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 5), line4);
+							splitPolygon(polygonIndex);
+						} else {
+							lineSegment line1;
+							lineSegment line2;
+							lineSegment line3;
+							lineSegment line4;
+							lineSegment line5;
+
+							line1.p = s_point;
+							line1.q = p_o1;
+
+							line2.p = p_o1; // line2.p == line1.q
+							line2.q = p_o2;
+
+							line3.p = p_o2; // line3.p == line2.q
+							line3.q = p_o3;
+
+							line4.p = p_o3; // line4.p == line3.q
+							line4.q = p_o4;
+
+							line5.p = p_o4; // line5.p = line4.q
+							line5.q = e_point;
+
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line3);
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line4);
+							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 5), line5);
+						}
+
 					}
 				}
                 // push new point to points pool
@@ -626,6 +713,11 @@ class RefinePolygons : public BuildingPolygons{
 				points.push_back(p_o2);
 				points.push_back(p_o3);
 				points.push_back(p_o4);
+
+				for(int i=0; i<polygons.at(polygonIndex).size(); i++){
+					cout << polygons.at(polygonIndex).at(i).p.x << " " << polygons.at(polygonIndex).at(i).p.y << " | ";
+					cout << polygons.at(polygonIndex).at(i).q.x << " " << polygons.at(polygonIndex).at(i).q.y << endl;
+				}
             }
             #pragma endregion 
         }
