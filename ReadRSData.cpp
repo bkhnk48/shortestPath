@@ -45,6 +45,8 @@ int checkCollisionRegardlessVirtualGate(lineSegment &line, vector<vector<lineSeg
     }
     return collision;
 }
+
+
 bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, double X_MIN = FLT_MIN, 
                                         double X_MAX = FLT_MAX, 
                                         double Y_MIN = FLT_MIN, 
@@ -202,10 +204,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
 
         xT_RATIO = xT*RATIO;
         yT_RATIO = yT*RATIO;
-        //if(xT_RATIO >= 0 && yT_RATIO <= 30 && yT_RATIO >= 24){
-        if(i >= 50){
-            //cout<<"DEBUG"<<endl;
-        }
+        
         
         for(int j = 0; j < polygons.size(); j++){
             //if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
