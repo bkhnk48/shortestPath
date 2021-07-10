@@ -231,6 +231,9 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 									cout<<"Wrong direction (4-Left/8-Up/6-Right/2-Down)"<<endl;
 									break;
 								}
+								else{
+									generator->setDirectionAtTheEnd(directionAtTheEnd);
+								}
 							}
 							fflush(stdin);
 							printf("Do you want to get in (I/i/1/l) or get out (O/o/0)?");
@@ -250,12 +253,12 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 								stopInput = false;
 								if(Mode == 'I' || Mode == 'i' || Mode == '1' || Mode == 'l'){
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, true);
-									plan->getTrajectory(generator, gate, slot, &directionAtTheEnd);
+									plan->getTrajectory(generator, gate, slot);
 								}
 								else{
 									point gate = generator->getPositionInGate(gateNumber, numOfStacks, false);
 									generator->removeEdgesAndVertices(indexOfStack, i, j);
-									plan->getTrajectory(generator, slot, gate, &directionAtTheEnd);
+									plan->getTrajectory(generator, slot, gate);
 								}
 							}
 							else{
@@ -342,7 +345,7 @@ void testTouching(){
 
 int main(int argc, const char* argv[]){
 	//testInsidePolygon();
-	testTouching();
+	//testTouching();
 	testFullAVsInStacks();
 	return 0;
 }
