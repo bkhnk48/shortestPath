@@ -33,7 +33,7 @@ class PlanningController{
 
         
         
-        vector<point> getTrajectory(BuildingPolygons* generator, point start, point end, int* directionAtTheEnd){
+        vector<point> getTrajectory(BuildingPolygons* generator, point start, point end){
             vector<point> points = generator->points;
             vector< vector< lineSegment> > polygons = generator->polygons;
             
@@ -110,7 +110,7 @@ class PlanningController{
                 //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
                 if(distance != -1){
                     
-                    runPythonCode("test\\AllPossibleTrajectories.py", rightDirection, directionAtTheEnd);
+                    runPythonCode("test\\AllPossibleTrajectories.py", rightDirection, generator->getDirectionAtTheEnd());
                     vector<Path*> paths = readRSFile("trajectory.txt", polygons, generator->getWIDTH());
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
@@ -169,14 +169,16 @@ class PlanningController{
             int last = r->points.size() - 1;
             int preLast = last - 1;
 
-            double uX = r->points.at(last).x - r->points.at(preLast).x;
+            double deltaX, deltaY;
+
+            /*double uX = r->points.at(last).x - r->points.at(preLast).x;
             double uY = r->points.at(last).y - r->points.at(preLast).y;
             double u = sqrt(uX*uX + uY*uY);
             //double U = sqrt((WIDTH*WIDTH/4) + (LENGTH*LENGTH/4));
             uX = (uX/u)*(generator->getWIDTH()/2);
             uY = (uY/u)*(generator->getWIDTH()/2);
 
-            double vX, vY;
+            
 
             if(uY == 0){
                 vX = 0;
@@ -193,10 +195,24 @@ class PlanningController{
                 if(newDotProduct > 0){
                     vX = -vX;
                 }
+            }*/
+            switch(generator->getDirectionAtTheEnd()){
+                case 8: deltaX = generator->getWIDTH()/2;
+                        deltaY = 0;
+                        break;
+                case 2: deltaX = -generator->getWIDTH()/2;
+                        deltaY = 0;
+                        break;
+                case 6: deltaX = 0;
+                        deltaY = -generator->getWIDTH()/2;
+                        break;
+                case 4: deltaX = 0;
+                        deltaY = generator->getWIDTH()/2;
+                        break;
             }
             //point preLastPoint()
-            r->points.at(last).x += vX;
-            r->points.at(last).y += vY;
+            r->points.at(last).x += deltaX;
+            r->points.at(last).y += deltaY;
 
             cout<<"Prelast x = "<<r->points.at(preLast).x<<" y = "<<r->points.at(preLast).y<<endl;
             cout<<"Last x = "<<r->points.at(last).x<<" y = "<<r->points.at(last).y<<endl;
