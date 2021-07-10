@@ -22,6 +22,7 @@ class BuildingPolygons{
     private:
         int WIDTH;
         int LENGTH; 
+        int directionAtTheEnd;
         
         vector<point> checkedPoints;
         //Create vector for containing the points of the polygons
@@ -110,6 +111,14 @@ class BuildingPolygons{
 
             pD.x = xCenter - (WIDTH/2);
             pD.y = yCenter - (LENGTH/2);
+        }
+
+        void setDirectionAtTheEnd(int directionAtTheEnd){
+            this->directionAtTheEnd = directionAtTheEnd;
+        }
+
+        int getDirectionAtTheEnd(){
+            return this->directionAtTheEnd;
         }
         
         void getRawPolygons(int indexOfStack, int** arrayOfAVs){
