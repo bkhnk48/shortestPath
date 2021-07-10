@@ -52,11 +52,11 @@ void writeRoute(string file_name, vector<point> &route, float firstAngle, float 
 }
 
 
-void runPythonCode(string file_name, vector<point> &route, int* directionAtTheEnd){
+void runPythonCode(string file_name, vector<point> &route, int directionAtTheEnd){
 
 	char cmd[50];
     float lastAngle = 0;
-    switch(*directionAtTheEnd){
+    switch(directionAtTheEnd){
         case 8:
             lastAngle = 90;
             break;
