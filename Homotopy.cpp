@@ -346,7 +346,13 @@ class Homotopy{
             return false;
         }
 
-        void insertTwoFirstPoints(vector<point> &route, vector<point> &rightDirectionRoute){
+        /*
+        Hàm dưới đây cập nhật lại tọa độ của hai điểm đầu tiên trong quỹ đạo của xe
+            - Tọa độ của điểm thứ nhất (chỉ số 0) trước khi được truyền vào hàm thì đã là tọa độ của điểm dưới cùng bên phải của AV
+            - Giờ thì cần kiểm tra điểm thứ hai có tọa độ là quỹ đạo của điểm dưới cùng bên trái hay điểm dưới cùng bên phải của AV
+            hay thậm chí là điểm trọng tâm của xe. Nó là điểm trọng tâm của xe nếu điểm đó không thuộc bất kỳ một đỉnh đa giác nào cả
+        */
+        void insertTwoFirstPoints(vector<point> &route, vector<point> &rightDirectionRoute, vector< vector<lineSegment > > &polygons, vector<point> &points){
             double startX = route.at(0).x;
             double startY = route.at(0).y;
 
@@ -359,6 +365,15 @@ class Homotopy{
             double uX, uY, vX, vY;
 
             rightDirectionRoute.push_back(route.at(0));
+
+            bool isVertex = false;//liệu điểm tiếp theo có là đỉnh của đa giác nào không?
+            for(int i = 1; i < points.size() - 1; i++){
+                if(points.at(i).x == nextX && points.at(i).y == nextY){
+                    isVertex = true;
+                    break;
+                }
+            }
+            
             lineSegment normalIn;
             normalIn.p.x = 0; normalIn.p.y = 0;
             
@@ -367,16 +382,17 @@ class Homotopy{
             vX = nextX - currX;
             vY = nextY - currY;
             double uv;
-            if(nextX == currX - WIDTH){//vi currX la quy dao cua trong tam
+            if(nextX == currX - WIDTH && isVertex){//vi currX la quy dao cua diem duoi cung ben tay phai
                 point p(nextX + WIDTH, nextY);
                 rightDirectionRoute.push_back(p);
             }
-            else if(nextX == currX){
+            else if(nextX == currX && isVertex){
                 rightDirectionRoute.push_back(route.at(1));
             }
             else{
                 uv = uX*vY - uY*vX;
-                if(uv > 0){
+                if(uv > 0 || !isVertex){
+                    double bias = (isVertex) ? WIDTH : WIDTH/2;
                     double deltaY = nextY - startY;
                     double deltaX = nextX - (startX - WIDTH);
                     getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);
@@ -384,8 +400,8 @@ class Homotopy{
                     temp1.x = nextX;
                     temp1.y = nextY;
                         
-                    temp1.x += WIDTH*(normalIn.q.x - normalIn.p.x);
-                    temp1.y += WIDTH*(normalIn.q.y - normalIn.p.y);
+                    temp1.x += bias*(normalIn.q.x - normalIn.p.x);
+                    temp1.y += bias*(normalIn.q.y - normalIn.p.y);
                     rightDirectionRoute.push_back(temp1);
                 }
                 else{
@@ -970,9 +986,9 @@ class Homotopy{
             
         }
 
-        vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons){
+        vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons, vector<point> &points){
             vector<point> rightDirectionRoute;
-            insertTwoFirstPoints(route, rightDirectionRoute);
+            insertTwoFirstPoints(route, rightDirectionRoute, polygons, points);
             double prevX = route.at(0).x;           double prevY = route.at(0).y;
 
             double currX = route.at(1).x;           double currY = route.at(1).y;
