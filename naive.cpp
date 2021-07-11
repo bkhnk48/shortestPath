@@ -230,8 +230,8 @@ double dijkstra(vector< vector< double > > &graphDistance, vector<vector< int> >
 
 			//calculate the complete distance to that current
 			double newdistance = distanceSoFar + graphDistance[current][i];
-			cout<<"distance from ("<<points.at(current).x<<", "<<points.at(current).y<<") to ("
-					<<points.at(next).x<<", "<<points.at(next).y<<") is "<<graphDistance[current][i]<<endl;
+			//cout<<"distance from ("<<points.at(current).x<<", "<<points.at(current).y<<") to ("
+			//		<<points.at(next).x<<", "<<points.at(next).y<<") is "<<graphDistance[current][i]<<endl;
 
 			//And push it to the queue
 			tuple<double,int,int> newTuple = make_tuple(-1*newdistance,next,current);
