@@ -651,8 +651,8 @@ class Homotopy{
         bool inRegionOfEachOther(point p, point q, lineSegment line, lineSegment &normalIn){
             /*
                 Ham nay tinh toan xem vector line co nam trong vung keo dai cua vector pq hay khong?
-                vector pq, tim ra vector chi phuong N cua A sao cho tich huu huong (A, N) la 1 so am
-                Tu dinh p, q keo dai vector chi phuong N ra den duong bien cua bai do.
+                vector pq, tim ra vector chi phuong N cua pq sao cho tich huu huong (pq, N) la 1 so am
+                Tu 2 dinh p, q keo dai 2 vector chi phuong N, N' ra den duong bien cua bai do.
                 Ta se duoc hai vector khac nhau, tam goi la A va B
                 neu 2 vector A va B cat qua vector line thi ta noi vector line co nam trong vung keo dai cua vector pq
 
@@ -661,6 +661,17 @@ class Homotopy{
                 Ta se duoc vector C
                 Neu vector C cat qua vector pq thi ta noi line co nam trong vung keo dai cua vector pq.
             */
+
+            double uX = q.x - p.x;
+            double uY = q.y - p.y;
+            double vX = line.q.x - line.p.x;
+            double vY = line.q.y - line.p.y;
+            double uv = uX*vY - uY*vX;
+            if(uv == 0)//neu hai vector pq va line song song nhau
+            {
+                return true;
+            }
+
             double deltaNormalInX = (normalIn.q.x - normalIn.p.x);
             double deltaNormalInY = (normalIn.q.y - normalIn.p.y);
             
@@ -675,7 +686,13 @@ class Homotopy{
                     line.p = p; line.q = q;
                     if(cutThrough(line, scaleNormal) == 0)
                     {
-                        return false;
+                        point middlePoint((line.p.x + line.q.x)/2, (line.p.y + line.q.y)/2);
+                        scaleNormal = getScaleVector(middlePoint, -deltaNormalInX, -deltaNormalInY);
+                        //neu pq va line khong song song nhau NHUNG 2 vector chi phuong (xuat phat tu p, q)
+                        //deu di qua dinh cua vector line. Thi ta can xet den trung diem cua pq
+                        if(cutThrough(line, scaleNormal) == 0){
+                            return false;
+                        }
                     }
                 }
             }
