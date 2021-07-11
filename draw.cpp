@@ -799,30 +799,31 @@ string drawLines(Section *section, int WIDTH){
 	str.append("' style=\"stroke:red; fill:transparent\" />\n");
 	#pragma endregion
 
+	int signedValue = section->param >= 0 ? 1 : -1;
 	#pragma region draw the center axes
 	str.append("\n<line x1='");
-	str.append(to_string((section->beganX*RATIO*(10) + xNormal/2)));
+	str.append(to_string((section->beganX*RATIO*(10) + signedValue*xNormal/2)));
 	str.append("' y1='");
-	str.append(to_string((section->beganY*RATIO*(-10)  + yNormal/2)));
+	str.append(to_string((section->beganY*RATIO*(-10)  + signedValue*yNormal/2)));
 	str.append("' x2='");
-	str.append(to_string((section->endedX*RATIO*(10) + xNormal/2)));
+	str.append(to_string((section->endedX*RATIO*(10) + signedValue*xNormal/2)));
 	str.append("' y2='");
-	str.append(to_string((section->endedY*RATIO*(-10) + yNormal/2)));
+	str.append(to_string((section->endedY*RATIO*(-10) + signedValue*yNormal/2)));
 	str.append("' style=\"stroke:violet; fill:transparent\" />\n");
 	#pragma endregion
 
 	#pragma region draw the remaining side
 	str.append("\n<line x1='");
-	str.append(to_string((section->beganX*RATIO*(10) + xNormal)));
+	str.append(to_string((section->beganX*RATIO*(10) + signedValue*xNormal)));
 	//To be honest, it should be (section->beganX + xNormal)*RATIO*(10). 
 	// But I use the shortcut to reduce number of FP arithmetic calculation
 
 	str.append("' y1='");
-	str.append(to_string((section->beganY*RATIO*(-10) + yNormal)));
+	str.append(to_string((section->beganY*RATIO*(-10) + signedValue*yNormal)));
 	str.append("' x2='");
-	str.append(to_string((section->endedX*RATIO*(10) + xNormal)));
+	str.append(to_string((section->endedX*RATIO*(10) + signedValue*xNormal)));
 	str.append("' y2='");
-	str.append(to_string((section->endedY*RATIO*(-10) + yNormal)));
+	str.append(to_string((section->endedY*RATIO*(-10) + signedValue*yNormal)));
 	str.append("' style=\"stroke:blue; fill:transparent\" />\n");
 	#pragma endregion
 
