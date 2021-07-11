@@ -90,7 +90,7 @@ vector<point> getTrajectory(int argc, const char* argv[]){
 
 
 	//The graph is constructed call dijksta to calculate the distance
-	double distance = dijkstra(graphDistance,graph,route);
+	double distance = dijkstra(graphDistance,graph,route, points);
 
    auto time4 = std::chrono::steady_clock::now();
 	//Output the distance
