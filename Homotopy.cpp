@@ -633,12 +633,15 @@ class Homotopy{
 
 
         void addMidPoint(point temp1, point temp2, vector<point> &rightDirectionRoute){
-            if(std::abs(temp1.x - temp2.x) >= WIDTH)
+            if(std::abs(temp1.x - temp2.x) >= WIDTH)//heuristic
             {
                 int signedValue = temp1.x < temp2.x ? 1 : -1;
-                if(std::abs(temp1.y - temp2.y) >= 6*WIDTH){
-                    point temp3(temp1.x + signedValue*WIDTH/2, (temp2.y + temp1.y)/2 - 6);
-                    rightDirectionRoute.push_back(temp3);
+                if(std::abs(temp1.y - temp2.y) >= 6*WIDTH){//heuristic
+                    double y = (temp2.y + temp1.y)/2 - 6;
+                    if(std::abs(y - temp2.y) >= 6){//heuristic
+                        point temp3(temp1.x + signedValue*WIDTH/2, y);
+                        rightDirectionRoute.push_back(temp3);
+                    }
                 }
             }
         }
