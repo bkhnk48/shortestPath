@@ -72,7 +72,7 @@ class PlanningController{
 
 
             //The graph is constructed call dijksta to calculate the distance
-            double distance = dijkstra(graphDistance,graph, route);
+            double distance = dijkstra(graphDistance,graph, route, points);
 
             auto time4 = std::chrono::steady_clock::now();
 
@@ -115,8 +115,8 @@ class PlanningController{
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
-                                                                    //shortestPath, 
-                                                                    rightDirection,
+                                                                    shortestPath, 
+                                                                    //rightDirection,
                                                                     //sideSteps,
                                                                     paths,
                                                                     graph);
