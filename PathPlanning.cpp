@@ -115,8 +115,8 @@ class PlanningController{
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
-                                                                    shortestPath, 
-                                                                    //rightDirection,
+                                                                    //shortestPath, 
+                                                                    rightDirection,
                                                                     //sideSteps,
                                                                     paths,
                                                                     graph);
@@ -214,8 +214,8 @@ class PlanningController{
             r->points.at(last).x += deltaX;
             r->points.at(last).y += deltaY;
 
-            cout<<"Prelast x = "<<r->points.at(preLast).x<<" y = "<<r->points.at(preLast).y<<endl;
-            cout<<"Last x = "<<r->points.at(last).x<<" y = "<<r->points.at(last).y<<endl;
+            //cout<<"Prelast x = "<<r->points.at(preLast).x<<" y = "<<r->points.at(preLast).y<<endl;
+            //cout<<"Last x = "<<r->points.at(last).x<<" y = "<<r->points.at(last).y<<endl;
 
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
@@ -279,51 +279,10 @@ class PlanningController{
 
         void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory, vector< vector< lineSegment> > polygons){ 
 
-            //dotProductRight = -(LENGTH/2)*(WIDTH/2);
-            
-            //if(trajectory.at(1).x > trajectory.at(0).x)
-            {
-                trajectory.at(0).x += WIDTH/2;
-            }
-            //else if(trajectory.at(1).x < trajectory.at(0).x){
-            //    trajectory.at(0).x -= WIDTH/2;
-            //}
+            trajectory.at(0).x += WIDTH/2;
             trajectory.at(0).y -= LENGTH/2;
-
             return;
 
-            int last = trajectory.size() - 1;
-            int preLast = last - 1;
-            cout<<"Prelast x = "<<trajectory.at(preLast).x<<" y = "<<trajectory.at(preLast).y<<endl;
-            cout<<"Last x = "<<trajectory.at(last).x<<" y = "<<trajectory.at(last).y<<endl;
-            double uX = trajectory.at(last).x - trajectory.at(preLast).x;
-            double uY = trajectory.at(last).y - trajectory.at(preLast).y;
-            double u = sqrt(uX*uX + uY*uY);
-            //double U = sqrt((WIDTH*WIDTH/4) + (LENGTH*LENGTH/4));
-            uX = (uX/u)*(WIDTH/2);
-            uY = (uY/u)*(WIDTH/2);
-
-            double vX, vY;
-
-            if(uY == 0){
-                vX = 0;
-                vY = -uX*WIDTH/2;
-            }
-            else{
-                double tag = uX/uY;
-                double tag_1 = 1/sqrt(1 + tag*tag);
-                double sin = tag*tag_1;
-                double cos = tag_1*0.5;
-                vY = (WIDTH/2)*sin;
-                vX = (WIDTH/2)*cos;
-                double newDotProduct = uX*vY - uY*vX;
-                if(newDotProduct > 0){
-                    vX = -vX;
-                }
-            }
-            //point preLastPoint()
-            trajectory.at(last).x += vX;
-            trajectory.at(last).y += vY;
         }
 
         bool isClockwise(point p1, point p2){
