@@ -97,7 +97,7 @@ class PlanningController{
                 //for(int i = 0; i < sideSteps.size(); i++){
                 //    cout<<"\t"<<i<<") Point("<<sideSteps.at(i).x<<", "<<sideSteps.at(i).y<<") "<<endl;
                 //}
-                vector<point> rightDirection = homotopy->calculateClockwise(shortestPath, polygons
+                vector<point> rightDirection = homotopy->calculateClockwise(shortestPath, polygons, points
                         );
                 cout<<"After calculateClockwise=========="<<endl;
                 for(int i = 0; i < shortestPath.size(); i++){
