@@ -662,7 +662,7 @@ class Homotopy{
                 Neu vector C cat qua vector pq thi ta noi line co nam trong vung keo dai cua vector pq.
             */
 
-            double uX = q.x - p.x;
+            /*double uX = q.x - p.x;
             double uY = q.y - p.y;
             double vX = line.q.x - line.p.x;
             double vY = line.q.y - line.p.y;
@@ -670,11 +670,11 @@ class Homotopy{
             if(uv == 0)//neu hai vector pq va line song song nhau
             {
                 return true;
-            }
+            }*/
 
             double deltaNormalInX = (normalIn.q.x - normalIn.p.x);
             double deltaNormalInY = (normalIn.q.y - normalIn.p.y);
-            
+            //line là cạnh của đa giác
             
             lineSegment scaleNormal = getScaleVector(p, deltaNormalInX, deltaNormalInY);
 
@@ -683,13 +683,14 @@ class Homotopy{
                 scaleNormal = getScaleVector(q, deltaNormalInX, deltaNormalInY);
                 if(cutThrough(line, scaleNormal) == 0){
                     scaleNormal = getScaleVector(line.p, -deltaNormalInX, -deltaNormalInY);
-                    line.p = p; line.q = q;
+                    double middlePointX = (line.p.x + line.q.x)/2, middlePointY = (line.p.y + line.q.y)/2;//lấy trung điểm của line
+                    line.p = p; line.q = q;//đảo lại giờ line là đường đi của AV
                     if(cutThrough(line, scaleNormal) == 0)
                     {
-                        point middlePoint((line.p.x + line.q.x)/2, (line.p.y + line.q.y)/2);
+                        point middlePoint(middlePointX, middlePointY);
                         scaleNormal = getScaleVector(middlePoint, -deltaNormalInX, -deltaNormalInY);
-                        //neu pq va line khong song song nhau NHUNG 2 vector chi phuong (xuat phat tu p, q)
-                        //deu di qua dinh cua vector line. Thi ta can xet den trung diem cua pq
+                        //neu 2 vector chi phuong (xuat phat tu p, q)
+                        //deu di qua dinh cua vector line. Thi ta can xet den trung diem cua line xem có cắt qua pq không?
                         if(cutThrough(line, scaleNormal) == 0){
                             return false;
                         }
