@@ -363,22 +363,22 @@ class Homotopy{
             normalIn.p.x = 0; normalIn.p.y = 0;
             
             uX = (currX - prevX);
-            uY = currY - prevY; 
+            uY = 1; 
             vX = nextX - currX;
             vY = nextY - currY;
             double uv;
-            if(nextX == currX - WIDTH/2){//vi currX la quy dao cua trong tam
+            if(nextX == currX - WIDTH){//vi currX la quy dao cua trong tam
                 point p(nextX + WIDTH, nextY);
                 rightDirectionRoute.push_back(p);
             }
-            else if(nextX == currX + WIDTH/2){
+            else if(nextX == currX){
                 rightDirectionRoute.push_back(route.at(1));
             }
             else{
                 uv = uX*vY - uY*vX;
                 if(uv > 0){
                     double deltaY = nextY - startY;
-                    double deltaX = nextX - (startX + WIDTH/2);
+                    double deltaX = nextX - (startX - WIDTH);
                     getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);
                     point temp1;
                     temp1.x = nextX;
