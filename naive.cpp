@@ -7,6 +7,15 @@
 #include <stdlib.h> //atoi
 #include <tuple> //get<n> make_tuple
 #include <chrono>
+#include <limits>
+#include <set>
+#include <map>
+#include <queue>
+#include <string>
+#include <algorithm>
+//#include "GraphElements.h"
+//#include "Graph.h"
+//#include "YenTopKShortestPathsAlg.h"
 
 #ifndef __NAIVE__
 #define __NAIVE__
@@ -169,7 +178,7 @@ int numberOfCrossings(vector<vector<lineSegment> > &polygons, lineSegment l){
 //Implementation of dijkstra
 //Takes a graph and a start and end point in the graph
 //returns the distance
-double dijkstra(vector< vector< double > > &graphDistance, vector<vector< int> > &graph ,vector<int> &route){
+double dijkstra(vector< vector< double > > &graphDistance, vector<vector< int> > &graph ,vector<int> &route, vector<point> &points){
 	int start = 0;
 	size_t end = graph.size()-1;
 
@@ -221,6 +230,8 @@ double dijkstra(vector< vector< double > > &graphDistance, vector<vector< int> >
 
 			//calculate the complete distance to that current
 			double newdistance = distanceSoFar + graphDistance[current][i];
+			cout<<"distance from ("<<points.at(current).x<<", "<<points.at(current).y<<") to ("
+					<<points.at(next).x<<", "<<points.at(next).y<<") is "<<graphDistance[current][i]<<endl;
 
 			//And push it to the queue
 			tuple<double,int,int> newTuple = make_tuple(-1*newdistance,next,current);
@@ -230,6 +241,41 @@ double dijkstra(vector< vector< double > > &graphDistance, vector<vector< int> >
 	}
 	return -1;
 }
+
+/*double YenAlg(vector< vector< double > > &graphDistance, vector<vector< int> > &graph ,vector<int> &route, vector<point> &points){
+	int start = 0;
+	size_t end = graph.size()-1;
+
+	route.resize(graph.size());
+	
+	Graph my_graph;
+	int nodes = points.size();
+	int size = 0;
+	for(int current = 0; current < graph.size(); current++){
+		size += graph.at(current).size();
+	}
+
+	my_graph.set_number_vertices( nodes );
+
+	for ( int i = 0; i < size; i++ )
+	{
+		my_graph.add_link( lk[ i ].u, lk[ i ].v, lk[ i ].weight );
+	}	
+
+	my_graph.setv();
+	
+	YenTopKShortestPathsAlg yenAlg(my_graph, 
+		                           my_graph.get_vertex(s), 
+		                           my_graph.get_vertex(d) );
+
+	// Output the k-shortest paths
+	int i = 0;
+	while( yenAlg.has_next() && i < k )
+	{
+		++i;
+		yenAlg.next()->PrintOut(cout);
+	}
+}*/
 
 int makeVisabilityGraph(vector< vector < int > > &graph, vector< vector < double > > &graphDistance,vector< vector<int> > &crossesNumber, vector<point> &points){
 
