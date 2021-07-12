@@ -163,7 +163,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 	PlanningController* plan = new PlanningController();
 	while(!stopInput && countAllStacks(stacks, numOfStacks, rowsInStack, columnsInStack) > 0){
 		stopInput = true;
-		printf("Type the number of stack: ");
+		printf("Type the index of stack: ");
 		#ifdef __linux__ 
 		//linux code goes here
 		__fpurge(stdin);
@@ -201,8 +201,8 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 						stacks[indexOfStack].slotsOfAV[i][j] == -1
 						){
 						point slot = generator->getSlot(indexOfStack, i, j);
-						fflush(stdin);
-						printf("Type the gate number (zero - 0 - for pick up an arbitrary point): ");
+						//fflush(stdin);
+						//printf("Type the gate number (zero - 0 - for pick up an arbitrary point): ");
 						#ifdef __linux__ 
 						//linux code goes here
 						__fpurge(stdin);
@@ -211,8 +211,10 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 						fflush(stdin);
 						#else
 						#endif
-						input = scanf("%d", &gateNumber);
-						if(input != EOF && gateNumber >= 0 && gateNumber <= 4){
+						//input = scanf("%d", &gateNumber);
+						if(//input != EOF && 
+								gateNumber >= 0 && gateNumber <= 4)
+						{
 							if(gateNumber == 0){
 								fflush(stdin);
 								printf("The direction from rear to center (4/8/6/2)?: ");
