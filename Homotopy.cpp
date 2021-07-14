@@ -215,7 +215,7 @@ class Homotopy{
             return rightDirectionRoute;
         }
 
-        double getMABCOfLine(lineSegment line, double *A, double *B, double *C){
+        /*double getMABCOfLine(lineSegment line, double *A, double *B, double *C){
             double x1 = line.p.x;
             double x2 = line.q.x;
             double y1 = line.p.y;
@@ -225,7 +225,7 @@ class Homotopy{
             *C = y1*x2 - x1*y2;
             double M = sqrt((*A)*(*A) + (*B)*(*B));
             return M;
-        }
+        }*/
 
         double minDistanceFromPointToPolygon(point &p, vector<lineSegment> &polygon){
             double M = 0, A = 0, B = 0, C = 0;
