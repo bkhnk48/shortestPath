@@ -80,7 +80,7 @@ bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, doub
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, int WIDTH)
+int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, int WIDTH, point &first, point &last, float &penalty)
 {
     double p1X = section->beganX;
     double p1Y = section->beganY;
@@ -124,6 +124,11 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         xNormal = xIn;
         yNormal = yIn;
     }
+
+    penalty = 0;
+    double directionX = last.x - first.x;
+    double directionY = last.y - first.y;
+    
 
     double h = (cos(section->param/2));
     double centerX = midPointX + h*xNormal;
@@ -183,6 +188,9 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                     p0, p1, p2, p3
                     };
     double LENGTH = 6;
+    double product = 0;
+    double M, A, B, C, D;
+    lineSegment line(first, last);
     
     for(int i = 1; i < n; i++){
         sin_omega_T = sin_omega_T*cos_deltaOmega + cos_omega_T*sin_deltaOmega;
@@ -224,6 +232,12 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                 }
                
             }
+            product = (xT_RATIO - first.x)*directionY - (yT_RATIO - first.y)*directionX;
+            if(product < 0){
+                M = getMABCOfLine(line, &A, &B, &C);
+                D = std::abs(A*xT_RATIO + B*yT_RATIO + C)/M;
+                penalty += D;
+            }
             
         }
         point p(xT, yT);
@@ -235,6 +249,7 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
 
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
                             vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error, int WIDTH
+                            , point &p, point &q
                             ){
     PathSegment *segment = new PathSegment();
     segment->beganX = x;       segment->beganY = y;
@@ -244,6 +259,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
     *error = 0;
     istringstream allSections(line);
     int numberSections = 0;
+    float penalty = 0;//tính toán độ lệch so với đường đi bên tay phải (right roadside)
     
     if(allSections >> strTemp1 >> numberSections){
         double startX = x; 
@@ -264,13 +280,14 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     int check = 1;
                     section->beganX = startX; section->beganY = startY; 
                     if(section->steering != 'S'){
-                        check = getPointsOfCircle(section, scaledPolygons, ranges, WIDTH);
+                        check = getPointsOfCircle(section, scaledPolygons, ranges, WIDTH, p, q, penalty);
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
                         
                         segment->sections.push_back(section);
                         segment->L += std::abs(section->param);
+                        segment->penalty += penalty;
                     }
                     else{
                         *error = 1;
@@ -317,7 +334,7 @@ void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &
     }
 }
 
-vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons, int WIDTH){
+vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons, int WIDTH, vector<point> &rightDirection){
     string line;
     string strTemp, strTemp1, strTemp2, strTemp3;
 
@@ -329,6 +346,9 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
     char typeOfTraj;
     vector<Path*> result;
     bool firstSetSide = true; enum SIDE side = LeftSide;
+    int sizeOfPaths = numPaths;
+    point firstPath(0, 0);
+    point lastPath(0, 0);
     while(numPaths > 0){
         Path *path = new Path();
         
@@ -344,7 +364,9 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                 while(numOfSegmentsInPath > 0){
                     int error = 0;
                     
-                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error, WIDTH);
+                    firstPath = rightDirection.at(sizeOfPaths - numPaths);
+                    lastPath = rightDirection.at(sizeOfPaths - numPaths + 1);
+                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error, WIDTH, firstPath, lastPath);
 
                     if(error == 0)
                     {
@@ -358,12 +380,16 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                         if(path->segments.size() == 0){
                             path->segments.push_back(segment);
                             path->Lmin = segment->L;
+                            path->penaltyMin = segment->penalty;
                         }
                         else{
-                            if(path->Lmin > segment->L){
-                                path->segments.erase(path->segments.begin());
-                                path->segments.push_back(segment);
-                                path->Lmin = segment->L;
+                            if(path->penaltyMin >= segment->penalty){
+                                if(path->Lmin > segment->L || path->penaltyMin > segment->penalty){
+                                    path->segments.erase(path->segments.begin());
+                                    path->segments.push_back(segment);
+                                    path->Lmin = segment->L;
+                                    path->penaltyMin = segment->penalty;
+                                }
                             }
                         }
                     }/*else{     cout<<"Va cham tai path "<<numPaths<<" segment "<<numOfSegmentsInPath<<endl;      }*/
@@ -403,7 +429,7 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
     }
 }
 
-vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons, int WIDTH){
+vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons, int WIDTH, vector<point> &rightDirection){
 
     //vector<point> discreteTrajectory;
     vector<Path*> result; 
@@ -421,7 +447,7 @@ vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons,
     { 
         cout<<"number of paths: "<<numPaths<<endl;
         
-        result = readPath(infile, numPaths, polygons, WIDTH);
+        result = readPath(infile, numPaths, polygons, WIDTH, rightDirection);
         printReedSheppTrajectories(result);
     }
     cout<<"Close file"<<endl;
