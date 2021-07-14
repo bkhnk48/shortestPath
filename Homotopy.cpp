@@ -799,7 +799,9 @@ class Homotopy{
         
 
         void rotateOnePoint(point currentPoint, bool pIsInside, bool qIsInside, point temp1, point temp2, 
-                            double arr[], vector<vector<lineSegment>> &polygons, vector<point> &rightDirectionRoute)
+                            double arr[], vector<vector<lineSegment>> &polygons, vector<point> &rightDirectionRoute
+                            //, lineSegment realNormalIn
+                            )
         {
             double nextX = arr[0];
             double nextY = arr[1];
@@ -823,57 +825,80 @@ class Homotopy{
 
             getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);    
 
-            int step = 0;
-
-            double changedX = WIDTH*normalIn.q.x;
-            double changedY = WIDTH*normalIn.q.y;
+            //lineSegment realNormalIn; //normal vector of the line temp1-temp2
+            //realNormalIn.p.x = 0; realNormalIn.p.y = 0;
+            //realNormalIn.q.x = normalIn.q.x; realNormalIn.p.y = normalIn.q.y;
+            //if(qIsInside){
+            //}
             
-           
-            do{
-                moveX += changedX;
-                moveY += changedY;
-                tempLine.q.x = moveX;
-                tempLine.q.y = moveY;
-                step++;
-            }
-            //while(numberOfCuttingThrough(polygons, tempLine) == 0);
-            //while(!cutThroughPolygons(tempLine, polygons));
-            //while(checkCollisionRegardlessVirtualGate(tempLine, polygons) == 0);
-            while(cutThroughRegardlessVirtualGate(tempLine, polygons) == 0);
-            
-
-            //step = 0;
-            int backward = 0;
-            //do
-            {
-                moveX -= changedX;
-                moveY -= changedY;
-                //tempLine.q.x -= backwardX;
-                //tempLine.q.y -= backwardY;
-                tempLine.q.x = moveX;
-                tempLine.q.y = moveY;
-                backward++;
-            }
-            //cout<<"HEREER"<<endl;
-            //1 is the thickness of parking wall
-            //while(!(tempLine.q.x > min_x + 1 && tempLine.q.x < max_x - 1
-            //        && tempLine.q.y > min_y + 1 && tempLine.q.y < max_y - 1)
-            //        );//this while makes no sense (has no loop)
-
-            backward = 0;
             int indexes = findRightRoadSide(temp1, temp2, polygons, normalIn);
             int poly = indexes >> 16;
             int edge = (indexes & 0xFFFF);
 
             if(poly != -1 && edge != -1){
+                int step = 0;
                 lineSegment line = polygons.at(poly).at(edge);
+                //cout<<"\n("<<line.p.x<<", "<<line.p.y<<") -> ("<<line.q.x<<", "<<line.q.y<<")"<<endl;
+
+                double changedX = WIDTH*normalIn.q.x;
+                double changedY = WIDTH*normalIn.q.y;
+                double product = 0;
+                int numOfCutThrough = 0;
+                int signedValue = qIsInside ? -1 : 1;
+            
+                do{
+                    moveX += changedX;
+                    moveY += changedY;
+                    tempLine.q.x = moveX;
+                    tempLine.q.y = moveY;
+                    step++;
+                    //product = (moveX - anchorX)*(line.p.y - moveY) - (moveY - anchorY)*(line.p.x - moveX);
+                    //product = signedValue * product;
+                    //numOfCutThrough = cutThroughRegardlessVirtualGate(tempLine, polygons);
+                    //cout<<" product: "<<product<<" "<<signedValue*isLeft(tempLine.p, tempLine.q, line.p)<<endl;
+                }
+                while(numberOfCuttingThrough(polygons, tempLine) == 0);
+                //while(!cutThroughPolygons(tempLine, polygons));
+                //while(checkCollisionRegardlessVirtualGate(tempLine, polygons) == 0);
+                //while(numOfCutThrough == 0 && product <= 0);
+
+                //cout<<"\ncutThrouh : "<<numOfCutThrough<<" product: "<<product<<" Moved point: ("<<moveX<<", "<<moveY<<") "<<endl;
+                
+
+                //step = 0;
+                int backward = 0;
+                //if(numOfCutThrough > 0 || product > 0)
+                {
+                    moveX -= changedX;
+                    moveY -= changedY;
+                    //tempLine.q.x -= backwardX;
+                    //tempLine.q.y -= backwardY;
+                    tempLine.q.x = moveX;
+                    tempLine.q.y = moveY;
+                    backward++;
+                }
+                //cout<<"Moved point: ("<<moveX<<", "<<moveY<<") "<<endl;
+                //cout<<"HEREER"<<endl;
+                //1 is the thickness of parking wall
+                //while(!(tempLine.q.x > min_x + 1 && tempLine.q.x < max_x - 1
+                //        && tempLine.q.y > min_y + 1 && tempLine.q.y < max_y - 1)
+                //        );//this while makes no sense (has no loop)
+
+                backward = 0;
+            
+                
                 double A = 0, B = 0, C = 0;
                 double M = getMABCOfLine(line, &A, &B, &C);
                 double D = std::abs(A*tempLine.q.x + B*tempLine.q.y + C)/M;
 
                 //bool enoughFar = shortestDistanceRequirement(tempLine, polygons, WIDTH);
                 //while(!enoughFar) 
-                while(D < WIDTH)
+                //product = (moveX - anchorX)*(line.p.y - moveY) - (moveY - anchorY)*(line.p.x - moveX);
+                //product = signedValue * product;
+                //cout<<" product: "<<product<<" "<<signedValue*isLeft(tempLine.p, tempLine.q, line.p)<<endl;
+
+                while(D < WIDTH //|| product > 0
+                                )
                 {
                     moveX -= changedX;
                     moveY -= changedY;
@@ -885,7 +910,8 @@ class Homotopy{
                     //enoughFar = shortestDistanceRequirement(tempLine, polygons, WIDTH);
                     D = std::abs(A*tempLine.q.x + B*tempLine.q.y + C)/M;
                     cout<<"Backward "<<backward<<" D = "<<D<<endl;
-
+                    product = (moveX - anchorX)*(line.p.y - moveY) - (moveY - anchorY)*(line.p.x - moveX);
+                    product = signedValue * product;
                 }
                             //&& !cutThroughPolygons(tempLine, polygons) 
                 //            && backward <= 1
@@ -943,7 +969,9 @@ class Homotopy{
                 }
                 
                 if(pIsInside ^ qIsInside){
-                    rotateOnePoint(currentPoint, pIsInside, qIsInside, temp1, temp2, arr, polygons, rightDirectionRoute);
+                    rotateOnePoint(currentPoint, pIsInside, qIsInside, temp1, temp2, arr, polygons, rightDirectionRoute
+                                    //, normalIn
+                                    );
                 }
 
                 if(pIsInside && qIsInside){
@@ -969,6 +997,9 @@ class Homotopy{
                 line.p.y = currY + biasY*WIDTH;
                 line.q.x = nextX;
                 line.q.y = nextY;
+                lineSegment realNormalIn;
+                realNormalIn.p.x = 0;   realNormalIn.p.y = 0;
+                realNormalIn.q.x = biasX;   realNormalIn.q.y = biasY;
 
                 //if(numberOfCuttingThrough(polygons, line) == 0)
                 int collision = checkCollisionRegardlessVirtualGate(line, polygons);
@@ -976,7 +1007,9 @@ class Homotopy{
                 if(collision == 0)                
                 {
                     double arr[4] = {nextX, nextY, currX, currY};
-                    rotateOnePoint(route.at(preLast + 1), false, true, route.at(preLast), route.at(preLast + 1), arr, polygons, rightDirectionRoute);
+                    rotateOnePoint(route.at(preLast + 1), false, true, route.at(preLast), route.at(preLast + 1), arr, polygons, rightDirectionRoute
+                                        //, realNormalIn
+                                        );
                     alreadyAddedLastPoint = true;
                 }
                 
