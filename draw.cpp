@@ -153,6 +153,7 @@ class PathSegment : public MovementPoint{
     public:
         vector<Section*> sections;
         float L;
+		float penalty;
 		//lineSegment firstVelocity;
 		//lineSegment lastVelocity;
         //int index;
@@ -160,6 +161,7 @@ class PathSegment : public MovementPoint{
         PathSegment(){
             //this->index = -1;
             this->L = 0;
+			this->penalty = 0;
         }
 
 		void setSide(enum SIDE side){
@@ -177,10 +179,12 @@ class Path : public MovementPoint{
     public:
         vector<PathSegment*> segments;
         float Lmin;
+		float penaltyMin;
         //int index;
 
         Path(){
             this->Lmin = FLT_MAX;
+			this->penaltyMin = FLT_MAX;
             //this->index = -1;
         }
 };
@@ -238,6 +242,18 @@ string drawX(point &p){
 string drawY(point &p){
 	double r = p.y*-10;
 	return to_string(r);
+}
+
+double getMABCOfLine(lineSegment line, double *A, double *B, double *C){
+	double x1 = line.p.x;
+	double x2 = line.q.x;
+	double y1 = line.p.y;
+	double y2 = line.q.y;
+	*A = y2 - y1;
+	*B = x1 - x2;
+	*C = y1*x2 - x1*y2;
+	double M = sqrt((*A)*(*A) + (*B)*(*B));
+	return M;
 }
 
 //we define the "normal in" vector v of vector u is a vector such that
