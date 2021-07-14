@@ -29,11 +29,13 @@ class Homotopy{
         vector<Clockwise> clockwises;
 
         int WIDTH;
+        int LENGTH;
         //bool isClockWise = false;
         //int LENGTH;
 
-        Homotopy(int WIDTH){
+        Homotopy(int WIDTH, int LENGTH){
             this->WIDTH = WIDTH;
+            this->LENGTH = LENGTH;
             //this->isClockWise = isClockWise;
             //this->LENGTH = LENGTH;
         }
@@ -573,10 +575,18 @@ class Homotopy{
                     movingLine1.p = temp1;
                     movingLine2.p = temp1;
                     movingLine3.p = temp1;
+                    cout<<"temp1 ("<<temp1.x<<", "<<temp1.y<<") yOut "<<yOut<<endl;
                 }
-                while(cutThroughRegardlessVirtualGate(movingLine1, polygons) != 0
-                    || cutThroughRegardlessVirtualGate(movingLine2, polygons) != 0
-                    || cutThroughRegardlessVirtualGate(movingLine3, polygons) != 0
+                while(
+                    //cutThroughRegardlessVirtualGate(movingLine1, polygons) != 0
+                    //|| cutThroughRegardlessVirtualGate(movingLine2, polygons) != 0
+                    //|| cutThroughRegardlessVirtualGate(movingLine3, polygons) != 0
+                    (numberOfCuttingThrough(polygons, movingLine1) != 0
+                    || numberOfCuttingThrough(polygons, movingLine2) != 0
+                    || numberOfCuttingThrough(polygons, movingLine3) != 0)
+                    && (temp1.x >= min_x - LENGTH && temp1.x <= max_x + LENGTH
+                        && temp1.y >= min_y - LENGTH && temp1.y <= max_y + LENGTH
+                            )
                         );
 
                 
