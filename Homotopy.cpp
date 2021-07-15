@@ -30,12 +30,14 @@ class Homotopy{
 
         int WIDTH;
         int LENGTH;
+        int directionAtTheEnd;
         //bool isClockWise = false;
         //int LENGTH;
 
-        Homotopy(int WIDTH, int LENGTH){
+        Homotopy(int WIDTH, int LENGTH, int directionAtTheEnd){
             this->WIDTH = WIDTH;
             this->LENGTH = LENGTH;
+            this->directionAtTheEnd = directionAtTheEnd;
             //this->isClockWise = isClockWise;
             //this->LENGTH = LENGTH;
         }
@@ -1020,19 +1022,29 @@ class Homotopy{
                 line.p.y = currY + biasY*WIDTH;
                 line.q.x = nextX;
                 line.q.y = nextY;
-                lineSegment realNormalIn;
-                realNormalIn.p.x = 0;   realNormalIn.p.y = 0;
-                realNormalIn.q.x = biasX;   realNormalIn.q.y = biasY;
 
-                //if(numberOfCuttingThrough(polygons, line) == 0)
-                int collision = checkCollisionRegardlessVirtualGate(line, polygons);
+                point temp;
+                int collision = 0;
+                for(int i = 0; i < polygons.size(); i++){
+                    if(!isVirtualGate(polygons.at(i))){
+                        for(int j = 0; j < polygons.at(i).size(); j++){
+                            int c = doIntersect(line,polygons[i][j]);
+                            if(c == 1){
+                                temp = lineLineIntersection(line.p, line.q, polygons.at(i).at(j).p, polygons.at(i).at(j).q);
+                                if(temp.x != FLT_MAX && temp.y != FLT_MAX){
+                                    if(temp.x != nextX || temp.y != nextY){
+                                        collision += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                     
                 if(collision == 0)                
                 {
                     double arr[4] = {nextX, nextY, currX, currY};
-                    rotateOnePoint(route.at(preLast + 1), false, true, route.at(preLast), route.at(preLast + 1), arr, polygons, rightDirectionRoute
-                                        //, realNormalIn
-                                        );
+                    rotateOnePoint(route.at(preLast + 1), false, true, route.at(preLast), route.at(preLast + 1), arr, polygons, rightDirectionRoute);
                     alreadyAddedLastPoint = true;
                 }
                 
@@ -1042,7 +1054,6 @@ class Homotopy{
                 rightDirectionRoute.push_back(route.at(preLast + 1));
             }
 
-            
         }
 
         vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons, vector<point> &points){
