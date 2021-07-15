@@ -505,6 +505,13 @@ int doIntersect(lineSegment line1, lineSegment line2)
     return 0; // Doesn't fall in any of the above cases
 }
 
+bool isEqual(double pX, double pY, double qX, double qY){
+	if(std::abs(pX - qX) <= EPSILON && std::abs(pY - qY) <= EPSILON){
+		return true;
+	}
+	return false;
+}
+
 
 // isLeft(): tests if a point is Left|On|Right of an infinite line.
 //    Input:  three points P0, P1, and P2
