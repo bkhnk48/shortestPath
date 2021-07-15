@@ -91,7 +91,7 @@ class PlanningController{
                 for(int i = 0; i < shortestPath.size(); i++){
                     cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
                 }
-                Homotopy* homotopy = new Homotopy(generator->getWIDTH(), generator->getLENGTH());
+                Homotopy* homotopy = new Homotopy(generator->getWIDTH(), generator->getLENGTH(), generator->getDirectionAtTheEnd());
                 //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 //cout<<"After sideStepRouting=========="<<endl;
                 //for(int i = 0; i < sideSteps.size(); i++){
@@ -215,7 +215,7 @@ class PlanningController{
             r->points.at(last).y += deltaY;
 
             //cout<<"Prelast x = "<<r->points.at(preLast).x<<" y = "<<r->points.at(preLast).y<<endl;
-            //cout<<"Last x = "<<r->points.at(last).x<<" y = "<<r->points.at(last).y<<endl;
+            cout<<"Last x = "<<r->points.at(last).x<<" y = "<<r->points.at(last).y<<endl;
 
             for(int i = 0; i < r->points.size(); i++){
                 //cout<<"("<<r->points.at(i).x<<", "<<r->points.at(i).y<<") ";
@@ -265,7 +265,10 @@ class PlanningController{
             movementOfTheSide(generator->getWIDTH(), generator->getLENGTH(),    
                         result
                         //r->points
-                        , polygons);
+                        //, polygons
+                        , r->points.at(last).x
+                        , r->points.at(last).y
+                        );
             
             return result;
             //return r->points;
@@ -277,10 +280,15 @@ class PlanningController{
         double dotProductRight;
         
 
-        void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory, vector< vector< lineSegment> > polygons){ 
+        void movementOfTheSide(int WIDTH, int LENGTH, vector<point> &trajectory, double lastX, double lastY){ 
 
             trajectory.at(0).x += WIDTH/2;
             trajectory.at(0).y -= LENGTH/2;
+            int last = trajectory.size() - 1;
+            if(trajectory.at(last).x != lastX){
+                trajectory.at(last).x = lastX;
+                trajectory.at(last).y = lastY;
+            }
             return;
 
         }
