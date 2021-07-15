@@ -16,6 +16,7 @@
 using namespace std;
 
 void twoSeperatePolygons(int** slots){
+    int NUM_STACKS = 1;
     int ROWS = 6;
     int COLS = 21;
 
@@ -23,13 +24,54 @@ void twoSeperatePolygons(int** slots){
 
     int arr[6][21] 
     = {
-        1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0,
+        1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0,
         0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0,
     };
+
+    printf("\n");
+    for(int i = 0; i < ROWS; i++){
+        printf("\t");
+        for(int j = 0; j < COLS; j++){
+            printf("%2d ", arr[i][j]);
+        }
+        printf("\n");
+    }
+
+    bool stopInput = false;
+	int input;
+    int indexOfStack = 0;
+	while(!stopInput){
+        stopInput = true;
+        printf("Which stack you want to edit?: ");
+        input = scanf("%d", &indexOfStack);
+        if(input != EOF && indexOfStack >= 0 && indexOfStack < NUM_STACKS){
+            printf("Which slot you want to change (from 0 to 1 or 1 to 0)? Type (row, colum): ");
+            int rowIndex, colIndex;
+            #ifdef __linux__ 
+            //linux code goes here
+            __fpurge(stdin);
+            #elif _WIN32
+            // windows code goes here
+            fflush(stdin);
+            #else
+            #endif
+            input = scanf("%d, %d", &rowIndex, &colIndex);
+            if(input != EOF && rowIndex >= 0 && rowIndex < ROWS && colIndex >= 0 && colIndex < COLS){
+                arr[rowIndex][colIndex] = arr[rowIndex][colIndex] == 0 ? 1 : 0;
+                stopInput = false;
+            }
+            else{
+                break;
+            }
+        }
+        else{
+            break;
+        }
+    }
 
     for(int i = 0; i < ROWS; i++){
         for(int j = 0; j < COLS; j++){
