@@ -176,7 +176,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 		#else
 		#endif
 		input = scanf("%d", &indexOfStack);
-		if(input != EOF && indexOfStack >= 0 && indexOfStack < numOfStacks){
+		if(input != EOF && input != 0 && indexOfStack >= 0 && indexOfStack < numOfStacks){
 			#ifdef __linux__ 
 			//linux code goes here
 			__fpurge(stdin);
@@ -187,7 +187,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 			#endif
 			printf("Type the row index of AV: ");
 			input = scanf("%d", &i);
-			if(input != EOF && i >= 0 && i < rowsInStack){
+			if(input != EOF && input != 0 && i >= 0 && i < rowsInStack){
 				fflush(stdin);
 				printf("Type the column index of AV: ");
 				#ifdef __linux__ 
@@ -199,7 +199,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 				#else
 				#endif
 				input = scanf("%d", &j);
-				if(input != EOF && j >= 0 && j < columnsInStack){
+				if(input != EOF && input != 0 && j >= 0 && j < columnsInStack){
 					if(stacks[indexOfStack].slotsOfAV[i][j] == 1 ||
 						stacks[indexOfStack].slotsOfAV[i][j] == -1
 						){
@@ -230,7 +230,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 								#else
 								#endif
 								input = scanf("%d", &directionAtTheEnd);
-								if(input == EOF || 
+								if(input == EOF || input == 0 ||
 										(directionAtTheEnd != 4 && directionAtTheEnd != 8 && directionAtTheEnd != 6 && directionAtTheEnd != 2))
 								{
 									cout<<"Wrong direction (4-Left/8-Up/6-Right/2-Down)"<<endl;
@@ -252,7 +252,7 @@ void getPathPlanning(K_Stack *stacks, int numOfStacks, int rowsInStack, int colu
 							#else
 							#endif
 							input = scanf("%c", &Mode);
-							if(input != EOF && (Mode == 'I' || Mode == 'O' || Mode == '1' || Mode == 'l' 
+							if(input != EOF && Mode != '.' && (Mode == 'I' || Mode == 'O' || Mode == '1' || Mode == 'l' 
 									|| Mode == 'i' || Mode == 'o' || Mode == '0')){
 								
 								stopInput = false;
