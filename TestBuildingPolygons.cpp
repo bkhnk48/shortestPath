@@ -55,7 +55,7 @@ void testFullAVsInStacks(){
 	char load;
 	char scenario;	
 	int input = scanf("%c", &load);
-	if(input == EOF)
+	if(input == EOF || load == '.')
 		return;
 
 	if(load == 'Y' || load == 'y' || load == '1'){
@@ -72,9 +72,12 @@ void testFullAVsInStacks(){
 		switch (scenario)
 		{
 			case '0':
-				twoSeperatePolygons(stacks[0].slotsOfAV);
+			case '1':
+			case '2':
+				twoSeperatePolygons(stacks[0].slotsOfAV, scenario);
 				break;
-		
+			case '.':
+				return;
 			default:
 				break;
 		}
