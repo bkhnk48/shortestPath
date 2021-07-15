@@ -343,13 +343,16 @@ int calculateNumberOfCrossings(vector < vector < int > > &crossesNumber,vector<v
 				lineSegment l;
 				l.p = points[i];
 				l.q = points[j];
+
 				if(i == j){
 					crossesNumber[i][j] = numberOfCrossings(polygons,l);	
 				}
 				else{
-					c = cutThroughPolygons(l, polygons);
-					if(c == 0){
+					if(!cutThroughPolygons(l, polygons)){
 						c = hasPointInside(l, points, i, j) ? 1 : 0;
+					}
+					else{
+						c = 1;
 					}
 					crossesNumber[i][j] = c;
 				}
