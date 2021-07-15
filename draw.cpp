@@ -206,6 +206,8 @@ class Range{
 
 double max_y,max_x,min_y,min_x;
 
+bool isVirtualGate(vector<lineSegment> polygon);
+
 void setMinMax(vector<vector<lineSegment>> &polygons
 				//, double *max_y, double *max_x, double *min_y, double *min_x
 							){
@@ -345,6 +347,10 @@ string drawPoint(point &p,string color){
 }
 
 string drawPolygon(vector<lineSegment> & polygon){
+	if(isVirtualGate(polygon)){
+		string nothing = "";
+		return nothing;
+	}
 	string str = "<polygon stroke='black' stroke-width='0.1' fill='#D3D3D3'  points='";
 	str.append(drawX(polygon[0].p));
 	str.append(","); str.append(drawY(polygon[0].p));
@@ -574,12 +580,19 @@ int wn_PnPoly(point P, vector<lineSegment> polygon, double scale = 1)
 
 vector<point> middlePoints(point pA, point pB){
 	vector<point> allMiddlePoints;
+	bool hasManyMiddlePoints = true;
 	int size = (int)round(std::abs(pA.x - pB.x));
 	if(size <= 1){
-		point p((pA.x + pB.x)/2, (pA.y + pB.y)/2);
-		allMiddlePoints.push_back(p);
+		size = (int)round(std::abs(pA.y - pB.y));
+		if(size <= 1)
+		{
+			point p((pA.x + pB.x)/2, (pA.y + pB.y)/2);
+			allMiddlePoints.push_back(p);
+			hasManyMiddlePoints = false;
+		}
 	}
-	else{
+	
+	if(hasManyMiddlePoints){
 		
 		double unitX = (pB.x - pA.x)/size;
 		double unitY = (pB.y - pA.y)/size;
