@@ -65,7 +65,7 @@ void twoSeperatePolygons(int** slots, char scenario){
         stopInput = true;
         printf("Which stack you want to edit?: ");
         input = scanf("%d", &indexOfStack);
-        if(input != EOF && indexOfStack >= 0 && indexOfStack < NUM_STACKS){
+        if(input != EOF && input != 0 && indexOfStack >= 0 && indexOfStack < NUM_STACKS){
             printf("Which slot you want to change (from 0 to 1 or 1 to 0)? Type (row, colum): ");
             int rowIndex, colIndex;
             #ifdef __linux__ 
@@ -77,7 +77,7 @@ void twoSeperatePolygons(int** slots, char scenario){
             #else
             #endif
             input = scanf("%d, %d", &rowIndex, &colIndex);
-            if(input != EOF && rowIndex >= 0 && rowIndex < ROWS && colIndex >= 0 && colIndex < COLS){
+            if(input != EOF && input != 0 && rowIndex >= 0 && rowIndex < ROWS && colIndex >= 0 && colIndex < COLS){
                 arr[rowIndex][colIndex] = arr[rowIndex][colIndex] == 0 ? 1 : 0;
                 stopInput = false;
             }
