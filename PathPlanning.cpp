@@ -12,7 +12,7 @@
 #include <algorithm>
 
 //#include "preprocess.cpp"
-#include "Homotopy.cpp"
+#include "PairGenerator.cpp"
 
 #ifndef _PLANNING_CONTROLLER_
 #define _PLANNING_CONTROLLER_
@@ -112,6 +112,7 @@ class PlanningController{
                     
                     runPythonCode("test\\AllPossibleTrajectories.py", rightDirection, generator->getDirectionAtTheEnd());
                     vector<Path*> paths = readRSFile("trajectory.txt", polygons, generator->getWIDTH(), rightDirection);
+
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
                                                                     points, 
