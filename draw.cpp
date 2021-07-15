@@ -582,9 +582,9 @@ vector<point> middlePoints(point pA, point pB){
 	vector<point> allMiddlePoints;
 	bool hasManyMiddlePoints = true;
 	int size = (int)round(std::abs(pA.x - pB.x));
-	if(size <= 1){
+	if(size <= 2){
 		size = (int)round(std::abs(pA.y - pB.y));
-		if(size <= 1)
+		if(size <= 2)
 		{
 			point p((pA.x + pB.x)/2, (pA.y + pB.y)/2);
 			allMiddlePoints.push_back(p);
