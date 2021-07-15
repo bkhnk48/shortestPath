@@ -91,7 +91,7 @@ class PlanningController{
                 for(int i = 0; i < shortestPath.size(); i++){
                     cout<<"\t"<<i<<") Point("<<shortestPath.at(i).x<<", "<<shortestPath.at(i).y<<") "<<endl;
                 }
-                Homotopy* homotopy = new Homotopy(generator->getWIDTH());
+                Homotopy* homotopy = new Homotopy(generator->getWIDTH(), generator->getLENGTH());
                 //vector<point> sideSteps = homotopy->sideStepRouting(shortestPath, polygons, points);
                 //cout<<"After sideStepRouting=========="<<endl;
                 //for(int i = 0; i < sideSteps.size(); i++){
