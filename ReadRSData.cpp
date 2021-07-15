@@ -58,18 +58,7 @@ bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, doub
         if(check != 0){
             return true;//collide with one of the polygons
         }
-        
-        /*if(check % 2 == 1){
-            return -1;//collide with one of the polygons
-        }
-        check = pnpoly(polygons.at(j), xT, yT, false);
-        if(check % 2 == 1)
-            return -1;//collide with one of the polygons*/
     }
-    //if(polygon.at(0).type == GATE)
-    //    cout<<"\nGATE\n"<<endl;
-    //else
-    //    cout<<"\nTYPE OF EDGE: "<<polygon.at(0).type<<endl;
     return false;
 }
 
