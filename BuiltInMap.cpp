@@ -15,7 +15,7 @@
 //So we don't need to write std:: everywhere
 using namespace std;
 
-void twoSeperatePolygons(int** slots){
+void twoSeperatePolygons(int** slots, char scenario){
     int NUM_STACKS = 1;
     int ROWS = 6;
     int COLS = 21;
@@ -24,13 +24,30 @@ void twoSeperatePolygons(int** slots){
 
     int arr[6][21] 
     = {
-        1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,
+        1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0,
         0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0,
     };
+
+    switch (scenario)
+    {
+        case '1':
+            arr[0][16] = 0;
+            arr[0][17] = 1;
+            break;
+        case '2':
+            arr[0][14] = 0;
+            arr[0][15] = 1;
+            arr[0][16] = 0;
+            arr[0][17] = 1;
+            break;
+        
+        default:
+            break;
+    }
 
     printf("\n");
     for(int i = 0; i < ROWS; i++){
