@@ -902,12 +902,6 @@ class Homotopy{
                     tempLine.q.y = moveY;
                     backward++;
                 }
-                //cout<<"Moved point: ("<<moveX<<", "<<moveY<<") "<<endl;
-                //cout<<"HEREER"<<endl;
-                //1 is the thickness of parking wall
-                //while(!(tempLine.q.x > min_x + 1 && tempLine.q.x < max_x - 1
-                //        && tempLine.q.y > min_y + 1 && tempLine.q.y < max_y - 1)
-                //        );//this while makes no sense (has no loop)
 
                 backward = 0;
             
@@ -915,12 +909,6 @@ class Homotopy{
                 double A = 0, B = 0, C = 0;
                 double M = getMABCOfLine(line, &A, &B, &C);
                 double D = std::abs(A*tempLine.q.x + B*tempLine.q.y + C)/M;
-
-                //bool enoughFar = shortestDistanceRequirement(tempLine, polygons, WIDTH);
-                //while(!enoughFar) 
-                //product = (moveX - anchorX)*(line.p.y - moveY) - (moveY - anchorY)*(line.p.x - moveX);
-                //product = signedValue * product;
-                //cout<<" product: "<<product<<" "<<signedValue*isLeft(tempLine.p, tempLine.q, line.p)<<endl;
 
                 while(D < WIDTH //|| product > 0
                                 )
@@ -938,9 +926,6 @@ class Homotopy{
                     product = (moveX - anchorX)*(line.p.y - moveY) - (moveY - anchorY)*(line.p.x - moveX);
                     product = signedValue * product;
                 }
-                            //&& !cutThroughPolygons(tempLine, polygons) 
-                //            && backward <= 1
-                //            );
             }
         
             if(qIsInside){
@@ -1032,7 +1017,8 @@ class Homotopy{
                             if(c == 1){
                                 temp = lineLineIntersection(line.p, line.q, polygons.at(i).at(j).p, polygons.at(i).at(j).q);
                                 if(temp.x != FLT_MAX && temp.y != FLT_MAX){
-                                    if(temp.x != nextX || temp.y != nextY){
+                                    if(!isEqual(temp.x, temp.y, nextX, nextY))
+                                    {
                                         collision += 1;
                                     }
                                 }
