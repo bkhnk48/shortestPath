@@ -211,13 +211,8 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
         
         
         for(int j = 0; j < polygons.size(); j++){
-            //if(xT >= ranges.at(j)->xMin && xT <= ranges.at(j)->xMax &&
-            //    yT >= ranges.at(j)->yMin && yT <= ranges.at(j)->yMax)
             if(!isVirtualGate(polygons.at(j))){
                 for(int k = 0; k < 4; k++){
-                    //if(n == 18 && k == 3 && j == 2 && i == 2){
-                    //    cout<<"DEBUG"<<endl;
-                    //}
                     if(collisionOfTrajectoryAndPolygon(arr[k]
                                                         //pC
                                                         , polygons.at(j)
