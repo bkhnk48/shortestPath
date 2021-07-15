@@ -557,8 +557,10 @@ class Homotopy{
             if(poly != -1 && edge != -1){
                 lineSegment line = polygons.at(poly).at(edge);
                 double xOut = 0, yOut = 0;
-                double deltaX = line.q.x - line.p.x;
-                double deltaY = line.q.y - line.p.y;
+                double deltaX = //line.q.x - line.p.x;
+                                tempLine.q.x - tempLine.p.x;
+                double deltaY = //line.q.y - line.p.y;
+                                tempLine.q.y - tempLine.p.y;
                 getNormalInAndOut(deltaX, deltaY, NULL, NULL, &xOut, &yOut);
                 lineSegment scaleVector = getScaleVector(tempLine.p, normalIn.q.x, normalIn.q.y);
 
@@ -567,28 +569,39 @@ class Homotopy{
                 lineSegment movingLine2(temp1, line.p);
                 lineSegment movingLine3(temp1, line.q);
 
+                //if(temp1.x == 28){
+                //    cout<<"Debug "<<temp1.x<<endl;
+                //}
+                //double M, A = 0, B = 0, C = 0, D1;
+                //M = getMABCOfLine(line, &A, &B, &C);
+                //D1 = std::abs(A*temp1.x + B*temp1.y + C)/M;
                 
+                //if(D1 > WIDTH)
+                {
 
-                do{
-                    temp1.x += WIDTH*xOut;
-                    temp1.y += WIDTH*yOut;
-                    movingLine1.p = temp1;
-                    movingLine2.p = temp1;
-                    movingLine3.p = temp1;
-                    cout<<"temp1 ("<<temp1.x<<", "<<temp1.y<<") yOut "<<yOut<<endl;
+                    do{
+                        temp1.x += WIDTH*xOut;
+                        temp1.y += WIDTH*yOut;
+                        movingLine1.p = temp1;
+                        movingLine2.p = temp1;
+                        movingLine3.p = temp1;
+                        //M = getMABCOfLine(line, &A, &B, &C);
+                        //D1 = std::abs(A*temp1.x + B*temp1.y + C)/M;
+                        //cout<<"temp1 ("<<temp1.x<<", "<<temp1.y<<") yOut "<<yOut<<" D1 "<<D1<<endl;
+                    }
+                    while(
+                        //cutThroughRegardlessVirtualGate(movingLine1, polygons) != 0
+                        //|| cutThroughRegardlessVirtualGate(movingLine2, polygons) != 0
+                        //|| cutThroughRegardlessVirtualGate(movingLine3, polygons) != 0
+                        (numberOfCuttingThrough(polygons, movingLine1) != 0
+                        || numberOfCuttingThrough(polygons, movingLine2) != 0
+                        || numberOfCuttingThrough(polygons, movingLine3) != 0)
+                        && (temp1.x >= min_x - LENGTH && temp1.x <= max_x + LENGTH
+                            && temp1.y >= min_y - LENGTH && temp1.y <= max_y + LENGTH
+                                )
+                        //&& D1 >= WIDTH
+                            );
                 }
-                while(
-                    //cutThroughRegardlessVirtualGate(movingLine1, polygons) != 0
-                    //|| cutThroughRegardlessVirtualGate(movingLine2, polygons) != 0
-                    //|| cutThroughRegardlessVirtualGate(movingLine3, polygons) != 0
-                    (numberOfCuttingThrough(polygons, movingLine1) != 0
-                    || numberOfCuttingThrough(polygons, movingLine2) != 0
-                    || numberOfCuttingThrough(polygons, movingLine3) != 0)
-                    && (temp1.x >= min_x - LENGTH && temp1.x <= max_x + LENGTH
-                        && temp1.y >= min_y - LENGTH && temp1.y <= max_y + LENGTH
-                            )
-                        );
-
                 
 
                 rightDirectionRoute.push_back(temp1);//Them diem temp1 vao quy dao
