@@ -25,7 +25,8 @@ using namespace std;
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
-int checkCollisionRegardlessVirtualGate(lineSegment &line, vector<vector<lineSegment>> &polygons)
+int checkCollisionRegardlessVirtualGate(lineSegment &line, vector<vector<lineSegment>> &polygons//, int directionAtTheEnd = -1
+)
 {
     int collision = 0;
     int c = 0;
@@ -34,11 +35,6 @@ int checkCollisionRegardlessVirtualGate(lineSegment &line, vector<vector<lineSeg
             for(size_t j=0;j<polygons[i].size();j++){
                 //c = cutThrough(line,polygons[i][j]);
                 c = doIntersect(line,polygons[i][j]);
-                /*if(c != 0){
-                    cout<<"Collision at "<<i <<" "<<j<<". More specifically, with ("; 
-                    cout<<polygons[i][j].p.x<<", "<<polygons[i][j].p.y<<") ("<<polygons[i][j].q.x <<", "<<polygons[i][j].q.y<<") ";
-                    cout<<" This polygon has "<<polygons.at(i).size()<<" edges"<<endl;
-                }*/
                 collision += c;
             }
         }
