@@ -386,13 +386,13 @@ class RefinePolygons : public BuildingPolygons{
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             point p_o1, p_o2, p_o3, p_o4; // init 4 vertices of AV
-//            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
-            int nmrSameVertices = 0;
-            polygonIndex = 0;
-            pA = point(2,6);
-            pB = point(2,7);
-            pC = point(1,6);
-            pD = point(1,7);
+            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+//            int nmrSameVertices = 4;
+//            polygonIndex = 0;
+//            pA = point(2,1);
+//            pB = point(2,2);
+//            pC = point(1,2);
+//            pD = point(1,1);
             
             #pragma region
             if(nmrSameVertices == 4){
@@ -437,6 +437,10 @@ class RefinePolygons : public BuildingPolygons{
                     }
 
 
+                } else {
+                	// delete polygon when it no contains line segment
+                	// case only when nmrSameVertices == 4
+                	this->polygons.erase(this->polygons.begin());
                 }
             } else if(nmrSameVertices == 3){
                 getVerticesAV(p_o1, p_o2, p_o3, p_o4);
@@ -714,11 +718,8 @@ class RefinePolygons : public BuildingPolygons{
 				points.push_back(p_o3);
 				points.push_back(p_o4);
 
-				for(int i=0; i<polygons.at(polygonIndex).size(); i++){
-					cout << polygons.at(polygonIndex).at(i).p.x << " " << polygons.at(polygonIndex).at(i).p.y << " | ";
-					cout << polygons.at(polygonIndex).at(i).q.x << " " << polygons.at(polygonIndex).at(i).q.y << endl;
-				}
             }
+
             #pragma endregion 
         }
 };
