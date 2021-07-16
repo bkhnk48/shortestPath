@@ -400,13 +400,25 @@ class Homotopy{
                     double deltaY = nextY - startY;
                     double deltaX = nextX - (startX - WIDTH);
                     getNormalInAndOut(deltaX, deltaY, &normalIn.q.x, &normalIn.q.y);
-                    point temp1;
+                    point temp0, temp1;
                     temp1.x = nextX;
                     temp1.y = nextY;
+
                         
                     temp1.x += bias*(normalIn.q.x - normalIn.p.x);
                     temp1.y += bias*(normalIn.q.y - normalIn.p.y);
-                    rightDirectionRoute.push_back(temp1);
+
+                    temp0.x = currX;
+                    temp0.y = currY;
+
+                    lineSegment line(temp0, temp1);
+                    //rightDirectionRoute.push_back(temp1);
+                    bool freeCollision = couldContinueToRotate(polygons, line);
+
+                    if(freeCollision){
+                        double arr[4] = {nextX, nextY, currX, currY};
+                        rotateOnePoint(route.at(1), true, false, route.at(0), route.at(1), arr, polygons, rightDirectionRoute);
+                    }
                 }
                 else{
                     rightDirectionRoute.push_back(route.at(1));
@@ -1008,26 +1020,10 @@ class Homotopy{
                 line.q.x = nextX;
                 line.q.y = nextY;
 
-                point temp;
-                int collision = 0;
-                for(int i = 0; i < polygons.size(); i++){
-                    if(!isVirtualGate(polygons.at(i))){
-                        for(int j = 0; j < polygons.at(i).size(); j++){
-                            int c = doIntersect(line,polygons[i][j]);
-                            if(c == 1){
-                                temp = lineLineIntersection(line.p, line.q, polygons.at(i).at(j).p, polygons.at(i).at(j).q);
-                                if(temp.x != FLT_MAX && temp.y != FLT_MAX){
-                                    if(!isEqual(temp.x, temp.y, nextX, nextY))
-                                    {
-                                        collision += 1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                
+                bool freeCollision = couldContinueToRotate(polygons, line, &nextX, &nextY);
                     
-                if(collision == 0)                
+                if(freeCollision)                
                 {
                     double arr[4] = {nextX, nextY, currX, currY};
                     rotateOnePoint(route.at(preLast + 1), false, true, route.at(preLast), route.at(preLast + 1), arr, polygons, rightDirectionRoute);
@@ -1042,6 +1038,28 @@ class Homotopy{
 
         }
 
+        bool couldContinueToRotate(vector<vector<lineSegment>> &polygons, lineSegment line, double* nextX = NULL, double* nextY = NULL){
+            int collision = 0;
+            point temp;
+            for(int i = 0; i < polygons.size(); i++){
+                if(!isVirtualGate(polygons.at(i))){
+                    for(int j = 0; j < polygons.at(i).size(); j++){
+                        int c = doIntersect(line,polygons[i][j]);
+                        if(c == 1 && nextX != NULL && nextY != NULL){
+                            temp = lineLineIntersection(line.p, line.q, polygons.at(i).at(j).p, polygons.at(i).at(j).q);
+                            if(temp.x != FLT_MAX && temp.y != FLT_MAX){
+                                if(!isEqual(temp.x, temp.y, *nextX, *nextY))
+                                {
+                                    collision += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return (collision == 0);
+        }
+
         vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons, vector<point> &points){
             vector<point> rightDirectionRoute;
             insertTwoFirstPoints(route, rightDirectionRoute, polygons, points);
@@ -1053,7 +1071,7 @@ class Homotopy{
             lineSegment normalIn;
             normalIn.p.x = 0; normalIn.p.y = 0;
             lineSegment tempLine;
-
+            
             for(int i = 2; i < route.size() - 1; i++){
                 nextX = route.at(i).x;             nextY = route.at(i).y;
                 uX = (currX - prevX);              uY = currY - prevY;
