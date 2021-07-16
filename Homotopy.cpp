@@ -411,13 +411,19 @@ class Homotopy{
                     temp0.x = currX;
                     temp0.y = currY;
 
-                    lineSegment line(temp0, temp1);
-                    //rightDirectionRoute.push_back(temp1);
-                    bool freeCollision = couldContinueToRotate(polygons, line);
+                    if(std::abs(nextX - currX) <= 2*WIDTH)
+                    {
+                        rightDirectionRoute.push_back(temp1);
+                    }
+                    else{
+                        lineSegment line(temp0, temp1);
+                        
+                        bool freeCollision = couldContinueToRotate(polygons, line);
 
-                    if(freeCollision){
-                        double arr[4] = {nextX, nextY, currX, currY};
-                        rotateOnePoint(route.at(1), true, false, route.at(0), route.at(1), arr, polygons, rightDirectionRoute);
+                        if(freeCollision){
+                            double arr[4] = {nextX, nextY, currX, currY};
+                            rotateOnePoint(route.at(1), true, false, route.at(0), route.at(1), arr, polygons, rightDirectionRoute);
+                        }
                     }
                 }
                 else{
