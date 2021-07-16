@@ -350,6 +350,53 @@ class Homotopy{
             return false;
         }
 
+        bool willPassBoundary(double x0, double y0, double x1, double y1, vector< vector<lineSegment > > &polygons){
+            //kiểm tra xem điểm di chuyển tiếp theo có phải là đỉnh của một đa giác đang bao bọc
+            //chính AV (muốn di chuyển hay không)
+            //Giải thuật:
+            /*
+            Gọi điểm xuất phát là điểm p0(x0, y0)
+            với điểm tiếp theo p1(x1, y1) tìm khắp các đa giác xem có đa giác nào có chứa điểm p1 đó
+            nếu có thì rõ ràng ta sẽ tìm ra 2 cạnh có đỉnh là điểm p1 đó. Gọi đỉnh còn lại là p2
+            + khi (p2.x - p1.x)*(p1.x - p0.x) > 0 thì ta nói trên đường đi của AV có một (số) AV khác chắn đường
+            + hoặc tương tự với (p2.y - p1.y)*(p1.y - p0.y) > 0 
+            Ở đây ta có một ngầm định là các AV được sắp xếp sao cho các cạnh của AV (coi AV là hình chữ nhật) 
+            song song với trục tọa độ
+            */
+           //lineSegment line1, line2;
+           double deltaX = x1 - x0;
+           double deltaY = y1 - y0;
+           double num1, num2;
+           bool found1 = false, found2 = false, found = false;
+           for(int i = 0; i < polygons.size(); i++){
+               for(int j = 0; j < polygons.at(i).size(); j++){
+                    if(polygons.at(i).at(j).p.x == x1 && polygons.at(i).at(j).p.y == y1){
+                        found1 = true;
+                        num1 = (polygons.at(i).at(j).q.x - x1)*deltaX;
+                        if(num1 > 0)
+                            return true;
+                        num2 = (polygons.at(i).at(j).q.y - y1)*deltaY;
+                        if(num2 > 0)
+                            return true;
+                    }
+                    else if(polygons.at(i).at(j).q.x == x1 && polygons.at(i).at(j).q.y == y1){
+                        found2 = true;
+                        num1 = (polygons.at(i).at(j).p.x - x1)*deltaX;
+                        if(num1 > 0)
+                            return true;
+                        num2 = (polygons.at(i).at(j).p.y - y1)*deltaY;
+                        if(num2 > 0)
+                            return true;
+                    }
+                   
+                    if(found1 && found2){
+                        return false;
+                    }
+               }
+           }
+           return false;
+        }
+
         /*
         Hàm dưới đây cập nhật lại tọa độ của hai điểm đầu tiên trong quỹ đạo của xe
             - Tọa độ của điểm thứ nhất (chỉ số 0) trước khi được truyền vào hàm thì đã là tọa độ của điểm dưới cùng bên phải của AV
@@ -408,10 +455,11 @@ class Homotopy{
                     temp1.x += bias*(normalIn.q.x - normalIn.p.x);
                     temp1.y += bias*(normalIn.q.y - normalIn.p.y);
 
-                    temp0.x = currX;
-                    temp0.y = currY;
+                    temp0.x = startX;
+                    temp0.y = startY;
 
-                    if(std::abs(nextX - currX) <= 2*WIDTH)
+                    //if(std::abs(nextX - startX) <= WIDTH)
+                    if(willPassBoundary(startX, startY, nextX, nextY, polygons))
                     {
                         rightDirectionRoute.push_back(temp1);
                     }
@@ -785,11 +833,15 @@ class Homotopy{
 
                     double u_v1 = uX*v1Y - uY*v1X;
                     double u_v2 = uX*v2Y - uY*v2X;
-
-                    if(u_v1 <= 0 || u_v2 <= 0){
+                    double vX = polygons.at(i).at(j).q.x - polygons.at(i).at(j).p.x; 
+                    double vY = polygons.at(i).at(j).q.y - polygons.at(i).at(j).p.y; 
+                    double uv = uX*vX + uY*vY;
+                    
+                    if((u_v1 <= 0 || u_v2 <= 0) && std::abs(uv) > EPSILON){
+                    //Tức là hai vector pq và polygons.at(i).at(j) phải không vuông góc nhau
 
                         if(inRegionOfEachOther(p, q, polygons.at(i).at(j), normalIn)){
-
+                            
                             line1.p = p;
                             line1.q = polygons.at(i).at(j).p;
 
@@ -1068,40 +1120,48 @@ class Homotopy{
 
         vector<point> calculateClockwise(vector<point> &route, vector< vector<lineSegment > > &polygons, vector<point> &points){
             vector<point> rightDirectionRoute;
-            insertTwoFirstPoints(route, rightDirectionRoute, polygons, points);
-            double prevX = route.at(0).x;           double prevY = route.at(0).y;
 
-            double currX = route.at(1).x;           double currY = route.at(1).y;
-            double nextX, nextY;
-            double uX, uY, vX, vY, uv;
-            lineSegment normalIn;
-            normalIn.p.x = 0; normalIn.p.y = 0;
-            lineSegment tempLine;
-            
-            for(int i = 2; i < route.size() - 1; i++){
-                nextX = route.at(i).x;             nextY = route.at(i).y;
-                uX = (currX - prevX);              uY = currY - prevY;
-                vX = nextX - currX;                vY = nextY - currY;
-                uv = uX*vY - uY*vX;
-                if(uv < 0){
-                    rightDirectionRoute.push_back(route.at(i));  //clockwises.push_back(YES);//Clockwise
-                }
-                else if(uv >= 0){
-                    //Assuming that the AV never moves straight backward (Không đi giật lùi)
-                    double arr[4] = {nextX, nextY, currX, currY};
-                    getToRightSide(route.at(i), normalIn, polygons, arr, rightDirectionRoute);
+            if(route.size() > 2){
+                insertTwoFirstPoints(route, rightDirectionRoute, polygons, points);
+                double prevX = route.at(0).x;           double prevY = route.at(0).y;
+
+                double currX = route.at(1).x;           double currY = route.at(1).y;
+                double nextX, nextY;
+                double uX, uY, vX, vY, uv;
+                lineSegment normalIn;
+                normalIn.p.x = 0; normalIn.p.y = 0;
+                lineSegment tempLine;
+                
+                for(int i = 2; i < route.size() - 1; i++){
+                    nextX = route.at(i).x;             nextY = route.at(i).y;
+                    uX = (currX - prevX);              uY = currY - prevY;
+                    vX = nextX - currX;                vY = nextY - currY;
+                    uv = uX*vY - uY*vX;
+                    if(uv < 0){
+                        rightDirectionRoute.push_back(route.at(i));  //clockwises.push_back(YES);//Clockwise
+                    }
+                    else if(uv >= 0){
+                        //Assuming that the AV never moves straight backward (Không đi giật lùi)
+                        double arr[4] = {nextX, nextY, currX, currY};
+                        getToRightSide(route.at(i), normalIn, polygons, arr, rightDirectionRoute);
+                        
+                    }
+                    cout<<endl;
+                    for(int j = 0; j < rightDirectionRoute.size(); j++){
+                        cout<<"("<<rightDirectionRoute.at(j).x<<", "<<rightDirectionRoute.at(j).y<<") ";
+                    }
+                    prevX = currX;             prevY = currY;
+                    currX = nextX;             currY = nextY;
                     
                 }
-                cout<<endl;
-                for(int j = 0; j < rightDirectionRoute.size(); j++){
-                    cout<<"("<<rightDirectionRoute.at(j).x<<", "<<rightDirectionRoute.at(j).y<<") ";
-                }
-                prevX = currX;             prevY = currY;
-                currX = nextX;             currY = nextY;
-                
-            }
             
-            rotateLastSegment(route, polygons, rightDirectionRoute);
+            
+                rotateLastSegment(route, polygons, rightDirectionRoute);
+            }
+            else{
+                rightDirectionRoute.push_back(route.at(0));
+                rightDirectionRoute.push_back(route.at(1));
+            }
             
             return rightDirectionRoute;
         }
