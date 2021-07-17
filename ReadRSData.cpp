@@ -21,7 +21,21 @@
 
 using namespace std;
 
+typedef struct {
+    /*double rangesX_MIN[polygons.size()], rangesX_MAX[polygons.size()];
+    double rangesY_MIN[polygons.size()], rangesY_MAX[polygons.size()];
+    for(int j = 0; j < polygons.size(); j++){
+        rangesX_MIN[j] = ranges.at(j)->xMin*RATIO;
+        rangesX_MAX[j] = ranges.at(j)->xMax*RATIO;
+        rangesY_MIN[j] = ranges.at(j)->yMin*RATIO;
+        rangesY_MAX[j] = ranges.at(j)->yMax*RATIO;
+    }*/
+    double *rangesX_MIN;
+    double *rangesX_MAX;
+    double *rangesY_MIN;
+    double *rangesY_MAX;
 
+} ALL_RANGES;
 
 vector<point> getSegmentOfCircle(double p1X, double p1Y, double p2X, double p2Y, double rotatedAngle, char steering);
 
@@ -65,7 +79,10 @@ bool collisionOfTrajectoryAndPolygon(point pT, vector<lineSegment> polygon, doub
 //p1, p2: diem dau diem cuoi cua chuyen dong tron
 //rotatedAngle: goc quay cua quy dao hinh tron (co the am hoac duong)
 //steering: quay theo duong tron ben trai hay duong tron ben phai cua xe
-int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, int WIDTH, point &first, point &last, float &penalty)
+int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, 
+                        //vector<Range*> ranges, 
+                        ALL_RANGES* allRanges,
+                        int WIDTH, point &first, point &last, float &penalty)
 {
     double p1X = section->beganX;
     double p1Y = section->beganY;
@@ -154,14 +171,14 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     double cos_deltaOmega = 1 - (SMALL_ANGLE*SMALL_ANGLE/2);
     double xT, yT;
     //point pT;
-    double rangesX_MIN[polygons.size()], rangesX_MAX[polygons.size()];
+    /*double rangesX_MIN[polygons.size()], rangesX_MAX[polygons.size()];
     double rangesY_MIN[polygons.size()], rangesY_MAX[polygons.size()];
     for(int j = 0; j < polygons.size(); j++){
         rangesX_MIN[j] = ranges.at(j)->xMin*RATIO;
         rangesX_MAX[j] = ranges.at(j)->xMax*RATIO;
         rangesY_MIN[j] = ranges.at(j)->yMin*RATIO;
         rangesY_MAX[j] = ranges.at(j)->yMax*RATIO;
-    }
+    }*/
     double xT_RATIO, yT_RATIO;
     
     R1 = signedValue*WIDTH/RATIO + R;
@@ -205,8 +222,10 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
                     if(collisionOfTrajectoryAndPolygon(arr[k]
                                                         //pC
                                                         , polygons.at(j)
-                                                        , rangesX_MIN[j], 
-                                rangesX_MAX[j], rangesY_MIN[j], rangesY_MAX[j])){
+                                                        , allRanges->rangesX_MIN[j], 
+                                allRanges->rangesX_MAX[j], 
+                                allRanges->rangesY_MIN[j], 
+                                allRanges->rangesY_MAX[j])){
                         return -1;//collide with one of the polygons
                     }
                 }
@@ -235,11 +254,20 @@ int getPointsOfLines(Section *section, vector<vector<lineSegment>> &polygons, ve
     //double deltaP1Y = p1Y*sin(yawAngle);
     double p2X = section->endedX;
     double p2Y = section->endedY;   
+
+    vector<point> allMiddlePoints = middlePoints(p1X, p1Y, p2X, p2Y);
+    int n = allMiddlePoints.size();
+    for(int i = 0; i < n - 1; i++){
+
+    }
     return 0;//to be continued...
 }
 
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
-                            vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error, int WIDTH
+                            vector<vector<lineSegment>> &scaledPolygons, 
+                            //vector<Range*> ranges, 
+                            ALL_RANGES* allRanges,
+                            int *error, int WIDTH
                             , point &p, point &q
                             ){
     PathSegment *segment = new PathSegment();
@@ -271,7 +299,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     int check = 1;
                     section->beganX = startX; section->beganY = startY; 
                     if(section->steering != 'S'){
-                        check = getPointsOfCircle(section, scaledPolygons, ranges, WIDTH, p, q, penalty);
+                        check = getPointsOfCircle(section, scaledPolygons, allRanges, WIDTH, p, q, penalty);
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
@@ -291,7 +319,7 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
     return segment;
 }
 
-void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &scaledPolygons, vector<vector<lineSegment>> &polygons){
+ALL_RANGES* scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &scaledPolygons, vector<vector<lineSegment>> &polygons){
     
     for(int i = 0; i < polygons.size(); i++){
         vector<lineSegment> lines;
@@ -323,15 +351,28 @@ void scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegment>> &
         ranges.push_back(rangeOfAPolygon);
         scaledPolygons.push_back(lines);
     }
+
+    ALL_RANGES* allRanges;
+    allRanges = (ALL_RANGES *)malloc(sizeof(ALL_RANGES));
+    cout<<polygons.size()<<endl;
+    allRanges->rangesX_MIN = (double*)malloc(polygons.size()*sizeof(double));
+    allRanges->rangesX_MAX = (double*)malloc(polygons.size()*sizeof(double));
+    allRanges->rangesY_MIN = (double*)malloc(polygons.size()*sizeof(double));
+    allRanges->rangesY_MAX = (double*)malloc(polygons.size()*sizeof(double));
+    for(int j = 0; j < polygons.size(); j++){
+        allRanges->rangesX_MIN[j] = ranges.at(j)->xMin*RATIO;
+        allRanges->rangesX_MAX[j] = ranges.at(j)->xMax*RATIO;
+        allRanges->rangesY_MIN[j] = ranges.at(j)->yMin*RATIO;
+        allRanges->rangesY_MAX[j] = ranges.at(j)->yMax*RATIO;
+    }
+    return allRanges;
 }
 
-vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons, int WIDTH, vector<point> &rightDirection){
+//vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &polygons, int WIDTH, vector<point> &rightDirection){
+vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment>> &scaledPolygons, int WIDTH, vector<point> &rightDirection, ALL_RANGES *allRanges){
     string line;
     string strTemp, strTemp1, strTemp2, strTemp3;
 
-    vector<Range*> ranges;      vector<vector<lineSegment>> scaledPolygons;
-    scaleAndGenerateRange(ranges, scaledPolygons, polygons);
-    
     double x, y, nextX, nextY, distance;
     int i;
     char typeOfTraj;
@@ -357,7 +398,7 @@ vector<Path*> readPath(ifstream& infile, int numPaths, vector<vector<lineSegment
                     
                     firstPath = rightDirection.at(sizeOfPaths - numPaths);
                     lastPath = rightDirection.at(sizeOfPaths - numPaths + 1);
-                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, ranges, &error, WIDTH, firstPath, lastPath);
+                    PathSegment* segment = readSegment(x, y, nextX, nextY, infile, scaledPolygons, allRanges, &error, WIDTH, firstPath, lastPath);
 
                     if(error == 0)
                     {
@@ -420,7 +461,7 @@ void printReedSheppTrajectories(vector<Path*> trajectories){
     }
 }
 
-vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons, int WIDTH, vector<point> &rightDirection){
+vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &scaledPolygons, int WIDTH, vector<point> &rightDirection, ALL_RANGES* allRanges){
 
     //vector<point> discreteTrajectory;
     vector<Path*> result; 
@@ -438,7 +479,7 @@ vector<Path*> readRSFile(string fileName, vector<vector<lineSegment>> &polygons,
     { 
         cout<<"number of paths: "<<numPaths<<endl;
         
-        result = readPath(infile, numPaths, polygons, WIDTH, rightDirection);
+        result = readPath(infile, numPaths, scaledPolygons, WIDTH, rightDirection, allRanges);
         printReedSheppTrajectories(result);
     }
     cout<<"Close file"<<endl;
