@@ -221,6 +221,8 @@ class BuildingPolygons{
                             //case 3: type = NONE; break;//never reach
                         }
                         lineSegment line(p, next, type);
+                        point vertex(line.p.x, line.p.y);
+                        points.push_back(vertex);
                         edges.push_back(line);
                     }
                 }
