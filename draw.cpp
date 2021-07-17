@@ -578,15 +578,19 @@ int wn_PnPoly(point P, vector<lineSegment> polygon, double scale = 1)
 }*/
 
 
-vector<point> middlePoints(point pA, point pB){
+vector<point> middlePoints(double firstX, double firstY, double lastX, double lastY){
+	// pA, point pB){
 	vector<point> allMiddlePoints;
 	bool hasManyMiddlePoints = true;
-	int size = (int)round(std::abs(pA.x - pB.x));
+	//int size = (int)round(std::abs(pA.x - pB.x));
+	int size = (int)round(std::abs(firstX - lastX));
 	if(size <= 2){
-		size = (int)round(std::abs(pA.y - pB.y));
+		//size = (int)round(std::abs(pA.y - pB.y));
+		size = (int)round(std::abs(firstY - lastY));
 		if(size <= 2)
 		{
-			point p((pA.x + pB.x)/2, (pA.y + pB.y)/2);
+			//point p((pA.x + pB.x)/2, (pA.y + pB.y)/2);
+			point p((firstX + lastX)/2, (firstY + lastY)/2);
 			allMiddlePoints.push_back(p);
 			hasManyMiddlePoints = false;
 		}
@@ -594,11 +598,13 @@ vector<point> middlePoints(point pA, point pB){
 	
 	if(hasManyMiddlePoints){
 		
-		double unitX = (pB.x - pA.x)/size;
-		double unitY = (pB.y - pA.y)/size;
+		//double unitX = (pB.x - pA.x)/size;
+		double unitX = (lastX - firstX)/size;
+		//double unitY = (pB.y - pA.y)/size;
+		double unitY = (lastY - firstY)/size;
 		size--;
-		double x = pA.x;
-		double y = pA.y;
+		double x = firstX; //pA.x;
+		double y = firstY; //pA.y;
 		//double x = min(pA.x + 1, pB.x + 1); 
 		//double y = ((x - pA.x)*(pB.y - pA.y)/(pB.x - pA.x)) + pA.y;
 		for(int i = 0; i < size; i++){
@@ -635,7 +641,8 @@ bool cutThroughPolygons(lineSegment line, vector<vector<lineSegment> > &polygons
 	double x;
 	double y;
 	
-	vector<point> allMiddlePoints = middlePoints(line.p, line.q);
+	//vector<point> allMiddlePoints = middlePoints(line.p, line.q);
+	vector<point> allMiddlePoints = middlePoints(line.p.x, line.p.y, line.q.x, line.q.y);
 
 	for(int i = 0; i < polygons.size(); i++){
 
