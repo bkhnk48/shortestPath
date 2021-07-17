@@ -246,21 +246,88 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons,
     return 1;
 }
 
-int getPointsOfLines(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, int WIDTH, point &first, point &last, float &penalty){
+int getPointsOfLines(Section *section, vector<vector<lineSegment>> &polygons, 
+                                        //vector<Range*> ranges, 
+                                        ALL_RANGES* allRanges,
+                                        int WIDTH, point &first, point &last, float &penalty){
     double p1X = section->beganX;
     double p1Y = section->beganY;
 
-    //double deltaP1X = p1X*cos(yawAngle);
-    //double deltaP1Y = p1Y*sin(yawAngle);
     double p2X = section->endedX;
-    double p2Y = section->endedY;   
+    double p2Y = section->endedY;
 
-    vector<point> allMiddlePoints = middlePoints(p1X, p1Y, p2X, p2Y);
+    double deltaX = p2X - p1X;
+    double deltaY = p2Y - p1Y;   
+    lineSegment normalOut;
+    normalOut.p.x = 0; normalOut.p.y = 0;
+    
+    getNormalInAndOut(deltaX, deltaY, NULL, NULL, &normalOut.q.x, &normalOut.q.y);
+    double xT, yT;
+    
+    double xT_RATIO, yT_RATIO;
+    
+    point p0, p1, p2, p3;
+    point arr[] = {//pA, pB, 
+                    //pC, pD
+                    p0, p1, p2, p3
+                    };
+    double LENGTH = 6/RATIO;
+    double product = 0;
+    double M, A, B, C, D;
+    lineSegment line(first, last);
+    lineSegment normal;
+    normal.p.x = 0;     normal.p.y = 0;
+    M = sqrt(deltaX*deltaX + deltaY*deltaY);
+    normal.q.x = deltaX/M;  normal.q.y = deltaY/M;
+    penalty = 0;
+    double directionX = last.x - first.x;
+    double directionY = last.y - first.y;
+
+    vector<point> allMiddlePoints = middlePoints(p1X*RATIO, p1Y*RATIO, p2X*RATIO, p2Y*RATIO);
+    double WIDTH_RATIO = WIDTH/RATIO;
     int n = allMiddlePoints.size();
-    for(int i = 0; i < n - 1; i++){
+    for(int i = 0; i < n; i++){
+        xT_RATIO = allMiddlePoints.at(i).x;    yT_RATIO = allMiddlePoints.at(i).y;
+        xT = xT_RATIO/RATIO;    yT = yT_RATIO / RATIO;
 
+        arr[0].x = xT + LENGTH*normal.q.x;
+        arr[0].y = yT + LENGTH*normal.q.y;
+        arr[1].x = arr[0].x + WIDTH_RATIO*normalOut.q.x;
+        arr[1].y = arr[0].y + WIDTH_RATIO*normalOut.q.y;
+
+        arr[2].x = xT;
+        arr[2].y = yT;
+        arr[3].x = arr[2].x + WIDTH_RATIO*normalOut.q.x;
+        arr[3].y = arr[2].y + WIDTH_RATIO*normalOut.q.y;
+        //xT_RATIO = arr[2].x*RATIO;    yT_RATIO = arr[2].y*RATIO;
+
+        for(int j = 0; j < polygons.size(); j++){
+            if(!isVirtualGate(polygons.at(j))){
+                for(int k = 0; k < 4; k++){
+                    if(collisionOfTrajectoryAndPolygon(arr[k]
+                                                        //pC
+                                                        , polygons.at(j)
+                                                        , allRanges->rangesX_MIN[j], 
+                                allRanges->rangesX_MAX[j], 
+                                allRanges->rangesY_MIN[j], 
+                                allRanges->rangesY_MAX[j])){
+                        return -1;//collide with one of the polygons
+                    }
+                }
+               
+            }
+            product = (xT_RATIO - first.x)*directionY - (yT_RATIO - first.y)*directionX;
+            if(product < 0){
+                M = getMABCOfLine(line, &A, &B, &C);
+                D = std::abs(A*xT_RATIO + B*yT_RATIO + C)/M;
+                penalty += D;
+            }
+            
+        }
+        point p(arr[2].x, arr[2].y);
+        section->possiblePoints.push_back(p);
     }
-    return 0;//to be continued...
+    return 1;//to be continued...
 }
 
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
@@ -300,6 +367,9 @@ PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstrea
                     section->beganX = startX; section->beganY = startY; 
                     if(section->steering != 'S'){
                         check = getPointsOfCircle(section, scaledPolygons, allRanges, WIDTH, p, q, penalty);
+                    }
+                    else{
+                        check = getPointsOfLines(section, scaledPolygons, allRanges, WIDTH, p, q, penalty);
                     }
                     if(check == 1){
                         startX = section->endedX; startY = section->endedY; 
@@ -354,7 +424,7 @@ ALL_RANGES* scaleAndGenerateRange(vector<Range*> &ranges, vector<vector<lineSegm
 
     ALL_RANGES* allRanges;
     allRanges = (ALL_RANGES *)malloc(sizeof(ALL_RANGES));
-    cout<<polygons.size()<<endl;
+    
     allRanges->rangesX_MIN = (double*)malloc(polygons.size()*sizeof(double));
     allRanges->rangesX_MAX = (double*)malloc(polygons.size()*sizeof(double));
     allRanges->rangesY_MIN = (double*)malloc(polygons.size()*sizeof(double));
