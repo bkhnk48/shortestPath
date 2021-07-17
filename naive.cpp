@@ -338,20 +338,31 @@ bool hasPointInside(lineSegment line, vector<point> &points, int i, int j){
 int calculateNumberOfCrossings(vector < vector < int > > &crossesNumber,vector<vector<lineSegment> > &polygons, vector<point> &points){
 	crossesNumber.resize(points.size(),vector<int>(points.size()));
 	int c;
+	int numberCutThrough = 0;
 	for(size_t i=0;i<points.size();i++){
 		for(size_t j=0;j<points.size();j++){
 				lineSegment l;
 				l.p = points[i];
 				l.q = points[j];
+				//if((l.p.x == 6 && l.p.y == 12) && (l.q.x == -11 && l.q.y == -11)){
+				//	cout<<"DEBUG"<<endl;
+				//}
 
 				if(i == j){
 					crossesNumber[i][j] = numberOfCrossings(polygons,l);	
 				}
 				else{
-					if(!cutThroughPolygons(l, polygons)){
-						c = hasPointInside(l, points, i, j) ? 1 : 0;
+					numberCutThrough = numberOfCuttingThrough(polygons, l);
+					bool cut = numberCutThrough > 0;
+					if(!cut){
+						if(!cutThroughPolygons(l, polygons)){
+							c = hasPointInside(l, points, i, j) ? 1 : 0;
+						}
+						else{
+							cut = true;
+						}
 					}
-					else{
+					if(cut){
 						c = 1;
 					}
 					crossesNumber[i][j] = c;
