@@ -227,6 +227,17 @@ int getPointsOfCircle(Section *section, vector<vector<lineSegment>> &polygons, v
     return 1;
 }
 
+int getPointsOfLines(Section *section, vector<vector<lineSegment>> &polygons, vector<Range*> ranges, int WIDTH, point &first, point &last, float &penalty){
+    double p1X = section->beganX;
+    double p1Y = section->beganY;
+
+    //double deltaP1X = p1X*cos(yawAngle);
+    //double deltaP1Y = p1Y*sin(yawAngle);
+    double p2X = section->endedX;
+    double p2Y = section->endedY;   
+    return 0;//to be continued...
+}
+
 PathSegment* readSegment(double x, double y, double nextX, double nextY, ifstream& infile, 
                             vector<vector<lineSegment>> &scaledPolygons, vector<Range*> ranges, int *error, int WIDTH
                             , point &p, point &q
