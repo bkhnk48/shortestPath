@@ -10,6 +10,7 @@
 #include <queue>
 #include <bits/stdc++.h>
 #include <algorithm>
+#include <assert.h>
 
 //#include "preprocess.cpp"
 #include "PairGenerator.cpp"
@@ -36,6 +37,7 @@ class PlanningController{
         vector<point> getTrajectory(BuildingPolygons* generator, point start, point end){
             vector<point> points = generator->points;
             vector< vector< lineSegment> > polygons = generator->polygons;
+            cout<<polygons.size()<<endl;
             
             vector< vector < int > > graph;
             vector< vector < double > > graphDistance;
@@ -51,6 +53,15 @@ class PlanningController{
 
             //Get how many points we have
             size_t numberOfPoints = points.size();
+            
+            cout<<"So diem: "<<numberOfPoints<<endl;
+            for(int i = 0; i < numberOfPoints; i++){
+                for(int j = i + 1; j < numberOfPoints; j++){
+                    if(points.at(i) == points.at(j)){
+                        assert(1 == 2);
+                    }
+                }
+            }
 
             //Create a two dimenstional vector for the graph
             
