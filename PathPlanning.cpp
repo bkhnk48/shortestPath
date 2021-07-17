@@ -110,8 +110,11 @@ class PlanningController{
                 //drawShortestPath(fileName, start, end, polygons, distance, points, sideSteps, graph);
                 if(distance != -1){
                     
+                    vector<Range*> ranges;      vector<vector<lineSegment>> scaledPolygons;
+                    ALL_RANGES* allRanges = scaleAndGenerateRange(ranges, scaledPolygons, polygons);
+
                     runPythonCode("test\\AllPossibleTrajectories.py", rightDirection, generator->getDirectionAtTheEnd());
-                    vector<Path*> paths = readRSFile("trajectory.txt", polygons, generator->getWIDTH(), rightDirection);
+                    vector<Path*> paths = readRSFile("trajectory.txt", scaledPolygons, generator->getWIDTH(), rightDirection, allRanges);
 
                     drawShortestPath(fileName, start, end, generator->getWIDTH(),
                                                  polygons, //sideSteps, 
