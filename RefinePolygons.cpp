@@ -440,7 +440,7 @@ class RefinePolygons : public BuildingPolygons{
                 } else {
                 	// delete polygon when it no contains line segment
                 	// case only when nmrSameVertices == 4
-                	this->polygons.erase(this->polygons.begin());
+                	this->polygons.erase(this->polygons.begin()+polygonIndex);
                 }
             } else if(nmrSameVertices == 3){
                 getVerticesAV(p_o1, p_o2, p_o3, p_o4);
