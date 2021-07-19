@@ -219,18 +219,6 @@ class Homotopy{
             return rightDirectionRoute;
         }
 
-        /*double getMABCOfLine(lineSegment line, double *A, double *B, double *C){
-            double x1 = line.p.x;
-            double x2 = line.q.x;
-            double y1 = line.p.y;
-            double y2 = line.q.y;
-            *A = y2 - y1;
-            *B = x1 - x2;
-            *C = y1*x2 - x1*y2;
-            double M = sqrt((*A)*(*A) + (*B)*(*B));
-            return M;
-        }*/
-
         double minDistanceFromPointToPolygon(point &p, vector<lineSegment> &polygon){
             double M = 0, A = 0, B = 0, C = 0;
             double minD = FLT_MAX, D = 0;
@@ -637,39 +625,29 @@ class Homotopy{
                 lineSegment movingLine2(temp1, line.p);
                 lineSegment movingLine3(temp1, line.q);
 
-                //if(temp1.x == 28){
-                //    cout<<"Debug "<<temp1.x<<endl;
-                //}
-                //double M, A = 0, B = 0, C = 0, D1;
-                //M = getMABCOfLine(line, &A, &B, &C);
-                //D1 = std::abs(A*temp1.x + B*temp1.y + C)/M;
-                
-                //if(D1 > WIDTH)
-                {
 
-                    do{
-                        temp1.x += WIDTH*xOut;
-                        temp1.y += WIDTH*yOut;
-                        movingLine1.p = temp1;
-                        movingLine2.p = temp1;
-                        movingLine3.p = temp1;
-                        //M = getMABCOfLine(line, &A, &B, &C);
-                        //D1 = std::abs(A*temp1.x + B*temp1.y + C)/M;
-                        //cout<<"temp1 ("<<temp1.x<<", "<<temp1.y<<") yOut "<<yOut<<" D1 "<<D1<<endl;
-                    }
-                    while(
-                        //cutThroughRegardlessVirtualGate(movingLine1, polygons) != 0
-                        //|| cutThroughRegardlessVirtualGate(movingLine2, polygons) != 0
-                        //|| cutThroughRegardlessVirtualGate(movingLine3, polygons) != 0
-                        (numberOfCuttingThrough(polygons, movingLine1) != 0
-                        || numberOfCuttingThrough(polygons, movingLine2) != 0
-                        || numberOfCuttingThrough(polygons, movingLine3) != 0)
-                        && (temp1.x >= min_x - LENGTH && temp1.x <= max_x + LENGTH
-                            && temp1.y >= min_y - LENGTH && temp1.y <= max_y + LENGTH
-                                )
-                        //&& D1 >= WIDTH
-                            );
+                do{
+                    temp1.x += WIDTH*xOut;
+                    temp1.y += WIDTH*yOut;
+                    movingLine1.p = temp1;
+                    movingLine2.p = temp1;
+                    movingLine3.p = temp1;
+                    //M = getMABCOfLine(line, &A, &B, &C);
+                    //D1 = std::abs(A*temp1.x + B*temp1.y + C)/M;
+                    //cout<<"temp1 ("<<temp1.x<<", "<<temp1.y<<") yOut "<<yOut<<" D1 "<<D1<<endl;
                 }
+                while(
+                    //cutThroughRegardlessVirtualGate(movingLine1, polygons) != 0
+                    //|| cutThroughRegardlessVirtualGate(movingLine2, polygons) != 0
+                    //|| cutThroughRegardlessVirtualGate(movingLine3, polygons) != 0
+                    (numberOfCuttingThrough(polygons, movingLine1) != 0
+                    || numberOfCuttingThrough(polygons, movingLine2) != 0
+                    || numberOfCuttingThrough(polygons, movingLine3) != 0)
+                    && (temp1.x >= min_x - LENGTH && temp1.x <= max_x + LENGTH
+                        && temp1.y >= min_y - LENGTH && temp1.y <= max_y + LENGTH
+                            )
+                    //&& D1 >= WIDTH
+                        );
                 
 
                 rightDirectionRoute.push_back(temp1);//Them diem temp1 vao quy dao
