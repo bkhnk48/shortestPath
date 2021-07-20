@@ -226,8 +226,8 @@ class PlanningController{
                         break;
             }
             //point preLastPoint()
-            r->points.at(last).x += deltaX;
-            r->points.at(last).y += deltaY;
+            double lastX = r->points.at(last).x + deltaX;
+            double lastY = r->points.at(last).y + deltaY;
 
             //cout<<"Prelast x = "<<r->points.at(preLast).x<<" y = "<<r->points.at(preLast).y<<endl;
             cout<<"Last x = "<<r->points.at(last).x<<" y = "<<r->points.at(last).y<<endl;
@@ -281,8 +281,10 @@ class PlanningController{
                         result
                         //r->points
                         //, polygons
-                        , r->points.at(last).x
-                        , r->points.at(last).y
+                        //, r->points.at(last).x
+                        //, r->points.at(last).y
+                        , lastX
+                        , lastY
                         );
             
             return result;
