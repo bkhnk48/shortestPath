@@ -11,6 +11,10 @@
 
 #include <cassert>  
 #include <stdio.h>
+#ifdef __linux__ 
+    //linux code goes here
+#include <stdio_ext.h> // __fpurge(stdin);
+#endif
 
 //So we don't need to write std:: everywhere
 using namespace std;
