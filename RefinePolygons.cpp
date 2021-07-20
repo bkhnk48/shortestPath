@@ -45,36 +45,28 @@ class RefinePolygons : public BuildingPolygons{
                 
         }
 
-        // check point p inside line
+        /**
+         * Check point inside lineSegment?
+         */
         bool isPointInsideLineSegment(lineSegment line, point p){
         	point p_1 = line.p;
         	point p_2 = line.q;
-
-//        	pair<int, int> intersec_1; // create vector (p, p_1)
-//        	intersec_1.first = p_1.x - p.x;
-//        	intersec_1.second = p_1.y - p.y;
-//
-//        	pair<int, int> intersec_2; // create vector (p, p_2)
-//        	intersec_2.first = p_2.x - p.x;
-//        	intersec_2.second = p_2.y - p.y;
-//
-//        	// check vector intersect_1 or intersect_2 is proportional to each other
-//        	if(abs(intersec_1.first / intersec_1.second + intersec_2.first / intersec_2.second) < 0.0001){ // delta = 0.0001
-//        		return true;
-//        	}
 
         	double dis_1 = sqrt((p_1.x - p.x) * (p_1.x - p.x) + (p_1.y - p.y) * (p_1.y - p.y));
         	double dis_2 = sqrt((p_2.x - p.x) * (p_2.x - p.x) + (p_2.y - p.y) * (p_2.y - p.y));
         	double dis = sqrt((p_1.x - p_2.x) * (p_1.x - p_2.x) + (p_1.y - p_2.y) * (p_1.y - p_2.y));
 
-        	if(abs(dis_1 + dis_2 - dis) < 0.0001){
+        	if(abs(dis_1 + dis_2 - dis) < 0.0001){ // AB + BC ~ AC => A,B,C straight
         		return true;
         	}
 
         	return false;
         }
 
-        // check point p inside polygon
+        /**
+         * Check point inside polygon?
+         * Does 1 point lie on the contour of the polygon?
+         */
         int isPointInsidePolygon(vector< vector<lineSegment> > polygons ,int polygonIndex, point p){
         	for(int i=0; i<polygons.at(polygonIndex).size(); i++){
         		lineSegment line = polygons.at(polygonIndex).at(i);
@@ -86,8 +78,10 @@ class RefinePolygons : public BuildingPolygons{
         	return -1;
         }
 
-        // get line include point, isPointInsideLineSegment check point have inside line segment and
-        // the method return line segment include this point
+        /**
+         * Get line include point, isPointInsideLineSegment check point have inside line segment and
+         * The method return line segment include this point
+         */
         lineSegment getLineSegmentIncludePoint(int polygonIndex, point p){
         	for(int i=0; i<polygons.at(polygonIndex).size(); i++){
 				lineSegment line = polygons.at(polygonIndex).at(i);
@@ -184,13 +178,18 @@ class RefinePolygons : public BuildingPolygons{
             return count;
         }
 
-        // calc Euclid distance between two point
-        // imporve : init class/interface distance and euclid_distance implement/extends distance class/interface
+        /**
+         * Calculate Euclid distance between two point
+         * Improve : initialization class/interface distance and euclid_distance implement/extends distance class/interface
+         */
         double euclid_distance(point a, point b){
             return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
         }
 
-        // swap 2 point, improve: replace by template
+        /**
+         * Swap 2 point
+         * Improve: replace by template
+         */
         void swap_point(point &point1, point &point2){
             point tmp_point = point1;
             point1 = point2;
@@ -199,7 +198,10 @@ class RefinePolygons : public BuildingPolygons{
             return;
         }
 
-        // swap 2 double parameter, improve: replace by template
+        /**
+         * Swap 2 double parameter
+         * Improve: replace by template
+         */
         void swap_double(double &dis_1, double &dis_2){
             double tmp_dis = dis_1;
             dis_1 = dis_2;
@@ -208,100 +210,111 @@ class RefinePolygons : public BuildingPolygons{
             return;
         }
 
-        // s_point is the first break found clockwise, and e_point is end point
-        // the method will sort p_o1 to p_o4, so that p_o1 to p_o4 order nearest and furthest compare to s_point follow clockwise
+        /**
+         * s_point is the first break found clockwise, and e_point is end point, them belong to lineSegment deleted
+         * The method will sort p_o1 to p_o4, so that p_o1 to p_o4 order nearest and farthest compare to s_point follow clockwise
+         * Improve: union with getVerticesAV
+         */
         void sort_clockwise(point &s_point, point &e_point, point &p_o1, point &p_o2, point &p_o3, point &p_o4, int cnt){
-            if(cnt == 1){ // if cnt == 1, we only have p_o1, so no need sort_clockwise
-                return;
-            }
+        	vector<point> listVertices; // listVertices is list of point is vertices of polygon before considering this case
+			if(cnt == 3){
+				listVertices.push_back(p_o4);
+			} else if(cnt == 2){
+				listVertices.push_back(p_o4);
+				listVertices.push_back(p_o3);
+			} else if(cnt == 1){
+				listVertices.push_back(p_o4);
+				listVertices.push_back(p_o3);
+				listVertices.push_back(p_o2);
+			} else if(cnt == 0){
+				listVertices.push_back(p_o4);
+				listVertices.push_back(p_o3);
+				listVertices.push_back(p_o2);
+				listVertices.push_back(p_o1);
+			}
 
-            if(cnt == 2){ // we have two point is p_o1 and p_o2
-                double dis_1 = euclid_distance(s_point, p_o1);
-                double dis_2 = euclid_distance(s_point, p_o2);
+			// sort 4 point p_o1->p_o4 such as: p_o1 nearest e_point and p_o4 nearest e_point
+        	double dis_1 = euclid_distance(s_point, p_o1);
+			double dis_2 = euclid_distance(s_point, p_o2);
+			double dis_3 = euclid_distance(s_point, p_o3);
+			double dis_4 = euclid_distance(s_point, p_o4);
 
-                if(dis_1 < dis_2){
-                    return;
-                } else { // if 2 point are reversed, we just reposition them
-                    swap_point(p_o1, p_o2);
-                    return;
-                }
-            }
+			if(dis_1 > dis_2){
+				swap_point(p_o1, p_o2);
+				swap_double(dis_1, dis_2);
+			}
 
-            if(cnt == 3){
-                double dis_1 = euclid_distance(s_point, p_o1);
-                double dis_2 = euclid_distance(s_point, p_o2);
-                double dis_3 = euclid_distance(s_point, p_o3);
+			if(dis_1 > dis_3){
+				swap_point(p_o1, p_o3);
+				swap_double(dis_1, dis_3);
+			}
 
-                if(dis_1 > dis_2){
-                    swap_point(p_o1, p_o2);
-                    swap_double(dis_1, dis_2);
-                }
+			if(dis_1 > dis_4){
+				swap_point(p_o1, p_o4);
+				swap_double(dis_1, dis_4);
+			} // after step, p_o1 is point nearest start point
+			// next step, we need swap p_o4 is nearest end point
 
-                if(dis_1 > dis_3){
-                    swap_point(p_o1, p_o3);
-                    swap_double(dis_1, dis_3);
-                } // after step, p_o1 is true location, we need replace p_o2 and p_o3 if need
+			dis_2 = euclid_distance(e_point, p_o2);
+			dis_3 = euclid_distance(e_point, p_o3);
+			dis_4 = euclid_distance(e_point, p_o4);
 
-                dis_2 = euclid_distance(e_point, p_o2);
-                dis_3 = euclid_distance(e_point, p_o3);
+			if(dis_4 > dis_2){
+				swap_point(p_o4, p_o2);
+				swap_double(dis_4, dis_2);
+			}
 
-                if(dis_2 < dis_3){
-                    swap_point(p_o2, p_o3);
-                    // swap_double(dis_2, dis_3);
-                }
+			if(dis_4 > dis_3){
+				swap_point(p_o4, p_o3);
+				swap_double(dis_4, dis_3);
+			} // after step p_o4 is nearest end point
 
-                return;
-            }
+			// next step, we must sort p_o2, p_o3 such as: p_o2 near p_o1 than p_o3 and p_o3 near p_o4 than p_o2
+			dis_2 = euclid_distance(p_o1, p_o2);
+			dis_3 = euclid_distance(p_o1, p_o3);
 
-            if(cnt == 4){
-                double dis_1 = euclid_distance(s_point, p_o1);
-                double dis_2 = euclid_distance(s_point, p_o2);
-                double dis_3 = euclid_distance(s_point, p_o3);
-                double dis_4 = euclid_distance(s_point, p_o4);
+			if(dis_2 > dis_3){
+				swap_point(p_o2, p_o3);
+				swap_double(dis_2, dis_3);
+			}
 
-                if(dis_1 > dis_2){
-                	swap_point(p_o1, p_o2);
-                	swap_double(dis_1, dis_2);
-                }
+			// p_o1 -> p_o4 sorted, but we need take point in "points" and push back
+			deque<point> queue;
 
-                if(dis_1 > dis_3){
-                	swap_point(p_o1, p_o3);
-                	swap_double(dis_1, dis_3);
-                }
+			if(find(listVertices.begin(), listVertices.end(), p_o4) != listVertices.end()){
+				queue.push_back(p_o4);
+			} else {
+				queue.push_front(p_o4);
+			};
 
-                if(dis_1 > dis_4){
-                	swap_point(p_o1, p_o4);
-                	swap_double(dis_1, dis_4);
-                } // after step, p_o1 is point nearest start point
-                // next step, we need swap p_o4 is nearest end point
+			if(find(listVertices.begin(), listVertices.end(), p_o3) != listVertices.end()){
+				queue.push_back(p_o3);
+			} else {
+				queue.push_front(p_o3);
+			};
 
-                dis_2 = euclid_distance(e_point, p_o2);
-                dis_3 = euclid_distance(e_point, p_o3);
-                dis_4 = euclid_distance(e_point, p_o4);
+			if(find(listVertices.begin(), listVertices.end(), p_o2) != listVertices.end()){
+				queue.push_back(p_o2);
+			} else {
+				queue.push_front(p_o2);
+			};
 
-                if(dis_4 > dis_2){
-                	swap_point(p_o4, p_o2);
-                	swap_double(dis_4, dis_2);
-                }
+			if(find(listVertices.begin(), listVertices.end(), p_o1) != listVertices.end()){
+				queue.push_back(p_o1);
+			} else {
+				queue.push_front(p_o1);
+			};
 
-                if(dis_4 > dis_3){
-                	swap_point(p_o4, p_o3);
-                	swap_double(dis_4, dis_3);
-                } // after step p_o4 is nearest end point
-
-                // next step, we must sort p_o2, p_o3 such as: p_o2 near p_o1 than p_o3 and p_o3 near p_o4 than p_o2
-                dis_2 = euclid_distance(p_o1, p_o2);
-                dis_3 = euclid_distance(p_o1, p_o3);
-
-                if(dis_2 > dis_3){
-                	swap_point(p_o2, p_o3);
-                	swap_double(dis_2, dis_3);
-                }
-            }
+			p_o1 = queue.at(0);
+			p_o2 = queue.at(1);
+			p_o3 = queue.at(2);
+			p_o4 = queue.at(3);
         }
 
-        // when delete lineSegment, polygon (in pylygons with index polygonIndex) was broken
-        // method find 2 point break in polygon
+        /**
+         * When delete lineSegment, polygon (in pylygons with index polygonIndex) was broken
+         * Method find 2 point break in polygon
+         */
         void findBreakPoint(double &x1, double &y1, double &x2, double &y2, int polygonIndex, int &breakIndex, bool &foundBreak){
             for(int i = 0; i < this->polygons.at(polygonIndex).size(); i++){
                 int j = (i + 1) % this->polygons.at(polygonIndex).size();
@@ -319,9 +332,11 @@ class RefinePolygons : public BuildingPolygons{
             }
         }
         
-        // get 4 vertices of AV assign to p_o1, p_o2, p_o3, p_o4
-        // if vertices in points push back to p_o4
-        // if vertices not in points push head to p_o1
+        /**
+         * Get 4 vertices of AV assign to p_o1, p_o2, p_o3, p_o4
+         * If vertices in points push back to p_o4
+         * If vertices not in points push head to p_o1
+         */
         void getVerticesAV(point &p_o1, point &p_o2, point &p_o3, point &p_o4){
             deque<point> queue;
             
@@ -355,7 +370,10 @@ class RefinePolygons : public BuildingPolygons{
             p_o4 = queue.at(3);
         }
 
-        // split polygon to two polygon
+        /**
+         * Split them to two polygon
+         * When after remove point and lineSegment, if polygon create to by two polygon
+         */
         void splitPolygon(int polygonIndex){
         	vector<lineSegment> subPolygon_1;
         	vector<lineSegment> subPolygon_2;
@@ -383,16 +401,19 @@ class RefinePolygons : public BuildingPolygons{
         	polygons.push_back(subPolygon_2);
         }
 
+        /**
+         * Remove Edges and Vertices when AV move
+         */
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
-            point p_o1, p_o2, p_o3, p_o4; // init 4 vertices of AV
+            point p_o1, p_o2, p_o3, p_o4; // initialization 4 vertices of AV
             int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
-//            int nmrSameVertices = 4;
-//            polygonIndex = 0;
-//            pA = point(2,1);
-//            pB = point(2,2);
-//            pC = point(1,2);
-//            pD = point(1,1);
+//            int nmrSameVertices = 2;
+//			polygonIndex = 0;
+//			pA = point(8,4);
+//			pB = point(10,4);
+//			pC = point(8,1);
+//			pD = point(10,1);
             
             #pragma region
             if(nmrSameVertices == 4){
@@ -533,6 +554,7 @@ class RefinePolygons : public BuildingPolygons{
 
 
                 }
+
                 // push new point to points pool
                 points.push_back(p_o1);
                 points.push_back(p_o2);
@@ -640,7 +662,6 @@ class RefinePolygons : public BuildingPolygons{
 						// it will split the original polygons into 2 polygons.
 						int con = (check_A != -1) && (check_B != -1) && (check_C != -1) && (check_D != -1);
 						if(con){
-//							cout << "P_O2 : " << p_o2.x << " " << p_o2.y << endl;
 							lineSegment line = getLineSegmentIncludePoint(polygonIndex, p_o2);
 							point s_point1 = line.p;
 							point e_point1 = line.q;
@@ -680,8 +701,8 @@ class RefinePolygons : public BuildingPolygons{
 							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line2);
 							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line3);
 							this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 5), line4);
-							splitPolygon(polygonIndex);
-						} else {
+							splitPolygon(polygonIndex); // when remove lineSegment and point, we need split polygon to two polygon
+						} else { // not special case
 							lineSegment line1;
 							lineSegment line2;
 							lineSegment line3;
