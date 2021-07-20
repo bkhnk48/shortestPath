@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 import turtle
 import reeds_shepp as rs
 import utils
