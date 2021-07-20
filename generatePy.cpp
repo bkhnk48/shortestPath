@@ -73,7 +73,14 @@ void runPythonCode(string file_name, vector<point> &route, int directionAtTheEnd
 
     writeRoute("route.txt", route, 90, lastAngle);
 
-    strcpy(cmd, "test\\AllPossibleTrajectories.py");
+    #ifdef __linux__ 
+    //linux code goes here
+	strcpy(cmd, "./test/AllPossibleTrajectories.py");
+	#elif _WIN32
+	// windows code goes here
+	strcpy(cmd, "test\\AllPossibleTrajectories.py");
+	#else
+	#endif
     system(cmd);
 
 }
