@@ -162,7 +162,7 @@ int numberOfCrossings(vector<vector<lineSegment> > &polygons, lineSegment l){
 			n++;
 		}
 	}
-	return n;
+	return n; 
 }
 
 

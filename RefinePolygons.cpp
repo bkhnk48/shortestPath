@@ -124,6 +124,25 @@ class RefinePolygons : public BuildingPolygons{
             
         }
 
+        //return true iff p1 is between p0 and p2
+        bool isTheMiddle(point p0, point p1, point p2){
+            //vector u is a vector from p0 to p1
+            double uX = p1.x - p0.x;
+            double uY = p1.y - p0.y;
+
+            //vector v is a vector from p1 to p2
+            double vX = p2.x - p1.x;
+            double vY = p2.y - p1.y;
+
+            double product = uX*vY - uY*vX;
+            double dotProduct = uX*vX + uY*vY;
+
+            if(product == 0 && dotProduct > 0){
+                return true;
+            }
+            return false;
+        }
+
         int countSharedVertices(int indexOfStack, int row, int column, int *first, int *last, int *polygonIndex){
             this->getFourVertecies(indexOfStack, row, column);
             bool found = false;
@@ -133,6 +152,8 @@ class RefinePolygons : public BuildingPolygons{
             sharedVertices[1] = false;
             sharedVertices[2] = false;
             sharedVertices[3] = false;
+
+            int indexOfZeroCase[4] = {-1, -1, -1, -1};
             
             int prev = 0;
             
@@ -158,6 +179,33 @@ class RefinePolygons : public BuildingPolygons{
                         sharedVertices[3] = true;
                         count++;
                     }
+                    else{
+                        if(indexOfZeroCase[0] == -1){
+                            bool AisOnEdge = isTheMiddle(this->polygons.at(i).at(j).p, pA, this->polygons.at(i).at(j).q);
+                            if(AisOnEdge){
+                                indexOfZeroCase[0] = i;
+                            }
+                        }
+                        if(indexOfZeroCase[1] == -1){
+                            bool BisOnEdge = isTheMiddle(this->polygons.at(i).at(j).p, pB, this->polygons.at(i).at(j).q);
+                            if(BisOnEdge){
+                                indexOfZeroCase[1] = i;
+                            }
+                        }
+                        if(indexOfZeroCase[2] == -1){
+                            bool CisOnEdge = isTheMiddle(this->polygons.at(i).at(j).p, pC, this->polygons.at(i).at(j).q);
+                            if(CisOnEdge){
+                                indexOfZeroCase[2] = i;
+                            }
+                        }
+                        if(indexOfZeroCase[3] == -1){
+                            bool DisOnEdge = isTheMiddle(this->polygons.at(i).at(j).p, pD, this->polygons.at(i).at(j).q);
+                            if(DisOnEdge){
+                                indexOfZeroCase[3] = i;
+                            }
+                        }
+
+                    }
                     if(prev != count){
                         if(*first == -1)
                             *first = j;
@@ -172,6 +220,15 @@ class RefinePolygons : public BuildingPolygons{
                     *polygonIndex = i;
                     found = true;
                     break;
+                }
+                else{
+                    if(indexOfZeroCase[0] == indexOfZeroCase[1] && indexOfZeroCase[1] == indexOfZeroCase[2]
+                        && indexOfZeroCase[2] == indexOfZeroCase[3] && indexOfZeroCase[0] != -1
+                    ){
+                        *polygonIndex = indexOfZeroCase[0];
+                        found = true;
+                        break;
+                    }
                 }
             }
             

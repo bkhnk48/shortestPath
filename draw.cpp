@@ -268,7 +268,6 @@ string drawGraph(vector< vector< int> > &graph, vector<point>& points){
 	return str;
 }
 
-
 int cutThrough(lineSegment l1, lineSegment l2){
 	//point A = l1.p; point B = l1.q;
 	//point C = l2.p; point D = l2.q;
