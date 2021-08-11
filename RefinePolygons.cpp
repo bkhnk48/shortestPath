@@ -235,11 +235,27 @@ class RefinePolygons : public BuildingPolygons{
                     found = true;
                     break;
                 }
+                // else{
+                //     if(indexOfZeroCase[0] == indexOfZeroCase[1] && indexOfZeroCase[1] == indexOfZeroCase[2]
+                //         && indexOfZeroCase[2] == indexOfZeroCase[3] && indexOfZeroCase[0] != -1
+                //     ){
+                //         *polygonIndex = indexOfZeroCase[0];
+                //         found = true;
+                //         break;
+                //     }
+                // }
                 else{
-                    if(indexOfZeroCase[0] == indexOfZeroCase[1] && indexOfZeroCase[1] == indexOfZeroCase[2]
-                        && indexOfZeroCase[2] == indexOfZeroCase[3] && indexOfZeroCase[0] != -1
-                    ){
-                        *polygonIndex = indexOfZeroCase[0];
+                    if((indexOfZeroCase[0] == indexOfZeroCase[1] && indexOfZeroCase[0] != -1) 
+                        || (indexOfZeroCase[1] == indexOfZeroCase[2] && indexOfZeroCase[1] != -1))
+                    {
+                        *polygonIndex = indexOfZeroCase[1];
+                        found = true;
+                        break;
+                    } 
+                    else if((indexOfZeroCase[2] == indexOfZeroCase[3] && indexOfZeroCase[2] != -1)
+                        || (indexOfZeroCase[3] == indexOfZeroCase[0] && indexOfZeroCase[0] != -1))
+                    {
+                        *polygonIndex = indexOfZeroCase[3];
                         found = true;
                         break;
                     }
@@ -526,13 +542,13 @@ class RefinePolygons : public BuildingPolygons{
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             point p_o1, p_o2, p_o3, p_o4; // initialization 4 vertices of AV
-            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
-            // int nmrSameVertices = 3;
-            // polygonIndex = 0;
-            // pA = point(25,20);
-            // pB = point(26,20);
-            // pC = point(25,17);
-            // pD = point(26,17);
+            // int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+            int nmrSameVertices = 1;
+            polygonIndex = 0;
+            pA = point(25,17);
+            pB = point(26,17);
+            pC = point(25,14);
+            pD = point(26,14);
             
             #pragma region
             if(nmrSameVertices == 4){
@@ -867,50 +883,278 @@ class RefinePolygons : public BuildingPolygons{
             } else if(nmrSameVertices == 1){
                 getVerticesAV(p_o1, p_o2, p_o3, p_o4);
 
-                // remove vertices and edge with vertices in points
-                removePoint(p_o4);
-                removeLineSegment(p_o4, polygonIndex);
+                point p_o4_opposite; // get point opposite with p_o4 (a point not include line segment of polygon)
+                if(p_o1.x != p_o4.x && p_o1.y != p_o4.y){ // point opposite with p_o4 is point does not match x and y
+                    p_o4_opposite = p_o1;
+                } else if(p_o2.x != p_o4.x && p_o2.y != p_o4.y){
+                    p_o4_opposite = p_o2;
+                } else if(p_o3.x != p_o4.x && p_o3.y != p_o4.y){
+                    p_o4_opposite = p_o3;
+                }
 
-                if(!this->polygons.at(polygonIndex).empty()){
-                    bool foundBreak = false;
-                    int breakIndex = 0;
-                    double x1, x2, y1, y2;
-                    findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
+                int match = isPointInsidePolygon(polygons, polygonIndex, p_o4_opposite);
+                if(match != -1){ // special case, when delete p_o4 and p_o4_opposite create 2 break locations
+                    // we have 2 case symmetrical
+                    // case 1: when p_o4 right for p_o4_opposite
+                    // case 2: when p_o4 left for p_o4_opposite
+                    bool check_reverse = p_o4.x < p_o4_opposite.x? true : false;
 
-                    point s_point, e_point;
-                    s_point.x = x1;
-                    s_point.y = y1;
-                    e_point.x = x2;
-                    e_point.y = y2;
+                    if(!check_reverse){
+                        lineSegment line = getLineSegmentIncludePoint(polygonIndex, p_o4_opposite);
+                        point p_start = line.p;
 
-                    // sort p_o1, p_o2, p_o3, p_o4
-                    sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 3);
+                        removePoint(p_o4);
+                        removeLineSegment(p_o4, polygonIndex);
 
-                    if(foundBreak){
-                        lineSegment line1;
-                        lineSegment line2;
-                        lineSegment line3;
-                        lineSegment line4;
+                        removePoint(p_start);
+                        removeLineSegment(p_start, polygonIndex);
 
-                        line1.p = s_point;
+                        // found 2 location break with 4 point break start-end, start-end
+                        bool foundBreak = false, foundBreak1 = false;
+                        int breakIndex = 0, breakIndex1 = 0;
+                        double x1, x2, x3, x4, y1, y2, y3, y4;
+                        findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
+                        if(x1 != p_start.x && y1 != p_start.y){
+                            x3 = x1;
+                            y3 = y1;
+                            x4 = x2;
+                            y4 = y2;
+                            breakIndex1 = breakIndex; breakIndex = 0;
+                            foundBreak1 = foundBreak; foundBreak = false;
+
+                            // we have 2 break locations, if first break locations not  point nearest p_start we need find continues
+                            findBreakPointFromIndex(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak, breakIndex1 + 1);
+                        }
+
+                        if(!foundBreak1){ // if not found second break location
+                            findBreakPointFromIndex(x3, y3, x4 , y4, polygonIndex, breakIndex1, foundBreak1, breakIndex + 1);
+                        }
+
+                        line.p.x = x1;
+                        line.p.y = y1;
+                        line.q = p_start;
+
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line);
+                        points.push_back(p_start);
+
+                        // connect polygon and split it to 2 polygon
+                        point s_point_1, e_point_1, s_point_2, e_point_2;
+                        s_point_1 = p_start;
+                        e_point_1.x = x2;
+                        e_point_1.y = y2;
+                        s_point_2.x = x3;
+                        s_point_2.y = y3;
+                        e_point_2.x = x4;
+                        e_point_2.y = y4;
+
+                        // swap p_o1, p_o2, p_o3, p_o4 
+                        // so that, p_o1 nearest than s_point_1
+                        //          p_o4 nearest than e_point_2
+                        //          p_o3 inside polygon
+                        //          p_o2 is remaining point and inside line
+
+                        // firstly, reassign p_o4 opposite to p_o1
+                        if(p_o4_opposite == p_o2){
+                            swap_point(p_o1, p_o2);
+                        } else if(p_o4_opposite == p_o3){
+                            swap_point(p_o1, p_o3);
+                        }
+
+                        if(euclid_distance(s_point_1, p_o1) > euclid_distance(s_point_1, p_o4)){
+                            swap_point(p_o1, p_o4);
+                        } // done p_o1, p_o4
+
+                        if(isPointInsidePolygon(polygons, polygonIndex, p_o2) == -1){
+                            swap_point(p_o2, p_o3);
+                        } // done p_o2, p_o3
+
+                        // connect polygon 1
+                        lineSegment line1, line2, line3, line4;
+                        line1.p = s_point_1;
                         line1.q = p_o1;
 
-                        line2.p = p_o1; // line2.p == line1.q
+                        line2.p = p_o1;
+                        line2.q = p_o3;
+
+                        line3.p = p_o3;
+                        line3.q = p_o4;
+
+                        line4.p = p_o4;
+                        line4.q = e_point_2;
+                        
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line1);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line2);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line3);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 5), line4);
+
+                        // connect polygon 2
+                        line1.p = s_point_2;
+                        line1.q = p_o4;
+
+                        line2.p = p_o4;
                         line2.q = p_o2;
 
-                        line3.p = p_o2; // line3.p == line2.q
-                        line3.q = p_o3;
+                        line3.p = p_o2;
+                        line3.q = e_point_1;
 
-                        line4.p = p_o3; // line4.p == line3.q
-                        line4.q = e_point;
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 1), line1);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 2), line2);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 3), line3);
 
-                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
-                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
-                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line3);
-                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line4);
+                        splitPolygon(polygonIndex);
+                    } else { // reverse of special case
+                        lineSegment line = getLineSegmentIncludePoint(polygonIndex, p_o4_opposite);
+                        point p_start = line.q;
+
+                        removePoint(p_o4);
+                        removeLineSegment(p_o4, polygonIndex);
+
+                        removePoint(p_start);
+                        removeLineSegment(p_start, polygonIndex);
+
+                        // found 2 location break with 4 point break start-end, start-end
+                        bool foundBreak = false, foundBreak1 = false;
+                        int breakIndex = 0, breakIndex1 = 0;
+                        double x1, x2, x3, x4, y1, y2, y3, y4;
+                        findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
+                        if(x1 != p_start.x && y1 != p_start.y){
+                            x3 = x1;
+                            y3 = y1;
+                            x4 = x2;
+                            y4 = y2;
+                            breakIndex1 = breakIndex; breakIndex = 0;
+                            foundBreak1 = foundBreak; foundBreak = false;
+
+                            // we have 2 break locations, if first break locations not  point nearest p_start we need find continues
+                            findBreakPointFromIndex(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak, breakIndex1 + 1);
+                        }
+
+                        if(!foundBreak1){ // if not found second break location
+                            findBreakPointFromIndex(x3, y3, x4 , y4, polygonIndex, breakIndex1, foundBreak1, breakIndex + 1);
+                        }
+
+                        line.p = p_start;
+                        line.q.x = x2;
+                        line.q.y = y2;
+
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex+1), line);
+                        points.push_back(p_start);
+
+                        // connect polygon and split it to 2 polygon
+                        point s_point_1, e_point_1, s_point_2, e_point_2;
+                        s_point_1.x = x3;
+                        s_point_1.y = y3;
+                        e_point_1.x = x4;
+                        e_point_1.y = y4;
+                        s_point_2.x = x1;
+                        s_point_2.y = y1;
+                        e_point_2 = p_start;
+
+                        // swap p_o1, p_o2, p_o3, p_o4 
+                        // so that, p_o1 nearest than s_point_1
+                        //          p_o4 nearest than e_point_2
+                        //          p_o3 inside polygon
+                        //          p_o2 is remaining point and inside line
+
+                        // firstly, reassign p_o4 opposite to p_o1
+                        if(p_o4_opposite == p_o2){
+                            swap_point(p_o1, p_o2);
+                        } else if(p_o4_opposite == p_o3){
+                            swap_point(p_o1, p_o3);
+                        }
+
+                        if(euclid_distance(s_point_1, p_o1) > euclid_distance(s_point_1, p_o4)){
+                            swap_point(p_o1, p_o4);
+                        } // done p_o1, p_o4
+
+                        if(isPointInsidePolygon(polygons, polygonIndex, p_o2) == -1){
+                            swap_point(p_o2, p_o3);
+                        } // done p_o2, p_o3
+
+                        lineSegment line1, line2, line3, line4;
+                        
+                        // connect polygon 2
+                        line1.p = s_point_2;
+                        line1.q = p_o2;
+
+                        line2.p = p_o2;
+                        line2.q = p_o1;
+
+                        line3.p = p_o1;
+                        line3.q = e_point_1;
+
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 1), line1);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 2), line2);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 3), line3);
+
+                        // connect polygon 1
+                        line1.p = s_point_1;
+                        line1.q = p_o1;
+
+                        line2.p = p_o1;
+                        line2.q = p_o3;
+
+                        line3.p = p_o3;
+                        line3.q = p_o4;
+
+                        line4.p = p_o4;
+                        line4.q = e_point_2;
+                        
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 1), line1);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 2), line2);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 3), line3);
+                        this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex1 + 4), line4);
+
+                        splitPolygon(polygonIndex);
                     }
+                    
+                } else { // not special case
+                    // remove vertices and edge with vertices in points
+                    removePoint(p_o4);
+                    removeLineSegment(p_o4, polygonIndex);
 
+                    if(!this->polygons.at(polygonIndex).empty()){
+                        bool foundBreak = false;
+                        int breakIndex = 0;
+                        double x1, x2, y1, y2;
+                        findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
+
+                        point s_point, e_point;
+                        s_point.x = x1;
+                        s_point.y = y1;
+                        e_point.x = x2;
+                        e_point.y = y2;
+
+                        // sort p_o1, p_o2, p_o3, p_o4
+                        sort_clockwise(s_point, e_point, p_o1, p_o2, p_o3, p_o4, 3);
+
+                        if(foundBreak){
+                            lineSegment line1;
+                            lineSegment line2;
+                            lineSegment line3;
+                            lineSegment line4;
+
+                            line1.p = s_point;
+                            line1.q = p_o1;
+
+                            line2.p = p_o1; // line2.p == line1.q
+                            line2.q = p_o2;
+
+                            line3.p = p_o2; // line3.p == line2.q
+                            line3.q = p_o3;
+
+                            line4.p = p_o3; // line4.p == line3.q
+                            line4.q = e_point;
+
+                            this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 1), line1);
+                            this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 2), line2);
+                            this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 3), line3);
+                            this->polygons.at(polygonIndex).insert(this->polygons.at(polygonIndex).begin() + (breakIndex + 4), line4);
+                        }
+
+                    }
                 }
+                
                 // push new point to points pool
                 points.push_back(p_o1);
                 points.push_back(p_o2);
