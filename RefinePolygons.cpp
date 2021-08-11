@@ -542,13 +542,13 @@ class RefinePolygons : public BuildingPolygons{
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             point p_o1, p_o2, p_o3, p_o4; // initialization 4 vertices of AV
-            // int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
-            int nmrSameVertices = 1;
-            polygonIndex = 0;
-            pA = point(25,17);
-            pB = point(26,17);
-            pC = point(25,14);
-            pD = point(26,14);
+            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+            // int nmrSameVertices = 1;
+            // polygonIndex = 0;
+            // pA = point(25,17);
+            // pB = point(26,17);
+            // pC = point(25,14);
+            // pD = point(26,14);
             
             #pragma region
             if(nmrSameVertices == 4){
