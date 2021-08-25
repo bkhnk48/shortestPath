@@ -542,13 +542,13 @@ class RefinePolygons : public BuildingPolygons{
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             point p_o1, p_o2, p_o3, p_o4; // initialization 4 vertices of AV
-            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
-//             int nmrSameVertices = 1;
-//             polygonIndex = 0;
-//             pA = point(25,14);
-//             pB = point(26,14);
-//             pC = point(25,11);
-//             pD = point(26,11);
+//            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+             int nmrSameVertices = 1;
+             polygonIndex = 0;
+             pA = point(20,17);
+             pB = point(21,17);
+             pC = point(20,14);
+             pD = point(21,14);
             
             #pragma region
             if(nmrSameVertices == 4){
@@ -1314,7 +1314,57 @@ class RefinePolygons : public BuildingPolygons{
 
             }
 
+            normalizePolygon(polygonIndex);
+            normalizePolygon(polygonIndex + 1);
             #pragma endregion 
+        }
+
+        // start point each polygon is point most left
+        // normalize start point of polygon when have AV deleted
+        void normalizePolygon(int polygonIndex){
+            vector<lineSegment> polygon = this->polygons.at(polygonIndex);
+            deque<lineSegment> queue;
+
+            // find lineSegment contain point most left
+            point leftMostPoint = polygon.at(0).p; // initialize leftMostPoint is point p of lineSegment 0
+            for(lineSegment line: polygon){
+                queue.push_back(line); // push each element of polygon to deque
+                point tmpPoint = line.p;
+
+                if(!leftMost(leftMostPoint, tmpPoint)){
+                    leftMostPoint = tmpPoint;
+                }
+            }
+
+            // for the queue in turn form front
+            // if not meet most left point, pop and push_back to queue
+            point rPoint = queue.front().p;
+            while(!(rPoint == leftMostPoint)){
+                lineSegment tmpLine = queue.front(); queue.pop_front(); // get and delete first element
+                queue.push_back(tmpLine); // push_back element deleted to queue
+
+                rPoint = queue.front().p;
+            }
+
+            // re-assign queue to polygon
+            vector<lineSegment> tmpPolygon;
+            while(queue.size() != 0){
+                tmpPolygon.push_back(queue.front()); queue.pop_front(); // get and delete first element
+            }
+
+            this->polygons.erase(this->polygons.begin() + polygonIndex);
+            this->polygons.insert(this->polygons.begin() + polygonIndex, tmpPolygon);
+        }
+
+        // if p_1 most left for p_2 return true
+        // else return false
+        bool leftMost(point p_1, point p_2){
+            if(p_1.x < p_2.x) return true;
+            else if(p_1.x > p_2.x) return false;
+            else {
+                if(p_1.y > p_2.y) return true;
+                else return false;
+            }
         }
 };
 #endif
