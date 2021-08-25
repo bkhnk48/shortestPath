@@ -52,7 +52,7 @@ class RefinePolygons : public BuildingPolygons{
 
         /**
          * Check point inside lineSegment
-         * assume lingeSegment is straight line with 2 ends is point => straight line AB
+         * assume lineSegment is straight line with 2 ends is point => straight line AB
          * if point C inside AB => AC + CB ~ AB
          */
         bool isPointInsideLineSegment(lineSegment line, point p){
@@ -542,13 +542,13 @@ class RefinePolygons : public BuildingPolygons{
         void removeEdgesAndVertices(int indexOfStack, int row, int column) override{
             int first = -1, last = -1, polygonIndex = -1;
             point p_o1, p_o2, p_o3, p_o4; // initialization 4 vertices of AV
-            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
-            // int nmrSameVertices = 1;
-            // polygonIndex = 0;
-            // pA = point(25,17);
-            // pB = point(26,17);
-            // pC = point(25,14);
-            // pD = point(26,14);
+//            int nmrSameVertices = this->countSharedVertices(indexOfStack, row, column, &first, &last, &polygonIndex);
+             int nmrSameVertices = 1;
+             polygonIndex = 0;
+             pA = point(25,14);
+             pB = point(26,14);
+             pC = point(25,11);
+             pD = point(26,11);
             
             #pragma region
             if(nmrSameVertices == 4){
@@ -600,8 +600,8 @@ class RefinePolygons : public BuildingPolygons{
                 }
             } else if(nmrSameVertices == 3){
                 getVerticesAV(p_o1, p_o2, p_o3, p_o4);
-                // because when remove we cann't check p_o1 begin have inside of polygon
-                // so we need check and save value before remove point and lineSegment from polygon
+                // because when remove we can not check p_o1 begin have inside of polygon
+                // so, we need check and save value before remove point and lineSegment from polygon
                 int checkPoint = isPointInsidePolygon(polygons, polygonIndex, p_o1); 
 
                 // remove vertices and edge with vertices in points
@@ -621,7 +621,7 @@ class RefinePolygons : public BuildingPolygons{
                     findBreakPoint(x1, y1, x2, y2, polygonIndex, breakIndex, foundBreak);
                     findBreakPointFromIndex(x3, y3, x4, y4, polygonIndex, breakIndex1, foundBreak1, breakIndex + 1);
 
-                    // foundBreak1==true like have 2 break localtions, so this is special case
+                    // foundBreak1==true like have 2 break locations, so this is special case
                     if(foundBreak1){ // special case, case nmr==3 and when delete create 2 polygon
                         if(checkPoint == -1){ // special case 1, when p_o1 not belong to any lineSegment of polygon
                             // sort p_o2, p_o3, p_o4 so that p_o2 nearest (x1,y1) and p_o4 nearest (x4,y4)
@@ -897,11 +897,37 @@ class RefinePolygons : public BuildingPolygons{
                     // we have 2 case symmetrical
                     // case 1: when p_o4 right for p_o4_opposite
                     // case 2: when p_o4 left for p_o4_opposite
-                    bool check_reverse = p_o4.x < p_o4_opposite.x? true : false;
+                    bool check_reverse;
+
+                    if(p_o4.y > p_o4_opposite.y){ // if p_o4 higher than p_o4 opposite
+                        check_reverse = p_o4.x < p_o4_opposite.x? true : false;
+                    } else { // if p_o4 lower than p_o4 opposite
+                        check_reverse = p_o4.x < p_o4_opposite.x? false : true;
+                    }
+
 
                     if(!check_reverse){
                         lineSegment line = getLineSegmentIncludePoint(polygonIndex, p_o4_opposite);
                         point p_start = line.p;
+                        cout << p_o2.x << " " << p_o2.y << endl;
+
+                        // swap p_o1, p_o2, p_o3, p_o4
+                        // so that, p_o1 nearest than s_point_1
+                        //          p_o4 nearest than e_point_2
+                        //          p_o3 inside polygon
+                        //          p_o2 is remaining point and inside line
+                        // we when swap p_o1, p_o4 if wrong place when we find s_point_1
+
+                        // firstly, reassign p_o4 opposite to p_o1
+                        if(p_o4_opposite == p_o2){
+                            swap_point(p_o1, p_o2);
+                        } else if(p_o4_opposite == p_o3){
+                            swap_point(p_o1, p_o3);
+                        }
+
+                        if(isPointInsidePolygon(polygons, polygonIndex, p_o2) == -1){
+                            swap_point(p_o2, p_o3);
+                        } // done p_o2, p_o3
 
                         removePoint(p_o4);
                         removeLineSegment(p_o4, polygonIndex);
@@ -947,26 +973,10 @@ class RefinePolygons : public BuildingPolygons{
                         e_point_2.x = x4;
                         e_point_2.y = y4;
 
-                        // swap p_o1, p_o2, p_o3, p_o4 
-                        // so that, p_o1 nearest than s_point_1
-                        //          p_o4 nearest than e_point_2
-                        //          p_o3 inside polygon
-                        //          p_o2 is remaining point and inside line
-
-                        // firstly, reassign p_o4 opposite to p_o1
-                        if(p_o4_opposite == p_o2){
-                            swap_point(p_o1, p_o2);
-                        } else if(p_o4_opposite == p_o3){
-                            swap_point(p_o1, p_o3);
-                        }
-
+                        // when found s_point_1 we need swap p_o1, p_o4 if them wrong place
                         if(euclid_distance(s_point_1, p_o1) > euclid_distance(s_point_1, p_o4)){
                             swap_point(p_o1, p_o4);
                         } // done p_o1, p_o4
-
-                        if(isPointInsidePolygon(polygons, polygonIndex, p_o2) == -1){
-                            swap_point(p_o2, p_o3);
-                        } // done p_o2, p_o3
 
                         // connect polygon 1
                         lineSegment line1, line2, line3, line4;
@@ -1005,6 +1015,24 @@ class RefinePolygons : public BuildingPolygons{
                     } else { // reverse of special case
                         lineSegment line = getLineSegmentIncludePoint(polygonIndex, p_o4_opposite);
                         point p_start = line.q;
+
+                        // swap p_o1, p_o2, p_o3, p_o4
+                        // so that, p_o1 nearest than s_point_1
+                        //          p_o4 nearest than e_point_2
+                        //          p_o3 inside polygon
+                        //          p_o2 is remaining point and inside line
+                        // we when swap p_o1, p_o4 if wrong place when we find s_point_1
+
+                        // firstly, reassign p_o4 opposite to p_o1
+                        if(p_o4_opposite == p_o2){
+                            swap_point(p_o1, p_o2);
+                        } else if(p_o4_opposite == p_o3){
+                            swap_point(p_o1, p_o3);
+                        }
+
+                        if(isPointInsidePolygon(polygons, polygonIndex, p_o2) == -1){
+                            swap_point(p_o2, p_o3);
+                        } // done p_o2, p_o3
 
                         removePoint(p_o4);
                         removeLineSegment(p_o4, polygonIndex);
@@ -1050,26 +1078,10 @@ class RefinePolygons : public BuildingPolygons{
                         s_point_2.y = y1;
                         e_point_2 = p_start;
 
-                        // swap p_o1, p_o2, p_o3, p_o4 
-                        // so that, p_o1 nearest than s_point_1
-                        //          p_o4 nearest than e_point_2
-                        //          p_o3 inside polygon
-                        //          p_o2 is remaining point and inside line
-
-                        // firstly, reassign p_o4 opposite to p_o1
-                        if(p_o4_opposite == p_o2){
-                            swap_point(p_o1, p_o2);
-                        } else if(p_o4_opposite == p_o3){
-                            swap_point(p_o1, p_o3);
-                        }
-
+                        // when found s_point_1 we need swap p_o1, p_o4 if them wrong place
                         if(euclid_distance(s_point_1, p_o1) > euclid_distance(s_point_1, p_o4)){
                             swap_point(p_o1, p_o4);
                         } // done p_o1, p_o4
-
-                        if(isPointInsidePolygon(polygons, polygonIndex, p_o2) == -1){
-                            swap_point(p_o2, p_o3);
-                        } // done p_o2, p_o3
 
                         lineSegment line1, line2, line3, line4;
                         
